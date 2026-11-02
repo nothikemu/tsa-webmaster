@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nothikemu.github.io/tsa-webmaster/sitemap.xml

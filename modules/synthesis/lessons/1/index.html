@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
+    <title>How a model reads a prompt · Synthesis · Parameter</title>
+    <meta name="description" content="A language model predicts the next token given everything before it. Your prompt is the start of that sequence, so it sets the odds for every word that follows. A vague prompt leav" />
+    <meta property="og:title" content="How a model reads a prompt · Synthesis · Parameter" />
+    <meta property="og:description" content="A language model predicts the next token given everything before it. Your prompt is the start of that sequence, so it sets the odds for every word that follows. A vague prompt leav" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/tsa-webmaster/favicon.svg" type="image/svg+xml" />
+    <script type="module" crossorigin src="/tsa-webmaster/assets/index-BujLmhDK.js" integrity="sha384-gMd25nvSCdOMBgXeU1NcaLOZKfHZHQMSFYZunauFxFO81jhzI/tpNpZe8wa7Zg+I"></script>
+    <link rel="modulepreload" crossorigin href="/tsa-webmaster/assets/vendor-react-BzmU5ktU.js">
+    <link rel="modulepreload" crossorigin href="/tsa-webmaster/assets/vendor-three-svXGcDTO.js">
+    <link rel="modulepreload" crossorigin href="/tsa-webmaster/assets/vendor-state-NeSqSlMk.js">
+    <link rel="modulepreload" crossorigin href="/tsa-webmaster/assets/vendor-three-gpu-DyPwhSza.js">
+    <link rel="modulepreload" crossorigin href="/tsa-webmaster/assets/scene-aA5trA8l.js">
+    <link rel="stylesheet" crossorigin href="/tsa-webmaster/assets/index-a1Aa8zIG.css" integrity="sha384-ae0nGXq6tDWMCyT+B5xuTnLZSzDPLLWc5pj3/JhuflwLR3WOFPE/czD/tFx4HhWo">
+  <link rel="canonical" href="https://nothikemu.github.io/tsa-webmaster/modules/synthesis/lessons/1/" />
+  <meta property="og:url" content="https://nothikemu.github.io/tsa-webmaster/modules/synthesis/lessons/1/" />
+  </head>
+  <body>
+    <div id="root"><div class="static-page"><a class="skip-link" href="#main">Skip to content</a><header class="static-header"><a class="wordmark" href="/">parameter</a><nav aria-label="Primary"><ul><li><a href="/modules">Modules</a></li><li><a href="/progress">Progress</a></li><li><a href="/achievements">Achievements</a></li><li><a href="/glossary">Glossary</a></li><li><a href="/about">About</a></li></ul></nav></header><main id="main" tabindex="-1"><p class="eyebrow">MOD 02 / SYNTHESIS / LESSON 1 OF 5 / MECHANICS</p><h1>How a model reads a prompt</h1><p>A language model predicts the next token given everything before it. Your prompt is the start of that sequence, so it sets the odds for every word that follows. A vague prompt leaves many continuations almost equally likely. A precise prompt narrows them.</p><p>A token is a chunk of text, often a word or part of one. Models read a limited number of tokens at once, called the context window. Anything outside the window is invisible, so the instructions and the material they apply to must both fit inside it.</p><p>Temperature controls how adventurous the sampling is. Near 0, the model picks the most probable token almost every time, so output is steady and repeatable. Near 1 and above, it takes more risks, which helps brainstorming and hurts exact answers.</p><section><h2>Key points</h2><ul><li>Output is a sampled continuation of the prompt.</li><li>The context window caps what the model can see.</li><li>Low temperature: repeatable. High temperature: varied.</li></ul></section><section><h2>Check yourself</h2><p>You need identical JSON extraction from invoices on every run. Which temperature fits best?</p><ul><li>Near 0</li><li>Around 0.7</li><li>Around 1.5</li><li>Temperature does not matter</li></ul><details><summary>Show the answer</summary><p>Near 0</p><p>Low temperature makes the model choose the most probable token almost every time, which gives repeatable output.</p></details></section><p><a href="/modules/synthesis/lessons/2">Next lesson</a></p></main><footer><p>Built for TSA Webmaster 2026-2027. All progress stays on your device.</p><ul><li><a href="/accessibility">Accessibility statement</a></li><li><a href="/credits">Credits</a></li><li><a href="/glossary">Glossary</a></li><li><a href="/about">About</a></li></ul></footer></div></div>
+    <noscript>Parameter teaches AI with interactive scenes. The scenes need JavaScript; the lessons below do not.</noscript>
+  </body>
+</html>

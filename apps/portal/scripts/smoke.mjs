@@ -7,6 +7,9 @@
 //   SMOKE_QUALITY     quality tier (0-3) for the frame-rate check (default 0, the governor's floor)
 //   SMOKE_ONLY        run only checks whose name matches this regular expression
 //   SMOKE_NO_WEBGPU=1 skip the WebGPU tier checks
+//   SMOKE_BASE        serve and test under this sub-path, for builds made with BASE=/repo/ (default "/")
+//   SMOKE_ISOLATION=0 serve WITHOUT the COOP/COEP headers, as GitHub Pages does (exercises the
+//                     non-SharedArrayBuffer fallbacks)
 //
 // It serves dist/ itself with the cross-origin isolation headers, so no other server is needed.
 import AxeBuilder from '@axe-core/playwright';
@@ -21,6 +24,10 @@ const here = dirname(fileURLToPath(import.meta.url));
 const DIST = resolve(here, '..', 'dist');
 const MIN_FPS = Number(process.env.SMOKE_MIN_FPS ?? 12);
 const WEBGPU = process.env.SMOKE_NO_WEBGPU !== '1';
+const BASE = (process.env.SMOKE_BASE ?? '/').replace(/\/?$/, '/');
+const ISOLATION = process.env.SMOKE_ISOLATION !== '0';
+const sub = BASE.replace(/\/$/, ''); // "" or "/repo"
+const at = (origin, path) => origin + sub + path;
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
@@ -31,16 +38,21 @@ const MIME = {
 function serve(root) {
   const server = createServer((req, res) => {
     const url = new URL(req.url ?? '/', 'http://x');
-    let file = normalize(join(root, decodeURIComponent(url.pathname)));
+    let rel = decodeURIComponent(url.pathname);
+    if (sub && (rel === sub || rel.startsWith(sub + '/'))) rel = rel.slice(sub.length) || '/';
+    else if (sub) { res.writeHead(404).end(); return; }
+    let file = normalize(join(root, rel));
     if (!file.startsWith(root)) { res.writeHead(403).end(); return; }
     if (existsSync(file) && statSync(file).isDirectory()) file = join(file, 'index.html');
     let status = 200;
     if (!existsSync(file)) { file = join(root, '404.html'); status = 404; }
     res.writeHead(status, {
       'Content-Type': MIME[extname(file)] ?? 'application/octet-stream',
-      'Cross-Origin-Opener-Policy': 'same-origin',
-      'Cross-Origin-Embedder-Policy': 'require-corp',
-      'Cross-Origin-Resource-Policy': 'same-origin',
+      ...(ISOLATION ? {
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Cross-Origin-Embedder-Policy': 'require-corp',
+        'Cross-Origin-Resource-Policy': 'same-origin',
+      } : {}),
       'Cache-Control': 'no-cache',
     });
     res.end(readFileSync(file));
@@ -81,7 +93,7 @@ async function open(path, opts = {}) {
   const warnings = [];
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); else if (m.type() === 'warning') warnings.push(m.text()); });
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
-  await page.goto(origin + path, { waitUntil: 'load' });
+  await page.goto(at(origin, path), { waitUntil: 'load' });
   return { ctx, page, errors, warnings };
 }
 const boot = (page) => page.waitForFunction(() => ['ready', 'static'].includes(document.documentElement.dataset.boot ?? ''), null, { timeout: 30000 });
@@ -117,7 +129,7 @@ await check('home boots with no console errors; exactly one rAF loop', async () 
   const errors = [];
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
   page.on('pageerror', (e) => errors.push(e.message));
-  await page.goto(origin + '/', { waitUntil: 'load' });
+  await page.goto(at(origin, '/'), { waitUntil: 'load' });
   await boot(page);
   assert((await page.evaluate(() => document.documentElement.dataset.boot)) === 'ready', 'did not reach boot=ready');
   await page.waitForTimeout(1500);
@@ -294,7 +306,7 @@ await check('integrity guard degrades to the static view when the asset blob is 
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await page.goto(alt.origin + '/modules/foundations/lessons/1', { waitUntil: 'load' });
+  await page.goto(at(alt.origin, '/modules/foundations/lessons/1'), { waitUntil: 'load' });
   await page.waitForFunction(() => document.documentElement.dataset.boot === 'static', null, { timeout: 30000 });
   const heading = await page.locator('h1').first().innerText();
   const interactive = await page.locator('canvas').count();
@@ -320,7 +332,7 @@ await check('integrity guard also catches an altered lazy chunk after the app ha
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await page.goto(alt.origin + '/about', { waitUntil: 'load' });
+  await page.goto(at(alt.origin, '/about'), { waitUntil: 'load' });
   await page.waitForFunction(() => document.documentElement.dataset.boot === 'static', null, { timeout: 30000 });
   const heading = await page.locator('h1').first().innerText();
   const hub = await page.locator('#hub-toggle').count();
@@ -335,7 +347,7 @@ await check('integrity guard also catches an altered lazy chunk after the app ha
 await check('pages are readable without JavaScript', async () => {
   const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 1280, height: 800 } });
   const page = await ctx.newPage();
-  await page.goto(origin + '/modules/synthesis/lessons/2', { waitUntil: 'load' });
+  await page.goto(at(origin, '/modules/synthesis/lessons/2'), { waitUntil: 'load' });
   const h1 = await page.locator('h1').innerText();
   const body = await page.locator('main').innerText();
   const visible = await page.locator('.static-page').isVisible();
@@ -357,7 +369,7 @@ await check('reduced motion: scenes still load and the cursor halo is off', asyn
 
 await check('deep links render real pages (every route has its own HTML)', async () => {
   for (const path of ['/modules', '/modules/ethics/knowledge-check', '/modules/synthesis/challenge', '/achievements', '/glossary', '/credits']) {
-    const res = await fetch(origin + path + '/');
+    const res = await fetch(at(origin, path + '/'));
     assert(res.status === 200, `${path} returned ${res.status}`);
     const html = await res.text();
     assert(/<h1[ >]/.test(html), `${path} has no static h1`);

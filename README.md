@@ -90,6 +90,22 @@ pnpm build && npx wrangler pages deploy apps/portal/dist
 pnpm build && npx netlify deploy --prod --dir apps/portal/dist
 ```
 
+### GitHub Pages
+
+Build for the repository sub-path, then publish `apps/portal/dist` to a `gh-pages` branch:
+
+```bash
+REQUIRE_WASM=1 BASE=/tsa-webmaster/ SITE_URL=https://nothikemu.github.io pnpm build
+```
+
+```bash
+git worktree add --detach /tmp/pages-wt HEAD && cd /tmp/pages-wt && git checkout --orphan gh-pages && git rm -rf -q . && cp -a /path/to/repo/apps/portal/dist/. . && git add -A && git commit -m "Deploy" && git push -f origin gh-pages
+```
+
+Then, once: repository **Settings, Pages, Source: Deploy from a branch, branch `gh-pages`, folder `/ (root)`**. Pages cannot send the `_headers` isolation headers, so the site uses its transferable-buffer fallback there.
+
+Test a sub-path build locally: `SMOKE_BASE=/tsa-webmaster/ SMOKE_ISOLATION=0 pnpm smoke`
+
 ## URL switches (for testing)
 
 `?renderer=webgl2|webgpu`, `?compute=webgpu|webgl2|wasm-worker|wasm-main|ts`, `?quality=0..3`

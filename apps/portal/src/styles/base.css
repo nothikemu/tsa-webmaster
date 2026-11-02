@@ -1,0 +1,372 @@
+/* Base: ground, type, focus, selection, scrollbar, grain, and the staged load sequence. */
+html {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01', 'cv11';
+  font-size: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: auto;
+  scrollbar-color: #2a2a2e transparent;
+  scrollbar-width: thin;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.55;
+  overflow-x: clip;
+}
+
+::selection {
+  background: #fff;
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2e;
+  border-radius: 10px;
+  border: 2px solid #000;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4a4a50;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+dl,
+dd,
+figure {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+p,
+li,
+dd {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: rgb(255 255 255 / 0.35);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 400ms var(--ease), opacity 400ms var(--ease);
+}
+a:hover {
+  text-decoration-color: #fff;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgb(77 132 255 / 0.75);
+  border-radius: 6px;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-feature-settings: 'tnum';
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum', 'ss01';
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.prose {
+  max-width: 62ch;
+  color: #d8d8dc;
+}
+
+.display {
+  font-size: var(--t-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  background: linear-gradient(180deg, #fff 30%, #86868b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.08em;
+}
+
+.h2 {
+  font-size: var(--t-h2);
+  letter-spacing: -0.035em;
+}
+
+.lead {
+  font-size: var(--t-lead);
+  color: #c4c4ca;
+  max-width: 54ch;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.sub {
+  margin-bottom: 0.9rem;
+}
+
+.eyebrow {
+  margin-bottom: 1.2rem;
+}
+
+.wrap {
+  width: min(100% - 2 * var(--gutter), var(--max));
+  margin-inline: auto;
+}
+
+/* Skip link: first tab stop, visible on focus. */
+.skip-link {
+  position: fixed;
+  left: 12px;
+  top: -80px;
+  z-index: 2000;
+  padding: 0.75rem 1.1rem;
+  background: #fff;
+  color: #000;
+  font-weight: 600;
+  border-radius: 999px;
+  transition: top 300ms var(--ease);
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+main {
+  display: block;
+  min-height: 70vh;
+}
+main:focus {
+  outline: none;
+}
+h1:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Film grain at about 3.5 percent. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.035;
+  background-size: 160px 160px;
+}
+
+/* Cursor halo, fine pointers only. */
+.halo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border: 1px solid rgb(255 255 255 / 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 90;
+  mix-blend-mode: difference;
+  transition: opacity 500ms var(--ease);
+}
+.halo[data-on='true'] {
+  opacity: 1;
+}
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .halo {
+    display: none;
+  }
+}
+
+/* Staged load: black, a hairline sweeping across the top, then the content reveals. */
+#root {
+  transition: opacity 900ms var(--ease);
+}
+/* The app normally reveals itself when ready. If it is not ready after 1.4 s (slow device or network),
+   the pre-rendered readable page is shown instead of a black screen. */
+@media (scripting: enabled) {
+  html:not([data-boot]) #root {
+    opacity: 0;
+    animation: reveal-fallback 0s 1.4s forwards;
+  }
+}
+@keyframes reveal-fallback {
+  to {
+    opacity: 1;
+  }
+}
+body::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #fff 50%, transparent);
+  transform-origin: left center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1000;
+  transition: opacity 600ms var(--ease-exit);
+}
+@media (scripting: enabled) {
+  html:not([data-boot]) body::after {
+    opacity: 1;
+    animation:
+      boot-line 1.5s var(--ease) infinite,
+      boot-off 0s 6s forwards;
+  }
+}
+@keyframes boot-line {
+  from {
+    transform: translateX(-100%) scaleX(0.4);
+  }
+  to {
+    transform: translateX(100%) scaleX(1);
+  }
+}
+@keyframes boot-off {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Static (no JavaScript, or integrity-failure) view of the pre-rendered page. */
+.static-page {
+  width: min(100% - 2 * var(--gutter), 920px);
+  margin-inline: auto;
+  padding-block: 2rem 4rem;
+}
+.static-page .static-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--hair);
+  padding-bottom: 1rem;
+  margin-bottom: 3rem;
+}
+.static-page nav ul,
+.static-page footer ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  list-style: none;
+  padding: 0;
+}
+.static-page h1 {
+  font-size: var(--t-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.2rem;
+}
+.static-page h2 {
+  font-size: var(--t-h2);
+  margin: 2.5rem 0 1rem;
+}
+.static-page h3 {
+  font-size: 1.4rem;
+  margin: 1.5rem 0 0.5rem;
+}
+.static-page p,
+.static-page li,
+.static-page dd {
+  max-width: 66ch;
+  color: #d8d8dc;
+  margin-bottom: 0.9rem;
+}
+.static-page .lead {
+  color: #c4c4ca;
+}
+.static-page ul,
+.static-page ol {
+  padding-left: 1.2rem;
+  list-style: revert;
+}
+.static-page nav ul {
+  padding-left: 0;
+  list-style: none;
+}
+.static-page details {
+  margin: 0.5rem 0 1rem;
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  padding: 0.7rem 1rem;
+}
+.static-page summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.static-page footer {
+  margin-top: 4rem;
+  border-top: 1px solid var(--hair);
+  padding-top: 1.5rem;
+}
+.static-page .wordmark {
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  font-size: 1.4rem;
+  text-decoration: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

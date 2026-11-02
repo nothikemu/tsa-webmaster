@@ -72,7 +72,7 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const crossH = useRef<SVGLineElement>(null);
   const crossV = useRef<SVGLineElement>(null);
-  const readout = useRef<SVGTextElement>(null);
+  const readout = useRef<HTMLDivElement>(null);
   const displayed = useRef<SpringGroup>(null as unknown as SpringGroup);
   if (!displayed.current) {
     displayed.current = new SpringGroup(4, reduced ? 60 : 9);
@@ -199,8 +199,8 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
     crossH.current?.setAttribute('y2', `${y}`);
     if (readout.current) {
       readout.current.textContent = `X ${x.toFixed(1).padStart(5, '0')}  Y ${y.toFixed(1).padStart(5, '0')}`;
-      readout.current.setAttribute('x', `${clamp(x + 1.5, 2, 70)}`);
-      readout.current.setAttribute('y', `${clamp(y - 1.5, 6, 98)}`);
+      readout.current.style.left = `${clamp(x + 1.2, 1, 78)}%`;
+      readout.current.style.top = `${clamp(y + 1.5, 1, 94)}%`;
     }
   }
 
@@ -245,10 +245,11 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
           <rect width="100" height="100" fill="url(#grid-major)" />
           <line ref={crossV} x1="50" x2="50" y1="0" y2="100" stroke="rgba(143,184,255,.7)" strokeWidth=".25" vectorEffect="non-scaling-stroke" />
           <line ref={crossH} y1="50" y2="50" x1="0" x2="100" stroke="rgba(143,184,255,.7)" strokeWidth=".25" vectorEffect="non-scaling-stroke" />
-          <text ref={readout} x="52" y="48" className="grid-readout" fontSize="2.6" fill="#cfdcff">
-            X 050.0  Y 050.0
-          </text>
         </svg>
+
+        <div className="grid-readout mono" ref={readout} aria-hidden="true">
+          X 050.0  Y 050.0
+        </div>
 
         <div className="pane pane-left" ref={leftRef}>
           <h3 className="mono pane-title">{t('b.console')}</h3>

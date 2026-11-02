@@ -1055,9 +1055,18 @@
   z-index: 1;
 }
 .grid-readout {
-  font-family: var(--font-mono);
+  position: absolute;
+  left: 51%;
+  top: 51%;
+  z-index: 4;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 0.7);
+  color: #cfdcff;
+  font-size: 0.65rem;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.05em;
+  white-space: pre;
+  pointer-events: none;
 }
 .pane {
   position: relative;

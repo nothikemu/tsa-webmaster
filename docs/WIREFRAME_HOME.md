@@ -6,7 +6,7 @@ Black ground (`#000`), elevated sections `#050507`, one mid-grey `#86868b`, whit
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ ▣ parameter                                   Modules  Progress  Achievements  Glossary  About │ ← sticky header, 60px, blur, hairline
+│ ▣ parameter                                   Modules  Progress  Achievements  Glossary  About │ ← sticky header, 64px, hairline (static on phones)
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ PARAMETER / INTERACTIVE AI LEARNING PORTAL / 2026-27        ·  ·  ·  ·  ·  ·  ·          │
 │                                                           ·  ╲╱  ╲╱  ╲╱  ╲╱  ·           │
@@ -81,27 +81,35 @@ Black ground (`#000`), elevated sections `#050507`, one mid-grey `#86868b`, whit
 ├──────────────────────────┤
 │ footer                   │
 └──────────────────────────┘
-                      (◯ 38%)  ← hub pill, bottom-right, 52px tall
+                      [ LVL 1  38%  ⌃ ]  ← progress bar, full width at the bottom edge on phones; a 52px ring at the bottom right on desktop
 ```
 
 ## Type and spacing
 
+Everything below lives in `apps/portal/src/styles/tokens.css`. Components read these tokens and do not invent values. Text uses the reader's system font (`ui-sans-serif, system-ui, ...`); nothing is downloaded.
+
 | Token | Value | Used for |
 | --- | --- | --- |
-| `--t-hero` | `clamp(3.4rem, 9.2vw + .4rem, 9.75rem)`, 800, -0.045em, line-height .93 | Hero headline |
-| `--t-display` | `clamp(2.5rem, 5.4vw + .4rem, 5.25rem)`, 800, -0.04em | Page titles |
-| `--t-h2` | `clamp(1.7rem, 2.6vw + .6rem, 3rem)`, 700, -0.035em | Section headings |
-| `--t-lead` | `clamp(1.1rem, .9vw + .85rem, 1.4rem)` | Lead paragraphs |
-| Micro-label | 11px mono, +0.16em tracking, uppercase, `#86868b` | `MOD 01 / FOUNDATIONS` labels |
+| `--t-hero` | `clamp(2.4rem, 10.2vw, 6.5rem)`, 700, -0.03em, line-height .98 | Hero headline (two lines at 320px with typical system fonts) |
+| `--t-display` | `clamp(2.25rem, 4.4vw + .9rem, 4.5rem)`, 700, -0.03em | Page titles |
+| `--t-h2` / `--t-h3` | `clamp(1.75rem, 2.2vw + 1.1rem, 2.75rem)` / `clamp(1.375rem, 1.2vw + 1.05rem, 1.75rem)` | Section and card headings |
+| `--t-lead` | `clamp(1.125rem, .4vw + 1.02rem, 1.375rem)`, `--text-2` | Lead paragraphs |
+| Label (`.mono`) | 12px mono, +0.1em tracking, uppercase, `--text-3` (#a1a1a6, 8:1 on black) | `MOD 01 / FOUNDATIONS` labels and short readouts only |
 | Numerals | `font-variant-numeric: tabular-nums` | Every readout |
-| Gutter | `clamp(16px, 4vw, 48px)`; max width 1320 | Page wrapper |
-| Radii | 24, 28, 32, 34, 36, 40 px (deliberately unequal) | Tiles and panels |
+| Text colors | `--text` #f5f5f7 (19:1), `--text-2` #c7c7cc (12:1), `--text-3` #a1a1a6 (8:1) | Body, secondary, labels |
+| Accent | `--accent` #6f9bff (links, focus, chart marks, 7.8:1), `--accent-solid` #2f66ee (button fill, 4.9:1 with white text) | Actions, current location, progress. Nothing else is colored |
+| Warning | `--warn` #ffb14d | Destructive actions and wrong answers |
+| Lines | `--line` 14% white (decoration), `--line-strong` 40% (3.7:1, tab and chip borders), `--line-control` 55% (inputs, ghost buttons) | Borders |
+| Space | `--s-1` to `--s-9`: 4, 8, 12, 16, 24, 32, 48, 64, 96 px; `--section` clamp(48px, 7vw, 96px) | Gaps and padding |
+| Radii | `--r-sm` 10, `--r-md` 18, `--r-lg` 28, `--r-pill` 999 px | Inputs, rows, panels, controls |
+| Width | `--max` 1200px, `--measure` 64ch, `--gutter` clamp(16px, 4vw, 40px) | Page wrapper and reading column |
+| Controls | `--tap` 44px minimum; focus ring `3px solid var(--accent)`, offset 3px | Every button, link target, tab, chip and slider |
 
 ## Scroll choreography
 
 | Section | Driver | Behaviour |
 | --- | --- | --- |
-| Hero | GSAP ScrollTrigger scrub → `--hero-p` (0 to 1) | Content pins for 70vh of scroll. Network scales up to 1.32×, layers light in sequence, headline drifts up 9vh and fades, stats and "SCROLL" fade out first |
+| Hero | GSAP ScrollTrigger scrub → `--hero-p` (0 to 1) | Only on screens at least 821px wide and 700px tall: content pins for 50svh of scroll. Network scales up to 1.32×, layers light in sequence, headline drifts up 6svh and fades, stats and "SCROLL" fade out first. On phones and short windows the hero is an ordinary section |
 | Strip, bento, gamification, facts | ScrollTrigger `once` at "top 90%" → class `in` | CSS reveal: 28px rise and fade over 1100 ms on `cubic-bezier(.16,1,.3,1)`, only while the motion layer runs |
 | Smooth scroll | Lenis, driven by the master frame loop | Home only; off under reduced motion |
 | Tiles | CSS hover | Line art drifts 6px and tints toward blue; machined edge angle rotates |

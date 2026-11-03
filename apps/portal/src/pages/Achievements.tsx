@@ -1,12 +1,38 @@
 import type { ReactNode } from 'react';
-import { MODULES, moduleHref } from '../content';
+import { MODULES, moduleHref, type ModuleContent } from '../content';
 import { t } from '../core/assets';
 import { BadgeChecklist } from '../modules/ModulePage';
+import { useBadgeProgress } from '../modules/shared/badgeRows';
 import { Link } from '../router';
 import { Badge } from '../ui/Badges';
 import { Eyebrow } from '../ui/Chrome';
 import { useData } from '../ui/hooks';
 import { edgeClass } from '../ui/edge';
+
+/** Earned, in progress or not started, in words, with a meter. The badge artwork alone never carries the state. */
+function BadgeStatus({ module }: { module: ModuleContent }): ReactNode {
+  const { done, total, earned } = useBadgeProgress(module);
+  const status = earned ? 'earned' : done > 0 ? 'progress' : 'none';
+  const label = earned
+    ? t('ach.earned')
+    : done > 0
+      ? t('ach.inProgress', { done, total })
+      : t('ach.notStarted', { done, total });
+  return (
+    <div className="ach-status">
+      <span className="status-tag" data-status={status}>
+        {label}
+      </span>
+      <span
+        className="bar ach-meter"
+        role="img"
+        aria-label={t('ach.meter', { name: module.badge.name, done, total })}
+      >
+        <span style={{ transform: `scaleX(${Math.max(0.005, done / total)})` }} />
+      </span>
+    </div>
+  );
+}
 
 export default function Achievements(): ReactNode {
   const data = useData();
@@ -27,6 +53,7 @@ export default function Achievements(): ReactNode {
               <div>
                 <p className="mono">{m.label}</p>
                 <h2 className="h2">{m.badge.name}</h2>
+                <BadgeStatus module={m} />
                 <p className="prose">{m.badge.criteria}</p>
                 <BadgeChecklist module={m} />
                 <Link to={moduleHref(m.id)} className="link-arrow">

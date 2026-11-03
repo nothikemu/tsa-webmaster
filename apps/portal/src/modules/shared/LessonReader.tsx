@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Lesson, ModuleContent } from '../../content';
 import { lessonHref, quizHref } from '../../content';
 import { t } from '../../core/assets';
-import { REVIEW_AFTER_MS } from '../../core/gamification';
+import { BADGE_QUIZ_MIN, REVIEW_AFTER_MS } from '../../core/gamification';
 import { masteryRank, type Mastery } from '../../core/schema';
 import { Link } from '../../router';
 import { useData, useGame } from '../../ui/hooks';
@@ -27,7 +27,13 @@ function MicroCheck({ module, lesson }: { module: ModuleContent; lesson: Lesson 
   const submit = (): void => {
     if (selected === null) return;
     const correct = selected === check.answer;
-    game({ type: 'LESSON_CHECKED', module: module.id, lesson: lesson.id, correct, firstTry: attempts === 0 });
+    game({
+      type: 'LESSON_CHECKED',
+      module: module.id,
+      lesson: lesson.id,
+      correct,
+      firstTry: attempts === 0,
+    });
     setAttempts((a) => a + 1);
     setResult(correct ? 'right' : 'wrong');
   };
@@ -38,7 +44,12 @@ function MicroCheck({ module, lesson }: { module: ModuleContent; lesson: Lesson 
       <p className="check-prompt">{check.prompt}</p>
       <div className="options" role="radiogroup" aria-label={check.prompt}>
         {check.options.map((option, i) => (
-          <label key={option} className="option" data-chosen={selected === i} data-right={result === 'right' && i === check.answer}>
+          <label
+            key={option}
+            className="option"
+            data-chosen={selected === i}
+            data-right={result === 'right' && i === check.answer}
+          >
             <input
               type="radio"
               name={`check-${lesson.id}`}
@@ -54,7 +65,12 @@ function MicroCheck({ module, lesson }: { module: ModuleContent; lesson: Lesson 
         ))}
       </div>
       <div className="check-actions">
-        <button type="button" className="btn" onClick={submit} disabled={selected === null || result === 'right'}>
+        <button
+          type="button"
+          className="btn"
+          onClick={submit}
+          disabled={selected === null || result === 'right'}
+        >
           {t('lesson.checkAnswer')}
         </button>
         <p role="status" aria-live="polite" className="feedback" data-result={result}>
@@ -75,7 +91,9 @@ export function LessonReader({ module, n }: { module: ModuleContent; n: number }
   const lesson = module.lessons[n - 1];
   const game = useGame();
   const data = useData();
-  const state: Mastery = lesson ? (data.modules[module.id].lessons[lesson.id] ?? 'unseen') : 'unseen';
+  const state: Mastery = lesson
+    ? (data.modules[module.id].lessons[lesson.id] ?? 'unseen')
+    : 'unseen';
   const stateRef = useRef(state);
   stateRef.current = state;
   const reviewedAt = lesson ? data.modules[module.id].reviewedAt[lesson.id] : undefined;
@@ -83,28 +101,34 @@ export function LessonReader({ module, n }: { module: ModuleContent; n: number }
 
   useEffect(() => {
     if (!lesson) return undefined;
-    const timer = setTimeout(() => game({ type: 'LESSON_OPENED', module: module.id, lesson: lesson.id }), DWELL_MS);
+    const timer = setTimeout(
+      () => game({ type: 'LESSON_OPENED', module: module.id, lesson: lesson.id }),
+      DWELL_MS,
+    );
     return () => clearTimeout(timer);
   }, [lesson, module.id, game]);
 
   useEffect(() => {
     if (!lesson || masteryRank(stateRef.current) < 2) return;
-    if (Date.now() - (reviewedAt ?? createdAt) > REVIEW_AFTER_MS) game({ type: 'LESSON_REVIEWED', module: module.id, lesson: lesson.id });
+    if (Date.now() - (reviewedAt ?? createdAt) > REVIEW_AFTER_MS)
+      game({ type: 'LESSON_REVIEWED', module: module.id, lesson: lesson.id });
     // Run once per lesson visit.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson?.id]);
 
   if (!lesson) return <p>{t('lesson.missing')}</p>;
   const total = module.lessons.length;
+  const next = module.lessons[n];
   return (
     <article className="lesson" aria-labelledby="lesson-title">
       <div className="lesson-meta">
         <p className="mono">
-          {t('lesson.counter', { n, total })} / {lesson.kicker.toUpperCase()} / {t('lesson.minutes', { n: lesson.minutes })}
+          {t('lesson.counter', { n, total })} / {lesson.kicker.toUpperCase()} /{' '}
+          {t('lesson.minutes', { n: lesson.minutes })}
         </p>
         <MasteryPill state={state} />
       </div>
-      <h2 id="lesson-title" className="lesson-title">
+      <h2 id="lesson-title" className="lesson-title sr-only">
         {lesson.title}
       </h2>
       {lesson.body.map((p) => (
@@ -119,6 +143,14 @@ export function LessonReader({ module, n }: { module: ModuleContent; n: number }
         ))}
       </ul>
       <MicroCheck key={lesson.id} module={module} lesson={lesson} />
+      <div className="up-next">
+        <p className="mono">{t('lesson.upNextLabel')}</p>
+        <p>
+          {next
+            ? t('lesson.upNext', { n: n + 1, title: next.title, minutes: next.minutes })
+            : t('lesson.upNextQuiz', { min: BADGE_QUIZ_MIN, total: module.quiz.length })}
+        </p>
+      </div>
       <nav className="lesson-nav" aria-label={t('lesson.nav')}>
         {n > 1 ? (
           <Link to={lessonHref(module.id, n - 1)} className="btn btn-ghost">

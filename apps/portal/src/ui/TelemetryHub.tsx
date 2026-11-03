@@ -24,14 +24,16 @@ export function TelemetryHub(): ReactNode {
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (open) panelRef.current?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true });
+    if (open)
+      panelRef.current?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true });
   }, [open]);
 
   // Escape closes the panel while focus is inside the hub.
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape' && panelRef.current?.closest('.hub')?.contains(document.activeElement)) hub.send({ type: 'CLOSE' });
+      if (e.key === 'Escape' && panelRef.current?.closest('.hub')?.contains(document.activeElement))
+        hub.send({ type: 'CLOSE' });
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -53,7 +55,14 @@ export function TelemetryHub(): ReactNode {
               </p>
             </div>
           </div>
-          <div className="hub-bar" role="img" aria-label={t('hub.toNext', { xp: Math.max(0, level.span - level.into), level: level.level + 1 })}>
+          <div
+            className="hub-bar"
+            role="img"
+            aria-label={t('hub.toNext', {
+              xp: Math.max(0, level.span - level.into),
+              level: level.level + 1,
+            })}
+          >
             <span style={{ transform: `scaleX(${Math.max(0.02, level.fraction)})` }} />
           </div>
           <ul className="hub-modules">
@@ -69,7 +78,8 @@ export function TelemetryHub(): ReactNode {
             ))}
           </ul>
           <p className="mono hub-streak">
-            {t('hub.streak')} <span className="num">{data.streak.current}</span> / {t('hub.best')} <span className="num">{data.streak.best}</span>
+            {t('hub.streak')} <span className="num">{data.streak.current}</span> / {t('hub.best')}{' '}
+            <span className="num">{data.streak.best}</span>
           </p>
           <Link to={rec.href} className="hub-next">
             <span className="mono">{t('hub.next')}</span>
@@ -88,7 +98,9 @@ export function TelemetryHub(): ReactNode {
         aria-controls="hub-panel"
         onClick={() => hub.send({ type: 'TOGGLE' })}
       >
-        <Ring value={overallT} size={34} stroke={4} label={t('hub.overall')} />
+        <Ring value={overallT} size={40} stroke={4} label={t('hub.overall')}>
+          <span className="num hub-ring-num">{Math.round(overallT)}</span>
+        </Ring>
         <span className="hub-toggle-text">
           <span className="mono">{t('hub.level', { level: level.level })}</span>
           <span className="num">{Math.round(overallT)}%</span>

@@ -21,27 +21,56 @@ export const NAV: readonly NavItem[] = [
   { label: 'About', href: '/about' },
 ];
 
-export const FOOTER_LINKS: readonly NavItem[] = [
-  { label: 'Accessibility statement', href: '/accessibility' },
-  { label: 'Credits', href: '/credits' },
-  { label: 'Glossary', href: '/glossary' },
-  { label: 'About', href: '/about' },
+export interface NavGroup {
+  heading: string;
+  links: readonly NavItem[];
+}
+
+/** The footer repeats the primary routes and adds the three module pages and the reference pages. */
+export const FOOTER_GROUPS: readonly NavGroup[] = [
+  {
+    heading: 'Learn',
+    links: [
+      { label: 'Foundations', href: '/modules/foundations' },
+      { label: 'Synthesis', href: '/modules/synthesis' },
+      { label: 'Ethics', href: '/modules/ethics' },
+      { label: 'Glossary', href: '/glossary' },
+    ],
+  },
+  {
+    heading: 'Your progress',
+    links: [
+      { label: 'Progress', href: '/progress' },
+      { label: 'Achievements', href: '/achievements' },
+    ],
+  },
+  {
+    heading: 'About',
+    links: [
+      { label: 'About this portal', href: '/about' },
+      { label: 'Accessibility statement', href: '/accessibility' },
+      { label: 'Credits', href: '/credits' },
+    ],
+  },
 ];
+
+/** Flat list for the pre-rendered no-JavaScript page. */
+export const FOOTER_LINKS: readonly NavItem[] = FOOTER_GROUPS.flatMap((g) => g.links);
 
 export const HOME = {
   eyebrow: 'PARAMETER / INTERACTIVE AI LEARNING PORTAL / 2026-27',
   headline: ['Learn how', 'machines learn.'],
-  lead: 'Push around a 6,000-particle neural network. Tune a prompt until the output behaves. Break a model four ways, then fix it. Fifteen lessons for grades 9 to 12, and nothing leaves your device.',
+  lead: 'Push around a neural network of up to 6,000 particles. Tune a prompt until the output behaves. Break a model four ways, then fix it. Fifteen lessons for grades 9 to 12, and nothing leaves your device.',
   stats: [
     { value: '3', label: 'modules' },
     { value: '15', label: 'lessons' },
-    { value: '15', label: 'check questions' },
+    { value: '30', label: 'practice questions' },
     { value: '0', label: 'accounts' },
   ],
   bento: {
     heading: 'Three modules. Three different ways to touch an idea.',
     tiles: {
-      foundations: 'Neural Topology Swarm / 6,000 particles / 5 lessons',
+      foundations: 'Neural Topology Swarm / up to 6,000 particles / 5 lessons',
       synthesis: 'Anamorphic Prompt Console / 4 parameters / 4 presets',
       ethics: 'Vulnerability Wireframe / 10,242 vertices / 4 failure modes',
     },
@@ -54,11 +83,23 @@ export const HOME = {
     ],
   },
   facts: {
-    heading: 'Built like a product, shipped as static files.',
+    heading: 'How it is built.',
     items: [
-      { value: '1', label: 'WebAssembly module', body: 'Rust kernels for neighbour search, noise and hashing, with a TypeScript twin for every one.' },
-      { value: '5', label: 'compute paths', body: 'WebGPU compute, WebGL2 float textures, a WASM worker, WASM on the main thread, plain TypeScript.' },
-      { value: '60', label: 'frames per second target', body: 'A quality governor trades particle count and effects for frame time, never the other way round.' },
+      {
+        value: '1',
+        label: 'WebAssembly module',
+        body: 'Rust kernels for neighbour search, noise and hashing, with a TypeScript twin for every one.',
+      },
+      {
+        value: '5',
+        label: 'compute paths',
+        body: 'WebGPU compute, WebGL2 float textures, a WASM worker, WASM on the main thread, plain TypeScript.',
+      },
+      {
+        value: '60',
+        label: 'frames per second target',
+        body: 'A quality governor trades particle count and effects for frame time, never the other way round.',
+      },
     ],
   },
 } as const;
@@ -92,7 +133,7 @@ export const ABOUT: DocPageContent = {
     {
       heading: 'Design brief',
       paragraphs: [
-        'The interface follows the pacing of a hardware launch page: black ground, one accent family used only on 3D elements, progress rings and focus states, and large type that does the work decoration usually does.',
+        "The interface is a black ground, the reader's own system typeface and one blue accent. The accent marks things you can act on, where you are, and how far you have come. Nothing else is colored, and large type does the work decoration usually does.",
         'Every interactive scene has a text alternative and a keyboard path. Motion respects the reduced-motion setting. The site is a set of static files and runs from any web host.',
       ],
     },
@@ -119,11 +160,13 @@ export const ACCESSIBILITY: DocPageContent = {
       heading: 'What is built in',
       items: [
         'Semantic landmarks, one h1 per page, a skip link, and focus moved to the page heading on every route change.',
-        'Every control works from the keyboard, with a visible high-contrast focus ring.',
+        'Every control works from the keyboard, with a 3 pixel focus ring that is kept clear of the header and the floating progress control.',
+        'Buttons, tabs, chips, sliders and menu links are at least 44 by 44 CSS pixels. Whole cards act as one large target.',
+        'Pages reflow without sideways scrolling down to 320 CSS pixels wide and at 200 percent zoom. Only the mastery heatmap and the credits table scroll sideways, inside labelled regions you can reach with the keyboard.',
         'Every canvas has an accessible name and a plain-text description next to it. Each centerpiece also has a text alternative with the same controls.',
         'Pointer-only interactions have keyboard equivalents: arrow keys move the particle pointer, the prompt divider and the sliders; Enter and Space activate vulnerability markers; 1, 2, 3 and M switch pointer modes.',
         'Progress changes are announced through a polite live region.',
-        'Text and interface colors meet AA contrast on the black background.',
+        'Text and interface colors meet AA contrast on the black background. Progress is never shown by color alone: every state also has a word or a shape.',
         'The prefers-reduced-motion setting turns off ambient drift, camera movement, tilt, particle bursts and spring overshoot.',
         'Without JavaScript, every page still shows its text content.',
       ],
@@ -144,7 +187,9 @@ export const ACCESSIBILITY: DocPageContent = {
     },
     {
       heading: 'Feedback',
-      paragraphs: ['If something here blocks you, tell your teacher or the team through the channel named in the competition submission, and describe the page and the assistive technology you used.'],
+      paragraphs: [
+        'If something here blocks you, tell your teacher or the team through the channel named in the competition submission, and describe the page and the assistive technology you used.',
+      ],
     },
   ],
 };
@@ -159,18 +204,52 @@ export interface CreditEntry {
 export const CREDIT_LIBRARIES: readonly CreditEntry[] = [
   { name: 'React and React DOM', version: '18.3.1', license: 'MIT', use: 'Interface components' },
   { name: 'three', version: '0.187.0', license: 'MIT', use: 'WebGL2 and WebGPU rendering' },
-  { name: 'postprocessing', version: '6.39.6', license: 'Zlib', use: 'Bloom, chromatic aberration and film grain' },
+  {
+    name: 'postprocessing',
+    version: '6.39.6',
+    license: 'Zlib',
+    use: 'Bloom, chromatic aberration and film grain',
+  },
   { name: 'XState', version: '5.33.3', license: 'MIT', use: 'State machines' },
   { name: 'Zustand', version: '5.0.16', license: 'MIT', use: 'Application store' },
   { name: 'Comlink', version: '4.4.2', license: 'Apache-2.0', use: 'Web Worker messaging' },
-  { name: 'GSAP and ScrollTrigger', version: '3.15.0', license: 'GSAP Standard License', use: 'Scroll choreography' },
+  {
+    name: 'GSAP and ScrollTrigger',
+    version: '3.15.0',
+    license: 'GSAP Standard License',
+    use: 'Scroll choreography',
+  },
   { name: 'Lenis', version: '1.3.27', license: 'MIT', use: 'Smooth scrolling' },
-  { name: 'Inter Variable (Fontsource)', version: '5.3.0', license: 'SIL OFL 1.1', use: 'Typeface' },
-  { name: 'wasm-bindgen', version: '0.2.130', license: 'MIT or Apache-2.0', use: 'Rust to WebAssembly bindings' },
-  { name: 'Vite, Tailwind CSS, TypeScript', version: '7.3.7 / 4.3.3 / 5.9.3', license: 'MIT, MIT, Apache-2.0', use: 'Build tooling' },
-  { name: 'javascript-obfuscator, Terser, Binaryen', version: '5.9.1 / 5.51.2 / 132.0.0', license: 'BSD-2-Clause, BSD-2-Clause, Apache-2.0', use: 'Build-time hardening and optimisation' },
-  { name: 'Vitest, Playwright, @axe-core/playwright', version: '3.2.7 / 1.64.1 / 4.14.0', license: 'MIT, Apache-2.0, MPL-2.0', use: 'Tests' },
-  { name: 'Simplex noise GLSL (Ashima Arts, Stefan Gustavson)', version: 'n/a', license: 'MIT', use: 'Wireframe displacement in the Module C vertex shader' },
+  {
+    name: 'wasm-bindgen',
+    version: '0.2.130',
+    license: 'MIT or Apache-2.0',
+    use: 'Rust to WebAssembly bindings',
+  },
+  {
+    name: 'Vite, Tailwind CSS, TypeScript',
+    version: '7.3.7 / 4.3.3 / 5.9.3',
+    license: 'MIT, MIT, Apache-2.0',
+    use: 'Build tooling',
+  },
+  {
+    name: 'javascript-obfuscator, Terser, Binaryen',
+    version: '5.9.1 / 5.51.2 / 132.0.0',
+    license: 'BSD-2-Clause, BSD-2-Clause, Apache-2.0',
+    use: 'Build-time hardening and optimisation',
+  },
+  {
+    name: 'Vitest, Playwright, @axe-core/playwright',
+    version: '3.2.7 / 1.64.1 / 4.14.0',
+    license: 'MIT, Apache-2.0, MPL-2.0',
+    use: 'Tests',
+  },
+  {
+    name: 'Simplex noise GLSL (Ashima Arts, Stefan Gustavson)',
+    version: 'n/a',
+    license: 'MIT',
+    use: 'Wireframe displacement in the Module C vertex shader',
+  },
 ];
 
 export const CREDITS: DocPageContent = {

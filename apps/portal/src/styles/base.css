@@ -1,10 +1,12 @@
 /* Base: ground, type, focus, selection, scrollbar, grain, and the staged load sequence. */
 html {
   background: var(--bg);
-  color: var(--fg);
+  color: var(--text);
   font-family: var(--font-sans);
-  font-feature-settings: 'ss01', 'cv11';
   font-size: 100%;
+  /* Anchors and keyboard focus scroll clear of the sticky header and the floating progress control. */
+  scroll-padding-top: calc(var(--header-h) + var(--s-4));
+  scroll-padding-bottom: var(--hub-clearance);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -17,10 +19,10 @@ body {
   margin: 0;
   min-height: 100vh;
   background: var(--bg);
-  color: var(--fg);
-  font-size: 1rem;
+  color: var(--text);
+  font-size: var(--fs-body);
   font-weight: 400;
-  line-height: 1.55;
+  line-height: var(--lh-body);
   overflow-x: clip;
 }
 
@@ -63,8 +65,8 @@ h2,
 h3,
 h4 {
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.04;
+  letter-spacing: var(--track-display);
+  line-height: var(--lh-tight);
   text-wrap: balance;
 }
 
@@ -76,12 +78,14 @@ dd {
 
 a {
   color: inherit;
-  text-decoration-color: rgb(255 255 255 / 0.35);
+  text-decoration-color: var(--line-strong);
   text-underline-offset: 0.2em;
-  transition: text-decoration-color 400ms var(--ease), opacity 400ms var(--ease);
+  transition:
+    text-decoration-color 300ms var(--ease),
+    color 300ms var(--ease);
 }
 a:hover {
-  text-decoration-color: #fff;
+  text-decoration-color: currentColor;
 }
 
 button,
@@ -97,41 +101,43 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 3px;
-  box-shadow: 0 0 0 5px rgb(77 132 255 / 0.75);
-  border-radius: 6px;
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+/* Inside clipped or dense containers the ring is drawn inward so it is never cut off. */
+:focus-visible:where(.stage-canvas, .divider, .grid-key) {
+  outline-offset: -3px;
 }
 
+/* Small technical labels: monospace, 12px, calm tracking, and still 8:1 against the ground. */
 .mono {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--fs-label);
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
-  color: var(--muted);
-  font-feature-settings: 'tnum';
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
 }
 
 .num {
   font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum', 'ss01';
 }
 
 .muted {
-  color: var(--muted);
+  color: var(--text-3);
 }
 
 .prose {
-  max-width: 62ch;
-  color: #d8d8dc;
+  max-width: var(--measure);
+  color: var(--text-2);
 }
 
 .display {
   font-size: var(--t-display);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  background: linear-gradient(180deg, #fff 30%, #86868b);
+  font-weight: 700;
+  letter-spacing: var(--track-display);
+  background: linear-gradient(180deg, var(--text) 35%, #b4b4ba);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -140,23 +146,35 @@ button {
 
 .h2 {
   font-size: var(--t-h2);
-  letter-spacing: -0.035em;
+  letter-spacing: var(--track-display);
 }
 
 .lead {
   font-size: var(--t-lead);
-  color: #c4c4ca;
-  max-width: 54ch;
+  color: var(--text-2);
+  max-width: 56ch;
   font-weight: 400;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .sub {
-  margin-bottom: 0.9rem;
+  margin-bottom: var(--s-3);
 }
 
 .eyebrow {
-  margin-bottom: 1.2rem;
+  margin-bottom: var(--s-4);
+}
+
+/* Windows high-contrast and forced-colors modes drop background images, which would leave
+   gradient-clipped headings invisible. Fall back to the system text color. */
+@media (forced-colors: active) {
+  .display,
+  .hero-line {
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: CanvasText;
+  }
 }
 
 .wrap {
@@ -170,11 +188,11 @@ button {
   left: 12px;
   top: -80px;
   z-index: 2000;
-  padding: 0.75rem 1.1rem;
+  padding: var(--s-3) var(--s-4);
   background: #fff;
   color: #000;
   font-weight: 600;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   transition: top 300ms var(--ease);
 }
 .skip-link:focus {
@@ -307,8 +325,8 @@ body::after {
 }
 .static-page h1 {
   font-size: var(--t-display);
-  font-weight: 800;
-  letter-spacing: -0.04em;
+  font-weight: 700;
+  letter-spacing: var(--track-display);
   margin-bottom: 1.2rem;
 }
 .static-page h2 {
@@ -323,11 +341,11 @@ body::after {
 .static-page li,
 .static-page dd {
   max-width: 66ch;
-  color: #d8d8dc;
+  color: var(--text-2);
   margin-bottom: 0.9rem;
 }
 .static-page .lead {
-  color: #c4c4ca;
+  color: var(--text-2);
 }
 .static-page ul,
 .static-page ol {
@@ -341,7 +359,7 @@ body::after {
 .static-page details {
   margin: 0.5rem 0 1rem;
   border: 1px solid var(--hair);
-  border-radius: 14px;
+  border-radius: var(--r-md);
   padding: 0.7rem 1rem;
 }
 .static-page summary {

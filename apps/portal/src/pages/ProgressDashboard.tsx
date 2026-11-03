@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode 
 import { MODULES } from '../content';
 import { announce } from '../core/announce';
 import { t } from '../core/assets';
-import { levelInfo } from '../core/gamification';
+import { XP_LESSON, levelInfo } from '../core/gamification';
 import { exportProgress, parseImport } from '../core/persistence';
-import { dayKey, masteryRank, type Mastery } from '../core/schema';
+import { dayKey, masteryRank } from '../core/schema';
 import { useServices } from '../core/services';
 import { Link } from '../router';
 import { Badge } from '../ui/Badges';
@@ -16,13 +16,20 @@ import { edgeClass } from '../ui/edge';
 const DAY_MS = 24 * 60 * 60 * 1000;
 const WEEKS = 12;
 
-const MASTERY_LETTER: Record<Mastery, string> = { unseen: 'U', seen: 'S', practiced: 'P', mastered: 'M' };
-
 function lastDays(n: number): string[] {
   const out: string[] = [];
   const now = Date.now();
   for (let i = n - 1; i >= 0; i--) out.push(dayKey(now - i * DAY_MS));
   return out;
+}
+
+/** "2026-11-03" -> "Nov 3". Parsed by hand so the date never shifts with the time zone. */
+function shortDate(key: string): string {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y!, (m ?? 1) - 1, d ?? 1).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
 }
 
 function XpHistory(): ReactNode {
@@ -31,39 +38,70 @@ function XpHistory(): ReactNode {
   const values = days.map((d) => xpByDay[d] ?? 0);
   const max = Math.max(50, ...values);
   const total = values.reduce((a, b) => a + b, 0);
+  const active = values.filter((v) => v > 0).length;
+  const bestIndex = values.indexOf(Math.max(...values));
+  const summary =
+    total === 0
+      ? t('pd.xpSummaryNone', { days: 14 })
+      : t('pd.xpSummary', {
+          total,
+          days: 14,
+          active,
+          best: values[bestIndex] ?? 0,
+          date: shortDate(days[bestIndex] ?? days[0]!),
+        });
   return (
     <figure className="chart">
-      <svg viewBox="0 0 420 150" role="img" aria-label={t('pd.xpLabel', { total, days: 14 })}>
+      <svg viewBox="0 0 336 150" role="img" aria-label={t('pd.xpLabel', { total, days: 14 })}>
         {values.map((v, i) => {
-          const h = (v / max) * 110;
+          const h = (v / max) * 96;
+          const x = 6 + i * 24;
           return (
             <g key={days[i]}>
-              <rect x={10 + i * 29} y={120 - h} width="20" height={Math.max(1.5, h)} rx="2" fill={v > 0 ? 'url(#xp-grad)' : 'rgba(255,255,255,.12)'} />
-              <text x={20 + i * 29} y="140" textAnchor="middle" fontSize="8.5" fill="#a8a8ad" className="num">
-                {days[i]!.slice(8)}
-              </text>
+              <rect
+                x={x}
+                y={120 - h}
+                width="16"
+                height={Math.max(2, h)}
+                rx="2"
+                fill={v > 0 ? '#6f9bff' : 'rgba(255,255,255,.3)'}
+              />
+              {i % 2 === 1 && (
+                <text
+                  x={x + 8}
+                  y="141"
+                  textAnchor="middle"
+                  fontSize="11"
+                  fill="#a1a1a6"
+                  className="num"
+                >
+                  {days[i]!.slice(8)}
+                </text>
+              )}
               {v > 0 && (
-                <text x={20 + i * 29} y={114 - h} textAnchor="middle" fontSize="8.5" fill="#fff" className="num">
+                <text
+                  x={x + 8}
+                  y={114 - h}
+                  textAnchor="middle"
+                  fontSize="11"
+                  fill="#f5f5f7"
+                  className="num"
+                >
                   {v}
                 </text>
               )}
             </g>
           );
         })}
-        <defs>
-          <linearGradient id="xp-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#8fb0ff" />
-            <stop offset="1" stopColor="#4d84ff" stopOpacity=".4" />
-          </linearGradient>
-        </defs>
       </svg>
       <figcaption className="mono">{t('pd.xpCaption')}</figcaption>
+      <p className="chart-summary">{summary}</p>
     </figure>
   );
 }
 
 function StreakCalendar(): ReactNode {
-  const { activeDays } = useData();
+  const { activeDays, streak } = useData();
   const cells = useMemo(() => {
     const today = new Date();
     const dow = (today.getDay() + 6) % 7; // Monday = 0
@@ -78,14 +116,43 @@ function StreakCalendar(): ReactNode {
     return list;
   }, [activeDays]);
   const level = (n: number): number => (n === 0 ? 0 : n < 3 ? 1 : n < 6 ? 2 : 3);
+  const past = cells.filter((c) => !c.future);
+  const activeCount = past.filter((c) => c.count > 0).length;
+  const legend: Array<[number, string]> = [
+    [0, t('pd.cal0')],
+    [1, t('pd.cal1')],
+    [2, t('pd.cal2')],
+    [3, t('pd.cal3')],
+  ];
   return (
     <figure className="chart">
       <ul className="calendar" aria-label={t('pd.calLabel', { weeks: WEEKS })}>
         {cells.map((c) => (
-          <li key={c.key} data-level={c.future ? 'x' : level(c.count)} aria-label={c.future ? undefined : t('pd.calDay', { day: c.key, n: c.count })} aria-hidden={c.future || undefined} />
+          <li
+            key={c.key}
+            data-level={c.future ? 'x' : level(c.count)}
+            aria-label={c.future ? undefined : t('pd.calDay', { day: c.key, n: c.count })}
+            aria-hidden={c.future || undefined}
+          />
         ))}
       </ul>
-      <figcaption className="mono">{t('pd.calCaption')}</figcaption>
+      <ul className="cal-legend">
+        <li>{t('pd.calLegend')}</li>
+        {legend.map(([l, label]) => (
+          <li key={l}>
+            <i data-level={l} aria-hidden="true" />
+            {label}
+          </li>
+        ))}
+      </ul>
+      <p className="chart-summary">
+        {t('pd.calSummary', {
+          n: activeCount,
+          total: past.length,
+          current: streak.current,
+          best: streak.best,
+        })}
+      </p>
     </figure>
   );
 }
@@ -93,7 +160,9 @@ function StreakCalendar(): ReactNode {
 function Heatmap(): ReactNode {
   const data = useData();
   return (
-    <div className="table-wrap">
+    // A horizontally scrollable region must be reachable by keyboard (WCAG 2.1.1), so it takes a tab stop and a name.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+    <div className="table-wrap" role="region" aria-label={t('pd.mastery')} tabIndex={0}>
       <table className="heatmap">
         <caption className="mono">{t('pd.heatCaption')}</caption>
         <thead>
@@ -118,16 +187,33 @@ function Heatmap(): ReactNode {
                   const s = d.lessons[l.id] ?? 'unseen';
                   return (
                     <td key={l.id} data-state={s} data-rank={masteryRank(s)}>
-                      <span aria-hidden="true">{MASTERY_LETTER[s]}</span>
-                      <span className="sr-only">{t(`mastery.${s}`)}</span>
+                      {t(`mastery.${s}`)}
                     </td>
                   );
                 })}
-                <td data-state={d.quiz.best >= 4 ? 'mastered' : d.quiz.attempts > 0 ? 'practiced' : 'unseen'}>
+                <td
+                  data-state={
+                    d.quiz.best >= 4 ? 'mastered' : d.quiz.attempts > 0 ? 'practiced' : 'unseen'
+                  }
+                >
                   <span className="num">{d.quiz.best}/5</span>
                 </td>
-                <td data-state={d.challenge.done ? 'mastered' : d.challenge.attempts > 0 ? 'practiced' : 'unseen'}>
-                  <span>{d.challenge.done ? t('check.done') : d.challenge.attempts > 0 ? t('pd.tried') : '-'}</span>
+                <td
+                  data-state={
+                    d.challenge.done
+                      ? 'mastered'
+                      : d.challenge.attempts > 0
+                        ? 'practiced'
+                        : 'unseen'
+                  }
+                >
+                  <span>
+                    {d.challenge.done
+                      ? t('check.done')
+                      : d.challenge.attempts > 0
+                        ? t('pd.tried')
+                        : '-'}
+                  </span>
                 </td>
               </tr>
             );
@@ -145,10 +231,11 @@ function DataControls(): ReactNode {
   const resetting = useSnapshot(game).matches('confirmingReset');
   const [message, setMessage] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
-  const confirmRef = useRef<HTMLButtonElement>(null);
+  // Focus lands on the safe choice, so a stray Enter keeps the progress instead of erasing it.
+  const keepRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (resetting) confirmRef.current?.focus();
+    if (resetting) keepRef.current?.focus();
   }, [resetting]);
 
   const doExport = async (): Promise<void> => {
@@ -181,7 +268,11 @@ function DataControls(): ReactNode {
     store.getState().replace(result.state);
     actor.send({
       type: 'BADGE_SYNC',
-      unlocked: { foundations: result.state.modules.foundations.badge, synthesis: result.state.modules.synthesis.badge, ethics: result.state.modules.ethics.badge },
+      unlocked: {
+        foundations: result.state.modules.foundations.badge,
+        synthesis: result.state.modules.synthesis.badge,
+        ethics: result.state.modules.ethics.badge,
+      },
     });
     setMessage(t('pd.imported'));
     announce(t('pd.imported'));
@@ -193,22 +284,55 @@ function DataControls(): ReactNode {
         {t('pd.dataTitle')}
       </h2>
       <p className="prose">{t('pd.dataBody')}</p>
-      <div className="check-actions">
-        <button type="button" className="btn btn-ghost" onClick={() => void doExport()}>
-          {t('pd.export')}
-        </button>
-        <button type="button" className="btn btn-ghost" onClick={() => fileRef.current?.click()}>
-          {t('pd.import')}
-        </button>
-        <input ref={fileRef} type="file" accept="application/json,.json" className="sr-only" tabIndex={-1} aria-label={t('pd.importFile')} onChange={(e) => void doImport(e)} />
-        {!resetting && (
-          <button type="button" className="btn btn-danger" onClick={() => actor.send({ type: 'RESET_REQUEST' })}>
-            {t('pd.reset')}
-          </button>
-        )}
+      <div className="data-groups">
+        <div className="data-group">
+          <h3>{t('pd.backupTitle')}</h3>
+          <p className="muted">{t('pd.backupBody')}</p>
+          <div className="check-actions">
+            <button type="button" className="btn btn-ghost" onClick={() => void doExport()}>
+              {t('pd.export')}
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => fileRef.current?.click()}
+            >
+              {t('pd.import')}
+            </button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="application/json,.json"
+              className="sr-only"
+              tabIndex={-1}
+              aria-label={t('pd.importFile')}
+              onChange={(e) => void doImport(e)}
+            />
+          </div>
+        </div>
+        <div className="data-group">
+          <h3>{t('pd.startOverTitle')}</h3>
+          <p className="muted">{t('pd.startOverBody')}</p>
+          {!resetting && (
+            <div className="check-actions">
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => actor.send({ type: 'RESET_REQUEST' })}
+              >
+                {t('pd.reset')}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       {resetting && (
-        <div className="confirm glass" role="alertdialog" aria-labelledby="confirm-h" aria-describedby="confirm-b">
+        <div
+          className="confirm glass"
+          role="alertdialog"
+          aria-labelledby="confirm-h"
+          aria-describedby="confirm-b"
+        >
           <h3 id="confirm-h" className="mono sub">
             {t('pd.confirmTitle')}
           </h3>
@@ -217,6 +341,7 @@ function DataControls(): ReactNode {
           </p>
           <div className="check-actions">
             <button
+              ref={keepRef}
               type="button"
               className="btn btn-ghost"
               onClick={() => actor.send({ type: 'RESET_CANCEL' })}
@@ -224,7 +349,11 @@ function DataControls(): ReactNode {
             >
               {t('pd.keep')}
             </button>
-            <button ref={confirmRef} type="button" className="btn btn-danger" onClick={() => actor.send({ type: 'RESET_CONFIRM' })}>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={() => actor.send({ type: 'RESET_CONFIRM' })}
+            >
               {t('pd.confirm')}
             </button>
           </div>
@@ -243,6 +372,7 @@ export default function ProgressDashboard(): ReactNode {
   const rec = useRecommendation();
   const level = levelInfo(data.xp);
   const xpT = useTween(data.xp);
+  const empty = data.xp === 0 && overall === 0;
   return (
     <div className="wrap page dashboard">
       <header className="page-head">
@@ -279,6 +409,15 @@ export default function ProgressDashboard(): ReactNode {
         </div>
       </section>
 
+      {empty && (
+        <section className={`empty-state ${edgeClass}`} aria-labelledby="empty-h">
+          <h2 id="empty-h" className="dash-big">
+            {t('pd.emptyTitle')}
+          </h2>
+          <p className="prose">{t('pd.emptyBody', { xp: XP_LESSON.seen })}</p>
+        </section>
+      )}
+
       <section aria-labelledby="mods-h" className="dash-section">
         <h2 id="mods-h" className="h2">
           {t('pd.byModule')}
@@ -287,8 +426,16 @@ export default function ProgressDashboard(): ReactNode {
           {MODULES.map((m) => (
             <li key={m.id}>
               <span className="mono">{m.label}</span>
-              <span className="bar" role="img" aria-label={`${m.title}: ${data.modules[m.id].progress} percent`}>
-                <span style={{ transform: `scaleX(${Math.max(0.005, data.modules[m.id].progress / 100)})` }} />
+              <span
+                className="bar"
+                role="img"
+                aria-label={`${m.title}: ${data.modules[m.id].progress} percent`}
+              >
+                <span
+                  style={{
+                    transform: `scaleX(${Math.max(0.005, data.modules[m.id].progress / 100)})`,
+                  }}
+                />
               </span>
               <span className="num">{data.modules[m.id].progress}%</span>
               <Badge module={m.id} unlocked={data.modules[m.id].badge} size={44} />

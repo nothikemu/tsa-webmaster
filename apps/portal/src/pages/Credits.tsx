@@ -10,7 +10,9 @@ export default function Credits(): ReactNode {
         <h2 id="libs-h" className="h2">
           {t('doc.libraries')}
         </h2>
-        <div className="table-wrap">
+        {/* A horizontally scrollable region must be reachable by keyboard (WCAG 2.1.1), so it takes a tab stop and a name. */}
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+        <div className="table-wrap" role="region" aria-label={t('doc.libraries')} tabIndex={0}>
           <table className="credits-table">
             <thead>
               <tr>

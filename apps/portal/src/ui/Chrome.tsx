@@ -1,11 +1,18 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { FOOTER_LINKS, NAV, SITE } from '../content/site';
+import { FOOTER_GROUPS, NAV, SITE } from '../content/site';
 import { t } from '../core/assets';
 import { Spring } from '../core/spring';
 import { useServices } from '../core/services';
-import { Link } from '../router';
+import { Link, useRouter } from '../router';
+
+/** "page" on the exact route; "true" on a route inside it, so a module page marks "Modules". */
+function locationState(path: string, href: string): 'page' | 'true' | undefined {
+  if (path === href) return 'page';
+  return path.startsWith(`${href}/`) ? 'true' : undefined;
+}
 
 export function Header(): ReactNode {
+  const { path } = useRouter();
   return (
     <header className="site-header">
       <div className="wrap site-header-inner">
@@ -17,7 +24,9 @@ export function Header(): ReactNode {
           <ul className="nav-list">
             {NAV.map((n) => (
               <li key={n.href}>
-                <Link to={n.href}>{n.label}</Link>
+                <Link to={n.href} aria-current={locationState(path, n.href)}>
+                  {n.label}
+                </Link>
               </li>
             ))}
           </ul>
@@ -36,14 +45,27 @@ export function Footer(): ReactNode {
           <p className="muted footer-note">{t('footer.note', { event: SITE.event })}</p>
           <p className="muted footer-note">{t('footer.privacy')}</p>
         </div>
-        <nav aria-label={t('nav.footer')}>
-          <ul className="footer-links">
-            {FOOTER_LINKS.map((n) => (
-              <li key={n.href}>
-                <Link to={n.href}>{n.label}</Link>
-              </li>
-            ))}
-          </ul>
+        <nav aria-label={t('nav.footer')} className="footer-nav">
+          {FOOTER_GROUPS.map((g) => (
+            <div key={g.heading}>
+              <p
+                className="mono footer-heading"
+                id={`footer-${g.heading.toLowerCase().replace(/\W+/g, '-')}`}
+              >
+                {g.heading}
+              </p>
+              <ul
+                className="footer-links"
+                aria-labelledby={`footer-${g.heading.toLowerCase().replace(/\W+/g, '-')}`}
+              >
+                {g.links.map((n) => (
+                  <li key={n.href}>
+                    <Link to={n.href}>{n.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </nav>
       </div>
     </footer>

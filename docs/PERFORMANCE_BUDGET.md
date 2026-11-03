@@ -17,8 +17,8 @@ All numbers come from a **software-rendered headless Chromium in a container**, 
 
 | Measure | Result |
 | --- | --- |
-| Lighthouse, **desktop** profile, home page | Performance **94**, Accessibility **100**, Best Practices **100**, SEO **100**. FCP 0.9 s, LCP 1.3 s, TBT 40 ms, CLS 0 |
-| Lighthouse, **mobile** profile (Slow 4G, 4x CPU throttle), home page | Performance **67**, Accessibility **100**, Best Practices **100**, SEO **100**. FCP 4.3 s, LCP 6.3 s, TBT about 0 ms, CLS 0 |
+| Lighthouse, **desktop** profile, home page | Performance **96**, Accessibility **100**, Best Practices **100**, SEO **100**. FCP 0.9 s, LCP 1.2 s, TBT 0 ms, CLS 0 |
+| Lighthouse, **mobile** profile (Slow 4G, 4x CPU throttle), home page | Performance **64**, Accessibility **100**, Best Practices **100**, SEO **100**. FCP 4.3 s, LCP 6.2 s, TBT 200 ms, CLS 0 (single run each; expect a few points of run-to-run variation) |
 | Frame rate, Module A, lowest quality tier, WebGL2 renderer | 55 fps (smoke test, 6-second window) |
 | Master frame loop | one native `requestAnimationFrame` loop, 0.97 to 1.10 rAF calls per frame (smoke test) |
 | Unit tests | 90 TypeScript tests, 20 Rust tests |
@@ -32,11 +32,10 @@ Next steps, in order of expected gain: (1) load WebAssembly lazily and boot on t
 
 | Asset | Raw | Gzip | When it loads |
 | --- | --- | --- | --- |
-| Entry script (`index`, string-encoded) | 227 KB | 74 KB | Always |
+| Entry script (`index`, string-encoded) | 229 KB | 74 KB | Always |
 | `vendor-react` | 140 KB | 46 KB | Always |
 | `vendor-state` (XState, Zustand, Comlink) | 44 KB | 15 KB | Always |
-| CSS | 42 KB | 10 KB | Always |
-| Inter Variable, Latin | 48 KB | 48 KB | Always (swap) |
+| CSS | 50 KB | 11 KB | Always |
 | WebAssembly (SIMD or scalar) | 51 KB | 24 KB | Always, one of the two |
 | Encrypted asset blob | 28 KB | 28 KB | Always |
 | Home page chunk | 32 KB | 11 KB | Home |

@@ -1,8 +1,21 @@
-import { lazy, Suspense, type ComponentType, type LazyExoticComponent, type ReactNode } from 'react';
-import { challengeHref, getModule, lessonHref, moduleHref, quizHref, type ModuleContent, type ModuleId } from '../content';
+import {
+  lazy,
+  Suspense,
+  type ComponentType,
+  type LazyExoticComponent,
+  type ReactNode,
+} from 'react';
+import {
+  challengeHref,
+  getModule,
+  lessonHref,
+  moduleHref,
+  quizHref,
+  type ModuleContent,
+  type ModuleId,
+} from '../content';
 import { t } from '../core/assets';
-import { BADGE_LESSON_RATIO, BADGE_QUIZ_MIN } from '../core/gamification';
-import { masteryRank } from '../core/schema';
+import { BADGE_QUIZ_MIN } from '../core/gamification';
 import { Link } from '../router';
 import { Eyebrow } from '../ui/Chrome';
 import { Badge } from '../ui/Badges';
@@ -11,8 +24,10 @@ import { Challenge } from './shared/Challenge';
 import { ErrorBoundary } from './shared/ErrorBoundary';
 import { LessonReader, MasteryPill } from './shared/LessonReader';
 import { Quiz } from './shared/Quiz';
+import { useBadgeProgress } from './shared/badgeRows';
 
-export type ModuleView = { kind: 'overview' } | { kind: 'lesson'; n: number } | { kind: 'quiz' } | { kind: 'challenge' };
+export type ModuleView =
+  { kind: 'overview' } | { kind: 'lesson'; n: number } | { kind: 'quiz' } | { kind: 'challenge' };
 
 type Stage = LazyExoticComponent<ComponentType<{ module: ModuleContent }>>;
 
@@ -25,7 +40,11 @@ const STAGES: Record<ModuleId, Stage> = {
 function Tabs({ module, view }: { module: ModuleContent; view: ModuleView }): ReactNode {
   const data = useData().modules[module.id];
   const current = (k: string): 'page' | undefined =>
-    (k === 'overview' && view.kind === 'overview') || (k === 'quiz' && view.kind === 'quiz') || (k === 'challenge' && view.kind === 'challenge') ? 'page' : undefined;
+    (k === 'overview' && view.kind === 'overview') ||
+    (k === 'quiz' && view.kind === 'quiz') ||
+    (k === 'challenge' && view.kind === 'challenge')
+      ? 'page'
+      : undefined;
   return (
     <nav aria-label={t('module.sections')} className="module-tabs">
       <ul>
@@ -36,18 +55,35 @@ function Tabs({ module, view }: { module: ModuleContent; view: ModuleView }): Re
         </li>
         {module.lessons.map((l, i) => (
           <li key={l.id}>
-            <Link to={lessonHref(module.id, i + 1)} aria-current={view.kind === 'lesson' && view.n === i + 1 ? 'page' : undefined} data-state={data.lessons[l.id] ?? 'unseen'} aria-label={t('module.lessonTab', { n: i + 1, title: l.title, state: t(`mastery.${data.lessons[l.id] ?? 'unseen'}`) })}>
+            <Link
+              to={lessonHref(module.id, i + 1)}
+              aria-current={view.kind === 'lesson' && view.n === i + 1 ? 'page' : undefined}
+              data-state={data.lessons[l.id] ?? 'unseen'}
+              aria-label={t('module.lessonTab', {
+                n: i + 1,
+                title: l.title,
+                state: t(`mastery.${data.lessons[l.id] ?? 'unseen'}`),
+              })}
+            >
               <span className="num">{i + 1}</span>
             </Link>
           </li>
         ))}
         <li>
-          <Link to={quizHref(module.id)} aria-current={current('quiz')} data-state={data.quiz.best >= BADGE_QUIZ_MIN ? 'mastered' : 'unseen'}>
+          <Link
+            to={quizHref(module.id)}
+            aria-current={current('quiz')}
+            data-state={data.quiz.best >= BADGE_QUIZ_MIN ? 'mastered' : 'unseen'}
+          >
             {t('module.check')}
           </Link>
         </li>
         <li>
-          <Link to={challengeHref(module.id)} aria-current={current('challenge')} data-state={data.challenge.done ? 'mastered' : 'unseen'}>
+          <Link
+            to={challengeHref(module.id)}
+            aria-current={current('challenge')}
+            data-state={data.challenge.done ? 'mastered' : 'unseen'}
+          >
             {t('module.challenge')}
           </Link>
         </li>
@@ -56,28 +92,69 @@ function Tabs({ module, view }: { module: ModuleContent; view: ModuleView }): Re
   );
 }
 
+/** A filled circle with a tick for a met requirement, an empty circle for an open one. Shape, not color, carries the state. */
+function RequirementMark({ done }: { done: boolean }): ReactNode {
+  return (
+    <svg className="req-mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+      {done ? (
+        <>
+          <circle cx="10" cy="10" r="9" fill="currentColor" />
+          <path
+            d="M5.8 10.4l2.9 2.9 5.5-5.9"
+            fill="none"
+            stroke="#000"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </>
+      ) : (
+        <circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      )}
+    </svg>
+  );
+}
+
 export function BadgeChecklist({ module }: { module: ModuleContent }): ReactNode {
-  const data = useData().modules[module.id];
-  const need = Math.ceil(module.lessons.length * BADGE_LESSON_RATIO);
-  const practiced = module.lessons.filter((l) => masteryRank(data.lessons[l.id] ?? 'unseen') >= 2).length;
-  const rows: Array<{ label: string; done: boolean }> = [
-    { label: t('check.lessons', { n: practiced, need, total: module.lessons.length }), done: practiced >= need },
-    ...module.requiredActions.map((a) => ({ label: a.label, done: data.actions[a.id] === true })),
-    { label: t('check.quiz', { best: data.quiz.best, min: BADGE_QUIZ_MIN }), done: data.quiz.best >= BADGE_QUIZ_MIN },
-    { label: t('check.challenge', { title: module.challenge.title }), done: data.challenge.done },
-  ];
+  const { rows } = useBadgeProgress(module);
   return (
     <ul className="requirements">
       {rows.map((r) => (
         <li key={r.label} data-done={r.done}>
-          <span className="req-mark mono" aria-hidden="true">
-            {r.done ? 'OK' : '--'}
-          </span>
+          <RequirementMark done={r.done} />
           <span>{r.label}</span>
           <span className="sr-only">{r.done ? t('check.done') : t('check.todo')}</span>
         </li>
       ))}
     </ul>
+  );
+}
+
+/** One line under the tabs: how close the badge is, with a way to the full list when it is not already on screen. */
+function BadgeProgressLine({
+  module,
+  view,
+}: {
+  module: ModuleContent;
+  view: ModuleView;
+}): ReactNode {
+  const { done, total, earned } = useBadgeProgress(module);
+  return (
+    <div className="badge-progress">
+      <p>
+        {earned
+          ? t('module.badge', { name: module.badge.name }) + ': ' + t('ach.earned')
+          : t('module.badgeProgress', { name: module.badge.name, done, total })}
+      </p>
+      {view.kind !== 'overview' && (
+        <Link to={moduleHref(module.id)} className="link-arrow">
+          {t('module.seeRequirements')}
+        </Link>
+      )}
+      <a href="#interactive" className="link-arrow jump-link">
+        {t('module.jump')}
+      </a>
+    </div>
   );
 }
 
@@ -143,11 +220,31 @@ export function ModulePage({ id, view }: { id: ModuleId; view: ModuleView }): Re
           {module.label} / {module.themeSection.toUpperCase()}
         </Eyebrow>
         <h1 className="display">{heading}</h1>
-        <p className="lead">{view.kind === 'overview' ? module.tagline : module.title + ' / ' + module.tagline}</p>
+        <p className="lead">
+          {view.kind === 'overview' ? module.tagline : module.title + ' / ' + module.tagline}
+        </p>
         <Tabs module={module} view={view} />
+        <BadgeProgressLine module={module} view={view} />
       </header>
       <div className="module-grid">
-        <div className="module-stage-col">
+        <div className="module-panel-col">
+          {view.kind === 'overview' && <Overview module={module} />}
+          {view.kind === 'lesson' && <LessonReader key={view.n} module={module} n={view.n} />}
+          {view.kind === 'quiz' && <Quiz module={module} />}
+          {view.kind === 'challenge' && <Challenge module={module} />}
+        </div>
+        <section
+          className="module-stage-col"
+          id="interactive"
+          tabIndex={-1}
+          aria-labelledby="interactive-h"
+        >
+          <div className="stage-caption">
+            <p className="mono">{t('module.interactive')}</p>
+            <h2 id="interactive-h" className="stage-caption-name">
+              {module.centerpiece.name}
+            </h2>
+          </div>
           <ErrorBoundary
             resetKey={id}
             fallback={(reset) => (
@@ -160,17 +257,20 @@ export function ModulePage({ id, view }: { id: ModuleId; view: ModuleView }): Re
               </div>
             )}
           >
-            <Suspense fallback={<div className="stage" aria-busy="true"><div className="stage-status"><span className="stage-hairline" /><span className="mono">{t('stage.loading')}</span></div></div>}>
+            <Suspense
+              fallback={
+                <div className="stage" aria-busy="true">
+                  <div className="stage-status">
+                    <span className="stage-hairline" />
+                    <span className="mono">{t('stage.loading')}</span>
+                  </div>
+                </div>
+              }
+            >
               <Stage module={module} />
             </Suspense>
           </ErrorBoundary>
-        </div>
-        <div className="module-panel-col">
-          {view.kind === 'overview' && <Overview module={module} />}
-          {view.kind === 'lesson' && <LessonReader key={view.n} module={module} n={view.n} />}
-          {view.kind === 'quiz' && <Quiz module={module} />}
-          {view.kind === 'challenge' && <Challenge module={module} />}
-        </div>
+        </section>
       </div>
     </div>
   );

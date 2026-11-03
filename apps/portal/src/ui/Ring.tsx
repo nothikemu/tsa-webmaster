@@ -15,19 +15,43 @@ interface RingProps {
  * transitions on the portal easing curve (a CSS transition on the --ease token), so the fill
  * glides to each new value. The numeric value is also exposed to assistive technology.
  */
-export function Ring({ value, size = 96, stroke = 7, label, children, className }: RingProps): ReactNode {
+export function Ring({
+  value,
+  size = 96,
+  stroke = 7,
+  label,
+  children,
+  className,
+}: RingProps): ReactNode {
   const uid = useId().replace(/:/g, '');
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const clamped = Math.max(0, Math.min(100, value));
   return (
-    <div className={`progress-ring ${className ?? ''}`} style={{ width: size, height: size }} role="img" aria-label={`${label}: ${Math.round(clamped)} percent`}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" focusable="false">
+    <div
+      className={`progress-ring ${className ?? ''}`}
+      style={{ width: size, height: size }}
+      role="img"
+      aria-label={`${label}: ${Math.round(clamped)} percent`}
+    >
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        aria-hidden="true"
+        focusable="false"
+      >
         <defs>
-          <linearGradient id={`g${uid}`} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={size} y2={size}>
-            <stop offset="0" stopColor="#4d84ff" />
-            <stop offset=".55" stopColor="#8f6bff" />
-            <stop offset="1" stopColor="#4de6ff" />
+          <linearGradient
+            id={`g${uid}`}
+            gradientUnits="userSpaceOnUse"
+            x1="0"
+            y1="0"
+            x2={size}
+            y2={size}
+          >
+            <stop offset="0" stopColor="#6f9bff" />
+            <stop offset="1" stopColor="#6f9bff" />
           </linearGradient>
           <mask id={`m${uid}`}>
             <circle
@@ -45,8 +69,23 @@ export function Ring({ value, size = 96, stroke = 7, label, children, className 
             />
           </mask>
         </defs>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,.1)" strokeWidth={stroke} />
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={`url(#g${uid})`} strokeWidth={stroke} mask={`url(#m${uid})`} />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke="rgba(255,255,255,.16)"
+          strokeWidth={stroke}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke={`url(#g${uid})`}
+          strokeWidth={stroke}
+          mask={`url(#m${uid})`}
+        />
       </svg>
       <div className="ring-center">{children}</div>
     </div>

@@ -25,7 +25,12 @@ export function Badge({ module, unlocked, size = 176, anchor = false }: BadgePro
   const { loop } = useServices();
   const reduced = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
-  const tilt = useRef({ rx: new Spring(0, 11), ry: new Spring(0, 11), hx: new Spring(50, 11), hy: new Spring(30, 11) });
+  const tilt = useRef({
+    rx: new Spring(0, 11),
+    ry: new Spring(0, 11),
+    hx: new Spring(50, 11),
+    hy: new Spring(30, 11),
+  });
   const sub = useRef<ReturnType<typeof loop.subscribe> | null>(null);
   const content = getModule(module);
   const state = unlocked ? t('badge.unlocked') : t('badge.locked');
@@ -44,7 +49,8 @@ export function Badge({ module, unlocked, size = 176, anchor = false }: BadgePro
         el.style.setProperty('--ry', `${s.ry.value.toFixed(2)}deg`);
         el.style.setProperty('--hx', `${s.hx.value.toFixed(1)}%`);
         el.style.setProperty('--hy', `${s.hy.value.toFixed(1)}%`);
-        if (s.rx.settled(0.02) && s.ry.settled(0.02) && s.hx.settled(0.1) && s.hy.settled(0.1)) handle.setActive(false);
+        if (s.rx.settled(0.02) && s.ry.settled(0.02) && s.hx.settled(0.1) && s.hy.settled(0.1))
+          handle.setActive(false);
       },
       { element: el, active: false },
     );
@@ -94,26 +100,33 @@ export function Badge({ module, unlocked, size = 176, anchor = false }: BadgePro
     sub.current?.setActive(true);
   };
 
+  // The image and the tilt control are siblings: an element with role="img" must not contain a
+  // focusable control, so the label sits on an inner wrapper and the button stays outside it.
   return (
     <div
       ref={ref}
       className={`badge ${unlocked ? 'is-unlocked' : 'is-locked'}`}
       style={{ width: size, height: size * 1.02 }}
       data-badge={anchor ? module : undefined}
-      role="img"
-      aria-label={`${content.badge.name} badge, ${state}`}
     >
-      <svg
-        viewBox="0 0 200 204"
-        width="100%"
-        height="100%"
-        aria-hidden="true"
-        focusable="false"
-        dangerouslySetInnerHTML={{ __html: getAsset(`badges/${module}.svg`) }}
-      />
-      <span className="badge-glint" aria-hidden="true" />
+      <div className="badge-art" role="img" aria-label={`${content.badge.name} badge, ${state}`}>
+        <svg
+          viewBox="0 0 200 204"
+          width="100%"
+          height="100%"
+          aria-hidden="true"
+          focusable="false"
+          dangerouslySetInnerHTML={{ __html: getAsset(`badges/${module}.svg`) }}
+        />
+        <span className="badge-glint" aria-hidden="true" />
+      </div>
       {unlocked && !reduced && (
-        <button type="button" className="badge-key" aria-label={t('badge.tilt', { name: content.badge.name })} onKeyDown={onKey} />
+        <button
+          type="button"
+          className="badge-key"
+          aria-label={t('badge.tilt', { name: content.badge.name })}
+          onKeyDown={onKey}
+        />
       )}
     </div>
   );

@@ -9,7 +9,7 @@
 - The Rust crate `crates/core` (SHA-256, HMAC, ChaCha20, Perlin noise, spatial hash, particle integrator). Test vectors for SHA-256, HMAC and ChaCha20 come from the public standards (FIPS 180-4, RFC 4231, RFC 8439) and were cross-checked against OpenSSL.
 - The gamification engine, persistence, integrity layers, router, spring solver, master loop, quality governor and build plugins.
 
-No stock photography, video, audio, icon packs or fonts other than the one listed below are used.
+No stock photography, video, audio, icon packs or downloaded fonts are used. Text is set in each reader's own system font.
 
 ## Third-party code and assets
 
@@ -23,7 +23,6 @@ No stock photography, video, audio, icon packs or fonts other than the one liste
 | Comlink | 4.4.2 | Apache-2.0 | https://github.com/GoogleChromeLabs/comlink | Worker messaging |
 | GSAP, ScrollTrigger | 3.15.0 | GSAP Standard License | https://gsap.com | Scroll progress |
 | Lenis | 1.3.27 | MIT | https://lenis.darkroom.engineering | Smooth scrolling |
-| Inter Variable (Fontsource) | 5.3.0 | SIL OFL 1.1 | https://fontsource.org/fonts/inter | Typeface (Latin subset, self-hosted) |
 | wasm-bindgen | 0.2.130 | MIT or Apache-2.0 | https://github.com/rustwasm/wasm-bindgen | Rust bindings |
 | Vite, Tailwind CSS, TypeScript | 7.3.7, 4.3.3, 5.9.3 | MIT, MIT, Apache-2.0 | project sites | Build tooling |
 | javascript-obfuscator, Terser, Binaryen | 5.9.1, 5.51.2, 132.0.0 | BSD-2-Clause, BSD-2-Clause, Apache-2.0 | project sites | Build hardening and WASM optimisation |

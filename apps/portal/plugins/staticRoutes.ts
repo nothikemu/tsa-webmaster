@@ -173,14 +173,24 @@ function shell(page: Page): string {
   return `<div class="static-page"><a class="skip-link" href="#main">Skip to content</a><header class="static-header"><a class="wordmark" href="/">${esc(SITE.name.toLowerCase())}</a><nav aria-label="Primary"><ul>${nav}</ul></nav></header><main id="main" tabindex="-1">${page.body}</main><footer><p>Built for ${esc(SITE.event)}. All progress stays on your device.</p><ul>${foot}</ul></footer></div>`;
 }
 
-function applyTemplate(template: string, page: Page, url: string | null): string {
+/**
+ * The shell's links are written as site-root paths ("/modules"). Under a sub-path deployment such as
+ * GitHub Pages ("/repo/") those would leave the project and land on the host's own 404 page, so every
+ * root-absolute href in the shell is rewritten to start at the deployment base.
+ */
+function withBase(html: string, base: string): string {
+  const prefix = base.endsWith('/') ? base : `${base}/`;
+  return html.replace(/href="\/(?!\/)/g, `href="${prefix}`);
+}
+
+function applyTemplate(template: string, page: Page, url: string | null, base: string): string {
   let html = template
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(page.title)}</title>`)
     .replace(/(<meta name="description" content=")[^"]*(")/, `$1${esc(page.description)}$2`)
     .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(page.title)}$2`)
     .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(page.description)}$2`);
   if (url) html = html.replace('</head>', `<link rel="canonical" href="${esc(url)}" />\n  <meta property="og:url" content="${esc(url)}" />\n  </head>`);
-  return html.replace(/<div id="root">[\s\S]*?<\/div>\s*(?=<noscript|<script|<\/body>)/, `<div id="root">${shell(page)}</div>\n    `);
+  return html.replace(/<div id="root">[\s\S]*?<\/div>\s*(?=<noscript|<script|<\/body>)/, `<div id="root">${withBase(shell(page), base)}</div>\n    `);
 }
 
 export const emitStaticRoutes: PostBuildStep = ({ outDir, base, root }) => {
@@ -190,13 +200,13 @@ export const emitStaticRoutes: PostBuildStep = ({ outDir, base, root }) => {
   const urlFor = (route: string): string | null => (siteUrl ? `${siteUrl}${base.replace(/\/$/, '')}${route === '/' ? '/' : route + '/'}` : null);
 
   for (const route of STATIC_ROUTES) {
-    const html = applyTemplate(template, pageFor(route), urlFor(route));
+    const html = applyTemplate(template, pageFor(route), urlFor(route), base);
     const target = route === '/' ? indexPath : join(outDir, route.slice(1), 'index.html');
     mkdirSync(dirname(target), { recursive: true });
     writeFileSync(target, html);
   }
   // Unknown paths get the app shell; the client router shows its not-found page.
-  writeFileSync(join(outDir, '404.html'), applyTemplate(template, { title: `Page not found · ${SITE.name}`, description: SITE.description, body: `<h1>Page not found</h1><p><a href="/">Back to the home page</a></p>` }, null));
+  writeFileSync(join(outDir, '404.html'), applyTemplate(template, { title: `Page not found · ${SITE.name}`, description: SITE.description, body: `<h1>Page not found</h1><p><a href="/">Back to the home page</a></p>` }, null, base));
 
   const repoRoot = resolve(root, '..', '..');
   for (const name of ['_headers', 'robots.txt']) {

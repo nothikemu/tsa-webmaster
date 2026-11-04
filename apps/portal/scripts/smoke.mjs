@@ -380,6 +380,9 @@ await check('deep links render real pages (every route has its own HTML)', async
     assert(res.status === 200, `${path} returned ${res.status}`);
     const html = await res.text();
     assert(/<h1[ >]/.test(html), `${path} has no static h1`);
+    // Links in the pre-rendered page must stay inside the deployment base; "/about" on GitHub Pages is the host's 404.
+    const strays = [...html.matchAll(/<a [^>]*href="(\/[^"]*)"/g)].map((m) => m[1]).filter((h) => !h.startsWith(sub + '/') && h !== sub);
+    assert(strays.length === 0, `${path} links outside the base path: ${strays.slice(0, 3).join(', ')}`);
   }
 });
 

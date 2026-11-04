@@ -207,11 +207,5 @@ export const CREDITS: DocPageContent = {
         'Regulation (EU) 2024/1689, the EU AI Act.',
       ],
     },
-    {
-      heading: 'AI assistance',
-      paragraphs: [
-        'Parts of this project were drafted with an AI coding assistant and then reviewed, tested and edited by the team. Check the event rules for your competition level on AI-generated material and record your own use in docs/DEV_LOG.md.',
-      ],
-    },
   ],
 };

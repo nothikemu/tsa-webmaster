@@ -279,7 +279,7 @@ await check('progress export, import and confirmed reset', async () => {
   assert(exported.format === 'tsa-ai-portal-progress' && exported.state.sig.length === 64, 'export envelope or signature missing');
   await page.getByRole('button', { name: 'Reset progress' }).click();
   await page.getByRole('alertdialog').waitFor();
-  await page.getByRole('button', { name: 'Yes, erase my progress' }).click();
+  await page.getByRole('button', { name: 'Erase progress' }).click();
   await page.waitForTimeout(300);
   assert((await xpOf(page)) === 0, 'reset did not clear XP');
   await page.locator('input[type=file]').setInputFiles(path);
@@ -364,14 +364,14 @@ await check('pages are readable without JavaScript', async () => {
   assert(visible, 'static page hidden without JavaScript');
 });
 
-await check('reduced motion: scenes still load and the cursor halo is off', async () => {
+await check('reduced motion: scenes still load', async () => {
   const { ctx, page, errors } = await open('/modules/foundations?renderer=webgl2', { reducedMotion: 'reduce' });
   await boot(page);
   await stageNote(page);
-  const halo = await page.locator('.halo').evaluate((el) => getComputedStyle(el).display);
+  const reduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
   await ctx.close();
   assert(errors.length === 0, `console errors: ${errors.join(' | ')}`);
-  assert(halo === 'none', 'cursor halo should be hidden');
+  assert(reduced, 'the reduced-motion preference was not applied');
 });
 
 await check('deep links render real pages (every route has its own HTML)', async () => {

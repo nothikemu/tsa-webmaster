@@ -17,6 +17,9 @@ function ModuleTile({ module }: { module: ModuleContent }): ReactNode {
       </h3>
       <p className="bento-tag">{module.tagline}</p>
       {progress > 0 && <p className="muted num">{t('home.percent', { n: progress })}</p>}
+      <span className="tile-cta" aria-hidden="true">
+        {progress > 0 ? t('home.continue') : t('home.begin')}
+      </span>
     </article>
   );
 }

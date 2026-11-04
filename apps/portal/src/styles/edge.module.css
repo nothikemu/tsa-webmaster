@@ -1,7 +1,7 @@
-/* One surface style for panels: a hairline border over a faint fill. Interactive panels strengthen
-   the border on hover and keyboard focus; static ones do not move. */
+/* One surface style for panels: a solid fill one step above the black base. Interactive panels
+   lighten on hover and keyboard focus (set where they are used); static ones do not move. */
 .edge {
   position: relative;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--fill);
+  border: 0;
 }

@@ -6,7 +6,7 @@ import { ModulePage } from './modules/ModulePage';
 import { Link, RouterProvider, pageTitle, useRouter, type Route } from './router';
 import { LiveRegion, SkipLink } from './ui/a11y';
 import { BurstOverlay } from './ui/BurstOverlay';
-import { CursorHalo, Footer, GrainOverlay, Header } from './ui/Chrome';
+import { Footer, Header } from './ui/Chrome';
 import { TelemetryHub } from './ui/TelemetryHub';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -22,7 +22,6 @@ function NotFound(): ReactNode {
   return (
     <div className="wrap page">
       <header className="page-head">
-        <p className="mono eyebrow">404</p>
         <h1 className="display">{t('nf.title')}</h1>
         <p className="lead">{t('nf.body')}</p>
         <Link to="/" className="btn btn-primary">
@@ -43,7 +42,11 @@ function view(route: Route): ReactNode {
       return <ModulePage key={route.id} id={route.id} view={{ kind: 'overview' }} />;
     case 'lesson': {
       const exists = route.n <= getModule(route.id).lessons.length;
-      return exists ? <ModulePage key={route.id} id={route.id} view={{ kind: 'lesson', n: route.n }} /> : <NotFound />;
+      return exists ? (
+        <ModulePage key={route.id} id={route.id} view={{ kind: 'lesson', n: route.n }} />
+      ) : (
+        <NotFound />
+      );
     }
     case 'quiz':
       return <ModulePage key={route.id} id={route.id} view={{ kind: 'quiz' }} />;
@@ -91,14 +94,14 @@ function Shell(): ReactNode {
       <SkipLink />
       <Header />
       <main id="main" tabIndex={-1}>
-        <Suspense fallback={<div className="route-loading" aria-hidden="true" />}>{view(route)}</Suspense>
+        <Suspense fallback={<div className="route-loading" aria-hidden="true" />}>
+          {view(route)}
+        </Suspense>
       </main>
       <Footer />
       <TelemetryHub />
       <LiveRegion />
       <BurstOverlay />
-      <CursorHalo />
-      <GrainOverlay />
     </>
   );
 }

@@ -89,24 +89,24 @@ Black ground (`#000`), elevated sections `#050507`, one mid-grey `#86868b`, whit
 
 ## Type and spacing
 
-Everything below lives in `apps/portal/src/styles/tokens.css`. Components read these tokens and do not invent values. Text uses the reader's system font (`ui-sans-serif, system-ui, ...`); nothing is downloaded.
+The values live in `apps/portal/src/styles/tokens.css`; the reasoning is in `APPLE_DESIGN_NOTES.md`. Text uses the reader's system font; nothing is downloaded.
 
 | Token | Value | Used for |
 | --- | --- | --- |
-| `--t-hero` | `clamp(2.4rem, 10.2vw, 6.5rem)`, 700, -0.03em, line-height .98 | Hero headline (two lines at 320px with typical system fonts) |
-| `--t-display` | `clamp(2.25rem, 4.4vw + .9rem, 4.5rem)`, 700, -0.03em | Page titles |
-| `--t-h2` / `--t-h3` | `clamp(1.75rem, 2.2vw + 1.1rem, 2.75rem)` / `clamp(1.375rem, 1.2vw + 1.05rem, 1.75rem)` | Section and card headings |
-| `--t-lead` | `clamp(1.125rem, .4vw + 1.02rem, 1.375rem)`, `--text-2` | Lead paragraphs |
-| Label (`.mono`) | 12px mono, +0.1em tracking, uppercase, `--text-3` (#a1a1a6, 8:1 on black) | `MOD 01 / FOUNDATIONS` labels and short readouts only |
-| Numerals | `font-variant-numeric: tabular-nums` | Every readout |
-| Text colors | `--text` #f5f5f7 (19:1), `--text-2` #c7c7cc (12:1), `--text-3` #a1a1a6 (8:1) | Body, secondary, labels |
-| Accent | `--accent` #6f9bff (links, focus, chart marks, 7.8:1), `--accent-solid` #2f66ee (button fill, 4.9:1 with white text) | Actions, current location, progress. Nothing else is colored |
-| Warning | `--warn` #ffb14d | Destructive actions and wrong answers |
-| Lines | `--line` 14% white (decoration), `--line-strong` 40% (3.7:1, tab and chip borders), `--line-control` 55% (inputs, ghost buttons) | Borders |
-| Space | `--s-1` to `--s-9`: 4, 8, 12, 16, 24, 32, 48, 64, 96 px; `--section` clamp(48px, 7vw, 96px) | Gaps and padding |
-| Radii | `--r-sm` 10, `--r-md` 18, `--r-lg` 28, `--r-pill` 999 px | Inputs, rows, panels, controls |
-| Width | `--max` 1200px, `--measure` 64ch, `--gutter` clamp(16px, 4vw, 40px) | Page wrapper and reading column |
-| Controls | `--tap` 44px minimum; focus ring `3px solid var(--accent)`, offset 3px | Every button, link target, tab, chip and slider |
+| `--t-hero` | `clamp(2.5rem, 7.4vw, 5rem)`, 600, line-height 1.05 | Hero headline, centered |
+| `--t-display` | `clamp(2rem, 3.4vw + 1rem, 3.5rem)`, 600 | Page titles |
+| `--t-h2` / `--t-h3` | up to 2.5rem / up to 1.75rem, 600 | Section and card headings |
+| `--t-lead` | 19 to 21px, `--text-2` | Lead paragraphs |
+| Body | 17px, line-height 1.47, regular | Everything that is read |
+| Small and labels | 14px (`--fs-small`, `.mono`), `--text-3` | Secondary text, never smaller |
+| Depth | `--bg` #000, `--fill` #1c1c1e, `--fill-2` #2c2c2e, `--bg-elev` #161617 | Base, cards, hover, footer band |
+| Text | `--text` #f5f5f7, `--text-2` #d2d2d7, `--text-3` #a1a1a6 | Primary, secondary, tertiary |
+| Accent | `--accent` #0091ff (links, focus, chart marks), `--accent-solid` #0071e3 (button fill) | Actions and progress only |
+| Selected | `--selected` #f5f5f7 with `--selected-text` #1d1d1f | Current tab, pressed chip, chosen segment |
+| Space | `--s-1` to `--s-9`: 4 to 96px; `--section` clamp(64px, 9vw, 128px) | Gaps and padding |
+| Radii | 12, 18, 28, 999px | Inputs, rows, panels, controls |
+| Width | `--max` 1080px, `--measure` 64ch | Page wrapper and reading column |
+| Controls | `--tap` 44px; focus ring 3px solid accent, offset 3px | Every target |
 
 ## Scroll choreography
 

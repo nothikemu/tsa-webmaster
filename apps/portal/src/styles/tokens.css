@@ -11,7 +11,7 @@
   --color-elev: #0a0a0c;
   --color-muted: #a1a1a6;
   --color-hair: rgb(255 255 255 / 0.14);
-  --color-blue: #6f9bff;
+  --color-blue: #0091ff;
   --color-violet: #8f6bff;
   --color-cyan: #4de6ff;
   --color-warn: #ffb14d;
@@ -34,54 +34,58 @@
   /* Used only for the loader's exit, so enter and exit differ on purpose. */
   --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
 
-  /* ---- color: ground and surfaces ---------------------------------------------------------- */
+  /* ---- color: depth. A black base and two lighter levels that come forward ----------------- */
   --bg: #000000;
-  --bg-elev: #0a0a0c;
-  --surface: rgb(255 255 255 / 0.035);
-  --surface-hover: rgb(255 255 255 / 0.065);
+  --bg-elev: #161617; /* the footer and other full-width bands */
+  --fill: #1c1c1e; /* cards and controls: one step above the base */
+  --fill-2: #2c2c2e; /* hover and pressed fills: two steps above */
+  --surface: var(--fill);
+  --surface-hover: var(--fill-2);
 
-  /* ---- color: text. Contrast on --bg: text 19:1, text-2 12:1, text-3 8:1 -------------------- */
+  /* ---- color: text. Contrast on --bg: text 19:1, text-2 14:1, text-3 8:1 -------------------- */
   --text: #f5f5f7;
-  --text-2: #c7c7cc;
+  --text-2: #d2d2d7;
   --text-3: #a1a1a6;
   --fg: var(--text);
   --muted: var(--text-3);
 
-  /* ---- color: lines. --line is decoration; --line-control marks something you can operate ---- */
-  --line: rgb(255 255 255 / 0.14);
-  --line-strong: rgb(255 255 255 / 0.4);
-  --line-control: rgb(255 255 255 / 0.55);
+  /* ---- color: lines. --line separates; --line-control and --line-strong outline controls ----- */
+  --line: rgb(84 84 88 / 0.65);
+  --line-strong: #636366; /* 3.5:1 on black */
+  --line-control: #8e8e93; /* 6.2:1 on black */
   --hair: var(--line);
 
-  /* ---- color: accent. Used for actions, the current location and progress, nowhere else ------- */
-  --accent: #6f9bff; /* text, links, focus ring, chart marks: 7.8:1 on black */
-  --accent-solid: #2f66ee; /* button fill: 4.9:1 against white text */
-  --accent-solid-hover: #2557d6;
-  --accent-soft: rgb(111 155 255 / 0.16);
+  /* ---- color: accent. One blue, for actions, links and progress. Nothing else is colored ----- */
+  --accent: #0091ff; /* links, focus ring, chart marks: 6.5:1 on black */
+  --accent-solid: #0071e3; /* primary button fill: 4.7:1 against white text */
+  --accent-solid-hover: #0066cc; /* pressed and hover: 5.6:1 against white text */
+  --accent-soft: rgb(0 145 255 / 0.16);
+  --accent-bright: #5ab4ff; /* accent text on --accent-soft: 6.5:1 */
   --on-accent: #ffffff;
-  --warn: #ffb14d; /* destructive actions and wrong answers: 11:1 on black */
+  --selected: #f5f5f7; /* the selected tab, chip or segment, with --selected-text on it */
+  --selected-text: #1d1d1f;
+  --warn: #ff9f0a; /* destructive actions and wrong answers: 10:1 on black */
   --blue: var(--accent);
   --violet: #8f6bff;
   --cyan: #4de6ff;
-  --spectrum: linear-gradient(100deg, #4d84ff, #8f6bff 55%, #4de6ff);
 
-  /* ---- type -------------------------------------------------------------------------------- */
-  --fs-label: 0.875rem; /* 14px: the smallest size used; sentence case, no capitals or tracking */
+  /* ---- type: the system typeface. 17px body, regular for reading, semibold for headings ------ */
+  --fs-label: 0.875rem; /* 14px: the smallest size used */
   --fs-small: 0.875rem;
-  --fs-body: 1rem;
-  --fs-lead-sm: 1.125rem;
-  --t-lead: clamp(1.125rem, 0.4vw + 1.02rem, 1.375rem);
-  --t-h3: clamp(1.375rem, 1.2vw + 1.05rem, 1.75rem);
-  --t-h2: clamp(1.75rem, 2.2vw + 1.1rem, 2.75rem);
-  --t-display: clamp(2.25rem, 4.4vw + 0.9rem, 4.5rem);
-  --t-hero: clamp(2.4rem, 10.2vw, 6.5rem);
-  --lh-body: 1.6;
-  --lh-tight: 1.08;
-  --track-display: -0.03em;
+  --fs-body: 1.0625rem; /* 17px */
+  --fs-lead-sm: 1.1875rem;
+  --t-lead: clamp(1.1875rem, 0.5vw + 1.07rem, 1.3125rem); /* 19 to 21px */
+  --t-h3: clamp(1.375rem, 1vw + 1.1rem, 1.75rem);
+  --t-h2: clamp(1.75rem, 2.2vw + 1rem, 2.5rem);
+  --t-display: clamp(2rem, 3.4vw + 1rem, 3.5rem);
+  --t-hero: clamp(2.5rem, 7.4vw, 5rem);
+  --lh-body: 1.47;
+  --lh-tight: 1.1;
+  --track-display: -0.015em;
   --track-label: 0;
   --measure: 64ch;
 
-  /* ---- space: a 4px base on a 1.5x ladder -------------------------------------------------- */
+  /* ---- space: a 4px base ------------------------------------------------------------------- */
   --s-1: 0.25rem;
   --s-2: 0.5rem;
   --s-3: 0.75rem;
@@ -91,12 +95,12 @@
   --s-7: 3rem;
   --s-8: 4rem;
   --s-9: 6rem;
-  --section: clamp(var(--s-7), 7vw, var(--s-9));
+  --section: clamp(4rem, 9vw, 8rem);
   --gutter: clamp(16px, 4vw, 40px);
-  --max: 1200px;
+  --max: 1080px;
 
   /* ---- shape ------------------------------------------------------------------------------- */
-  --r-sm: 10px; /* inputs, small marks */
+  --r-sm: 12px; /* inputs, small marks */
   --r-md: 18px; /* options, rows inside a panel */
   --r-lg: 28px; /* panels, stages, tiles */
   --r-pill: 999px; /* buttons, chips, tabs */
@@ -105,6 +109,6 @@
   --tap: 44px; /* minimum target size */
   --focus-ring: 3px solid var(--accent);
   --focus-offset: 3px;
-  --header-h: 64px;
+  --header-h: 48px;
   --hub-clearance: 6rem; /* bottom space so the floating progress control never covers content */
 }

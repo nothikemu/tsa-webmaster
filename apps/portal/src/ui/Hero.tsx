@@ -70,7 +70,7 @@ function HeroNetwork(): ReactNode {
             for (let j = 0; j < LAYERS[l + 1]!; j++) {
               const [x2, y2] = node(l + 1, j);
               const pulse = 0.5 + 0.5 * Math.sin(t * 0.9 - l * 1.3 + i * 0.7 + j * 0.45);
-              ctx.strokeStyle = `rgba(160,190,255,${(0.035 + 0.11 * pulse * act + 0.03 * act).toFixed(3)})`;
+              ctx.strokeStyle = `rgba(150,200,255,${(0.035 + 0.11 * pulse * act + 0.03 * act).toFixed(3)})`;
               ctx.lineWidth = 1;
               ctx.beginPath();
               ctx.moveTo(x1, y1);

@@ -63,7 +63,7 @@ function XpHistory(): ReactNode {
                 width="16"
                 height={Math.max(2, h)}
                 rx="2"
-                fill={v > 0 ? '#6f9bff' : 'rgba(255,255,255,.3)'}
+                fill={v > 0 ? '#0091ff' : 'rgba(255,255,255,.3)'}
               />
               {i % 2 === 1 && (
                 <text
@@ -379,7 +379,7 @@ export default function ProgressDashboard(): ReactNode {
           <p className="mono">{t('hub.next')}</p>
           <p className="dash-big">{rec.label}</p>
           <Link to={rec.href} className="btn btn-primary">
-            {t('pd.go')}
+            {rec.kind === 'start' ? t('home.begin') : t('home.continue')}
           </Link>
         </div>
       </section>

@@ -862,9 +862,6 @@
   align-items: center;
   justify-content: space-between;
 }
-.stage-hint {
-  font-size: 0.9rem;
-}
 .segmented {
   display: inline-flex;
   flex-wrap: wrap;
@@ -1153,6 +1150,12 @@ input[type='range']:hover::-webkit-slider-thumb {
 }
 .marker[data-seen='true']:not([aria-pressed='true']) {
   border-color: rgb(255 177 77 / 0.5);
+}
+.explain:empty {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  border: 0;
 }
 .explain {
   padding: 1.2rem 1.5rem;
@@ -1511,10 +1514,6 @@ input[type='range']:hover::-webkit-slider-thumb {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   gap: var(--s-7);
-}
-.chart-summary {
-  color: var(--text-2);
-  max-width: var(--measure);
 }
 .mod-bars {
   list-style: none;

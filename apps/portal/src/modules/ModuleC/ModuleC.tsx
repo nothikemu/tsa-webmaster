@@ -119,15 +119,13 @@ export default function ModuleC({ module }: { module: ModuleContent }): ReactNod
       </div>
 
       <div className="explain glass" role="region" aria-label={t('c.explain')} aria-live="polite">
-        {current ? (
+        {current && (
           <>
             <h3 className="mono sub">{current.name}</h3>
             <p className="prose">{current.summary}</p>
             <h4 className="mono sub">{t('c.mitigation')}</h4>
             <p className="prose">{current.mitigation}</p>
           </>
-        ) : (
-          <p className="prose muted">{t('c.stable')}</p>
         )}
       </div>
 

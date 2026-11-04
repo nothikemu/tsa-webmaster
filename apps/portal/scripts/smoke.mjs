@@ -230,7 +230,7 @@ await check('Module C: 10,242 vertices; markers open mitigations; remediate work
   assert(/10,242 vertices/.test(note), `expected the 10,242-vertex wireframe, got "${note}"`);
   assert(/GPT-2|differential privacy/i.test(text), 'mitigation text missing');
   assert(pressed === 'true', 'marker not pressed');
-  assert(/stable/i.test(stable), 'remediate did not restore the stable message');
+  assert(stable.trim() === '', 'remediate did not clear the explanation');
   return note;
 });
 

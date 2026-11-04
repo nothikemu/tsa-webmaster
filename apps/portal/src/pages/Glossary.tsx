@@ -16,7 +16,6 @@ export default function Glossary(): ReactNode {
     <div className="wrap page prose-page">
       <header className="page-head">
         <h1 className="display">{t('gl.title')}</h1>
-        <p className="lead">{t('gl.lead', { n: glossary.length })}</p>
       </header>
       <div className="field">
         <label htmlFor="gl-search" className="mono">

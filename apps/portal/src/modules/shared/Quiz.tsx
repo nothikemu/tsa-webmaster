@@ -32,7 +32,6 @@ export function Quiz({ module }: { module: ModuleContent }): ReactNode {
       <h2 id="quiz-h" className="lesson-title sr-only">
         {t('quiz.title')}
       </h2>
-      <p className="prose">{t('quiz.intro', { min: BADGE_QUIZ_MIN, total })}</p>
 
       {score !== null && (
         <div className="quiz-result glass" ref={resultRef} tabIndex={-1} role="status">

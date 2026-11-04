@@ -200,7 +200,6 @@ export default function ModuleA({ module }: { module: ModuleContent }): ReactNod
           options={MODES.map((m) => ({ value: m.id, label: m.label, hint: m.key }))}
         />
       </div>
-      <p className="muted stage-hint">{t('a.hint')}</p>
 
       <details className="alt glass">
         <summary>{t('alt.summary')}</summary>

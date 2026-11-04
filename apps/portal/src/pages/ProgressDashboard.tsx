@@ -93,7 +93,7 @@ function XpHistory(): ReactNode {
           );
         })}
       </svg>
-      <p className="chart-summary">{summary}</p>
+      <p className="sr-only">{summary}</p>
     </figure>
   );
 }
@@ -128,7 +128,7 @@ function StreakCalendar(): ReactNode {
           />
         ))}
       </ul>
-      <p className="chart-summary">
+      <p className="sr-only">
         {t('pd.calSummary', {
           n: activeCount,
           total: past.length,
@@ -268,7 +268,6 @@ function DataControls(): ReactNode {
       <div className="data-groups">
         <div className="data-group">
           <h3>{t('pd.backupTitle')}</h3>
-          <p className="muted">{t('pd.backupBody')}</p>
           <div className="check-actions">
             <button type="button" className="btn btn-ghost" onClick={() => void doExport()}>
               {t('pd.export')}
@@ -293,7 +292,6 @@ function DataControls(): ReactNode {
         </div>
         <div className="data-group">
           <h3>{t('pd.startOverTitle')}</h3>
-          <p className="muted">{t('pd.startOverBody')}</p>
           {!resetting && (
             <div className="check-actions">
               <button

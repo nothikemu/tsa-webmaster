@@ -68,7 +68,7 @@ function Sliders({ displayed }: { displayed: SpringGroup }): ReactNode {
                 set(key as ParamKey, v);
               }}
             />
-            <p id={`slider-${key}-hint`} className="muted slider-hint">
+            <p id={`slider-${key}-hint`} className="sr-only">
               {PARAM_META[key].hint}
             </p>
           </div>
@@ -367,9 +367,6 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
       </div>
 
       <VisuallyHidden id="split-desc">{module.centerpiece.description}</VisuallyHidden>
-      <p className="muted stage-hint" id="split-hint">
-        {t('b.hint')}
-      </p>
 
       <details className="alt glass">
         <summary>{t('alt.summary')}</summary>

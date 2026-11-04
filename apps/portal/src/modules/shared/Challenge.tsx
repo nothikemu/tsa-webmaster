@@ -87,7 +87,6 @@ function Intro({
   return (
     <div className="challenge-intro">
       <p className="prose">{c.intro}</p>
-      <p className="muted">{t('challenge.pass', { n: c.passMark })}</p>
       <Segmented
         label={t('challenge.mode')}
         value={mode}
@@ -97,9 +96,6 @@ function Intro({
           { value: 'timed', label: t('challenge.timed') },
         ]}
       />
-      <p className="muted">
-        {mode === 'timed' ? t('challenge.timedNote') : t('challenge.untimedNote')}
-      </p>
       <button type="button" className="btn" onClick={start}>
         {t('challenge.start')}
       </button>
@@ -300,7 +296,6 @@ function TuningRun({ module, challenge }: Shared & { challenge: TuningChallenge 
             </div>
           ))}
         </dl>
-        <p className="muted">{t('challenge.tuneNote')}</p>
         <div className="check-actions">
           <button type="button" className="btn" onClick={lock}>
             {t('challenge.lock')}

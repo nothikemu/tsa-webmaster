@@ -1,11 +1,27 @@
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react';
 import type { ModuleContent } from '../../content';
 import { t } from '../../core/assets';
 import { Spring, SpringGroup, clamp } from '../../core/spring';
 import { useServices } from '../../core/services';
 import { VisuallyHidden, useReducedMotion } from '../../ui/a11y';
 import { useGame } from '../../ui/hooks';
-import { PARAM_KEYS, PARAM_META, PRESETS, buildPrompt, paramsStore, temperatureValue, useParams, type ParamKey } from './params';
+import {
+  PARAM_KEYS,
+  PARAM_META,
+  PRESETS,
+  buildPrompt,
+  paramsStore,
+  temperatureValue,
+  useParams,
+  type ParamKey,
+} from './params';
 import { TOKENS, simulateOutput } from './simulate';
 
 const GRID_W = 48;
@@ -27,7 +43,9 @@ function Sliders({ displayed }: { displayed: SpringGroup }): ReactNode {
             <div className="slider-head">
               <label htmlFor={`slider-${key}`}>{label}</label>
               <output htmlFor={`slider-${key}`} className="num">
-                {key === 'temperature' ? temperatureValue({ ...params, temperature: shown }).toFixed(2) : shown}
+                {key === 'temperature'
+                  ? temperatureValue({ ...params, temperature: shown }).toFixed(2)
+                  : shown}
               </output>
             </div>
             <input
@@ -38,7 +56,11 @@ function Sliders({ displayed }: { displayed: SpringGroup }): ReactNode {
               step={1}
               value={shown}
               aria-describedby={`slider-${key}-hint`}
-              aria-valuetext={key === 'temperature' ? `${temperatureValue({ ...params, temperature: shown }).toFixed(2)}` : `${shown} percent`}
+              aria-valuetext={
+                key === 'temperature'
+                  ? `${temperatureValue({ ...params, temperature: shown }).toFixed(2)}`
+                  : `${shown} percent`
+              }
               style={{ '--fill': `${shown}%` } as React.CSSProperties}
               onChange={(e) => {
                 const v = Number(e.target.value);
@@ -68,11 +90,8 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
   const stageRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
-  const barsRef = useRef<SVGGElement>(null);
+  const barsRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const crossH = useRef<SVGLineElement>(null);
-  const crossV = useRef<SVGLineElement>(null);
-  const readout = useRef<HTMLDivElement>(null);
   const displayed = useRef<SpringGroup>(null as unknown as SpringGroup);
   if (!displayed.current) {
     displayed.current = new SpringGroup(4, reduced ? 60 : 9);
@@ -80,7 +99,6 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
   }
   const divider = useRef(new Spring(50, reduced ? 60 : 13));
   const bars = useRef(new SpringGroup(TOKENS.length, reduced ? 60 : 11));
-  const cursor = useRef({ x: 50, y: 50 });
   const dragging = useRef(false);
   const [pos, setPos] = useState(50);
   const [, setRender] = useState(0);
@@ -114,8 +132,10 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
     const lean = (p - 50) / 28;
     const warpL = reduced ? 0 : -lean * 5 - v * 0.035;
     const warpR = reduced ? 0 : lean * 5 + v * 0.035;
-    if (leftRef.current) leftRef.current.style.transform = `perspective(1500px) rotateY(${warpL.toFixed(2)}deg) scaleX(${(1 + lean * 0.02).toFixed(4)}) skewY(${(v * 0.004).toFixed(3)}deg)`;
-    if (rightRef.current) rightRef.current.style.transform = `perspective(1500px) rotateY(${warpR.toFixed(2)}deg) scaleX(${(1 - lean * 0.02).toFixed(4)}) skewY(${(-v * 0.004).toFixed(3)}deg)`;
+    if (leftRef.current)
+      leftRef.current.style.transform = `perspective(1500px) rotateY(${warpL.toFixed(2)}deg) scaleX(${(1 + lean * 0.02).toFixed(4)}) skewY(${(v * 0.004).toFixed(3)}deg)`;
+    if (rightRef.current)
+      rightRef.current.style.transform = `perspective(1500px) rotateY(${warpR.toFixed(2)}deg) scaleX(${(1 - lean * 0.02).toFixed(4)}) skewY(${(-v * 0.004).toFixed(3)}deg)`;
   }, [reduced]);
 
   // One loop subscription drives sliders, divider, bars and the noise field.
@@ -135,15 +155,22 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
         const g = barsRef.current;
         if (g) {
           for (let i = 0; i < TOKENS.length; i++) {
-            const rect = g.children[i] as SVGRectElement | undefined;
-            const h = Math.max(1, bars.current.values[i]! * 150);
-            rect?.setAttribute('height', h.toFixed(1));
-            rect?.setAttribute('y', (170 - h).toFixed(1));
+            const fill = g.children[i]?.lastElementChild as HTMLElement | null | undefined;
+            if (fill)
+              fill.style.transform = `scaleX(${Math.min(1, Math.max(0.01, bars.current.values[i]! / 0.6)).toFixed(3)})`;
           }
         }
         if (ctx && canvas) {
           phase += f.dt * s.field.speed;
-          kernels.fbmField(field, GRID_W, GRID_H, reduced ? 0 : phase, s.field.scale, s.field.octaves, 7);
+          kernels.fbmField(
+            field,
+            GRID_W,
+            GRID_H,
+            reduced ? 0 : phase,
+            s.field.scale,
+            s.field.octaves,
+            7,
+          );
           const cw = canvas.width / GRID_W;
           const ch = canvas.height / GRID_H;
           for (let y = 0; y < GRID_H; y++) {
@@ -162,21 +189,17 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
     return () => sub.dispose();
   }, [loop, kernels, applyWarp, reduced]);
 
-  // Pointer: divider drag and crosshair tracking. Listeners are passive.
+  // Pointer: divider drag. Listeners are passive.
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return undefined;
     const rectOf = (): DOMRect => stage.getBoundingClientRect();
     const move = (e: PointerEvent): void => {
+      if (!dragging.current) return;
       const r = rectOf();
       const px = clamp(((e.clientX - r.left) / r.width) * 100, 0, 100);
-      const py = clamp(((e.clientY - r.top) / r.height) * 100, 0, 100);
-      cursor.current = { x: px, y: py };
-      paintCrosshair();
-      if (dragging.current) {
-        divider.current.target = clamp(px, POS_MIN, POS_MAX);
-        setPos(divider.current.target);
-      }
+      divider.current.target = clamp(px, POS_MIN, POS_MAX);
+      setPos(divider.current.target);
     };
     const up = (): void => {
       dragging.current = false;
@@ -191,19 +214,6 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
     };
   }, []);
 
-  function paintCrosshair(): void {
-    const { x, y } = cursor.current;
-    crossV.current?.setAttribute('x1', `${x}`);
-    crossV.current?.setAttribute('x2', `${x}`);
-    crossH.current?.setAttribute('y1', `${y}`);
-    crossH.current?.setAttribute('y2', `${y}`);
-    if (readout.current) {
-      readout.current.textContent = `X ${x.toFixed(1).padStart(5, '0')}  Y ${y.toFixed(1).padStart(5, '0')}`;
-      readout.current.style.left = `${clamp(x + 1.2, 1, 78)}%`;
-      readout.current.style.top = `${clamp(y + 1.5, 1, 94)}%`;
-    }
-  }
-
   const onDividerKey = (e: KeyboardEvent<HTMLDivElement>): void => {
     const step = e.shiftKey ? 10 : 2;
     let next = divider.current.target;
@@ -217,39 +227,44 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
     setPos(divider.current.target);
   };
 
-  const onGridKey = (e: KeyboardEvent<HTMLDivElement>): void => {
-    const step = e.shiftKey ? 10 : 1;
-    const c = cursor.current;
-    if (e.key === 'ArrowLeft') c.x = clamp(c.x - step, 0, 100);
-    else if (e.key === 'ArrowRight') c.x = clamp(c.x + step, 0, 100);
-    else if (e.key === 'ArrowUp') c.y = clamp(c.y - step, 0, 100);
-    else if (e.key === 'ArrowDown') c.y = clamp(c.y + step, 0, 100);
-    else return;
-    e.preventDefault();
-    paintCrosshair();
-  };
-
   return (
     <div className="stage-wrap">
-      <div className="splitpane glass" ref={stageRef} style={{ '--pos': '50%' } as React.CSSProperties} data-testid="splitpane">
-        <svg className="grid-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <div
+        className="splitpane glass"
+        ref={stageRef}
+        style={{ '--pos': '50%' } as React.CSSProperties}
+        data-testid="splitpane"
+      >
+        <svg
+          className="grid-overlay"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          focusable="false"
+        >
           <defs>
             <pattern id="grid-minor" width="5" height="5" patternUnits="userSpaceOnUse">
-              <path d="M5 0H0V5" fill="none" stroke="rgba(255,255,255,.07)" strokeWidth=".15" vectorEffect="non-scaling-stroke" />
+              <path
+                d="M5 0H0V5"
+                fill="none"
+                stroke="rgba(255,255,255,.07)"
+                strokeWidth=".15"
+                vectorEffect="non-scaling-stroke"
+              />
             </pattern>
             <pattern id="grid-major" width="25" height="25" patternUnits="userSpaceOnUse">
-              <path d="M25 0H0V25" fill="none" stroke="rgba(255,255,255,.16)" strokeWidth=".2" vectorEffect="non-scaling-stroke" />
+              <path
+                d="M25 0H0V25"
+                fill="none"
+                stroke="rgba(255,255,255,.16)"
+                strokeWidth=".2"
+                vectorEffect="non-scaling-stroke"
+              />
             </pattern>
           </defs>
           <rect width="100" height="100" fill="url(#grid-minor)" />
           <rect width="100" height="100" fill="url(#grid-major)" />
-          <line ref={crossV} x1="50" x2="50" y1="0" y2="100" stroke="rgba(143,184,255,.7)" strokeWidth=".25" vectorEffect="non-scaling-stroke" />
-          <line ref={crossH} y1="50" y2="50" x1="0" x2="100" stroke="rgba(143,184,255,.7)" strokeWidth=".25" vectorEffect="non-scaling-stroke" />
         </svg>
-
-        <div className="grid-readout mono" ref={readout} aria-hidden="true">
-          X 050.0  Y 050.0
-        </div>
 
         <div className="pane pane-left" ref={leftRef}>
           <h3 className="mono pane-title">{t('b.console')}</h3>
@@ -261,7 +276,6 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
                 type="button"
                 className="chip"
                 aria-pressed={preset === p.id}
-                title={p.summary}
                 onClick={() => {
                   applyPreset(p.id);
                   game({ type: 'ACTION', module: module.id, action: p.action });
@@ -273,9 +287,6 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
           </div>
           <div className="prompt-template" aria-live="off">
             <h4 className="mono pane-title">{t('b.template')}</h4>
-            <p className="mono param-line">
-              temperature={temperatureValue(params).toFixed(2)} specificity={params.specificity} context={params.context} strictness={params.strictness}
-            </p>
             {prompt.map((part) => (
               <div key={part.id} className="prompt-part" data-active={part.active}>
                 <span className="mono">{part.label}</span>
@@ -314,26 +325,30 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
 
         <div className="pane pane-right" ref={rightRef}>
           <h3 className="mono pane-title">{t('b.output')}</h3>
-          <p className="sim-flag mono">{t('b.simulated')}</p>
-          <svg className="bars" viewBox="0 0 400 200" role="img" aria-label={t('b.barsLabel', { top: TOKENS[sim.probs.indexOf(Math.max(...sim.probs))]!, p: Math.round(Math.max(...sim.probs) * 100) })}>
-            <g ref={barsRef}>
-              {TOKENS.map((tok, i) => (
-                <rect key={tok} x={12 + i * 48} width="30" y="170" height="1" rx="2" fill="url(#bar-grad)" />
-              ))}
-            </g>
-            <defs>
-              <linearGradient id="bar-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor="#8fb0ff" />
-                <stop offset="1" stopColor="#4d84ff" stopOpacity=".35" />
-              </linearGradient>
-            </defs>
-            {TOKENS.map((tok, i) => (
-              <text key={tok} x={27 + i * 48} y="190" textAnchor="middle" className="bar-label" fontSize="8.5">
-                {tok}
-              </text>
+          <div
+            className="token-bars"
+            ref={barsRef}
+            role="img"
+            aria-label={t('b.barsLabel', {
+              top: TOKENS[sim.probs.indexOf(Math.max(...sim.probs))]!,
+              p: Math.round(Math.max(...sim.probs) * 100),
+            })}
+          >
+            {TOKENS.map((tok) => (
+              <div key={tok}>
+                <span>{tok}</span>
+                <i className="token-fill" />
+              </div>
             ))}
-          </svg>
-          <canvas ref={canvasRef} className="noise-field" width={GRID_W * 8} height={GRID_H * 8} role="img" aria-label={t('b.fieldLabel')} />
+          </div>
+          <canvas
+            ref={canvasRef}
+            className="noise-field"
+            width={GRID_W * 8}
+            height={GRID_H * 8}
+            role="img"
+            aria-label={t('b.fieldLabel')}
+          />
           <dl className="readouts">
             <div>
               <dt className="mono">{t('b.adherence')}</dt>
@@ -348,12 +363,6 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
               <dd className="num">{Math.round(sim.risk * 100)}%</dd>
             </div>
           </dl>
-        </div>
-
-        {/* role="application" hands arrow keys to the crosshair; the label explains it. */}
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
-        <div className="grid-key mono" tabIndex={0} role="application" aria-label={t('b.gridKey')} onKeyDown={onGridKey}>
-          {t('b.gridKeyShort')}
         </div>
       </div>
 
@@ -375,11 +384,13 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
           })}
         </p>
         <ol className="prose alt-list">
-          {prompt.filter((p) => p.active).map((p) => (
-            <li key={p.id}>
-              <strong>{p.label}:</strong> {p.lines.join(' ')}
-            </li>
-          ))}
+          {prompt
+            .filter((p) => p.active)
+            .map((p) => (
+              <li key={p.id}>
+                <strong>{p.label}:</strong> {p.lines.join(' ')}
+              </li>
+            ))}
         </ol>
       </details>
     </div>

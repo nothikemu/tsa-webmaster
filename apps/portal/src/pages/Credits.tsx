@@ -5,7 +5,7 @@ import { Doc } from './Doc';
 
 export default function Credits(): ReactNode {
   return (
-    <Doc page={CREDITS} eyebrow={t('doc.creditsEyebrow')}>
+    <Doc page={CREDITS}>
       <section aria-labelledby="libs-h" className="doc-section">
         <h2 id="libs-h" className="h2">
           {t('doc.libraries')}

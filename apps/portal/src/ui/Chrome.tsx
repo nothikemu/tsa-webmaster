@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { FOOTER_GROUPS, NAV, SITE } from '../content/site';
+import { FOOTER_LINKS, NAV, SITE } from '../content/site';
 import { t } from '../core/assets';
 import { Spring } from '../core/spring';
 import { useServices } from '../core/services';
@@ -42,38 +42,20 @@ export function Footer(): ReactNode {
       <div className="wrap site-footer-inner">
         <div>
           <p className="wordmark">{SITE.name.toLowerCase()}</p>
-          <p className="muted footer-note">{t('footer.note', { event: SITE.event })}</p>
           <p className="muted footer-note">{t('footer.privacy')}</p>
         </div>
-        <nav aria-label={t('nav.footer')} className="footer-nav">
-          {FOOTER_GROUPS.map((g) => (
-            <div key={g.heading}>
-              <p
-                className="mono footer-heading"
-                id={`footer-${g.heading.toLowerCase().replace(/\W+/g, '-')}`}
-              >
-                {g.heading}
-              </p>
-              <ul
-                className="footer-links"
-                aria-labelledby={`footer-${g.heading.toLowerCase().replace(/\W+/g, '-')}`}
-              >
-                {g.links.map((n) => (
-                  <li key={n.href}>
-                    <Link to={n.href}>{n.label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+        <nav aria-label={t('nav.footer')}>
+          <ul className="footer-links">
+            {FOOTER_LINKS.map((n) => (
+              <li key={n.href}>
+                <Link to={n.href}>{n.label}</Link>
+              </li>
+            ))}
+          </ul>
         </nav>
       </div>
     </footer>
   );
-}
-
-export function Eyebrow({ children }: { children: ReactNode }): ReactNode {
-  return <p className="mono eyebrow">{children}</p>;
 }
 
 /**

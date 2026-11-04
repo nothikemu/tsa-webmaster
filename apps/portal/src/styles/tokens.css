@@ -66,7 +66,7 @@
   --spectrum: linear-gradient(100deg, #4d84ff, #8f6bff 55%, #4de6ff);
 
   /* ---- type -------------------------------------------------------------------------------- */
-  --fs-label: 0.75rem; /* 12px: the smallest size used, for short technical labels only */
+  --fs-label: 0.875rem; /* 14px: the smallest size used; sentence case, no capitals or tracking */
   --fs-small: 0.875rem;
   --fs-body: 1rem;
   --fs-lead-sm: 1.125rem;
@@ -78,7 +78,7 @@
   --lh-body: 1.6;
   --lh-tight: 1.08;
   --track-display: -0.03em;
-  --track-label: 0.1em;
+  --track-label: 0;
   --measure: 64ch;
 
   /* ---- space: a 4px base on a 1.5x ladder -------------------------------------------------- */

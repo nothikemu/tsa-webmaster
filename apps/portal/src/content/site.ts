@@ -21,85 +21,24 @@ export const NAV: readonly NavItem[] = [
   { label: 'About', href: '/about' },
 ];
 
-export interface NavGroup {
-  heading: string;
-  links: readonly NavItem[];
-}
-
-/** The footer repeats the primary routes and adds the three module pages and the reference pages. */
-export const FOOTER_GROUPS: readonly NavGroup[] = [
-  {
-    heading: 'Learn',
-    links: [
-      { label: 'Foundations', href: '/modules/foundations' },
-      { label: 'Synthesis', href: '/modules/synthesis' },
-      { label: 'Ethics', href: '/modules/ethics' },
-      { label: 'Glossary', href: '/glossary' },
-    ],
-  },
-  {
-    heading: 'Your progress',
-    links: [
-      { label: 'Progress', href: '/progress' },
-      { label: 'Achievements', href: '/achievements' },
-    ],
-  },
-  {
-    heading: 'About',
-    links: [
-      { label: 'About this portal', href: '/about' },
-      { label: 'Accessibility statement', href: '/accessibility' },
-      { label: 'Credits', href: '/credits' },
-    ],
-  },
+export const FOOTER_LINKS: readonly NavItem[] = [
+  { label: 'Glossary', href: '/glossary' },
+  { label: 'About', href: '/about' },
+  { label: 'Accessibility', href: '/accessibility' },
+  { label: 'Credits', href: '/credits' },
 ];
 
-/** Flat list for the pre-rendered no-JavaScript page. */
-export const FOOTER_LINKS: readonly NavItem[] = FOOTER_GROUPS.flatMap((g) => g.links);
-
 export const HOME = {
-  eyebrow: 'PARAMETER / INTERACTIVE AI LEARNING PORTAL / 2026-27',
   headline: ['Learn how', 'machines learn.'],
-  lead: 'Push around a neural network of up to 6,000 particles. Tune a prompt until the output behaves. Break a model four ways, then fix it. Fifteen lessons for grades 9 to 12, and nothing leaves your device.',
-  stats: [
-    { value: '3', label: 'modules' },
-    { value: '15', label: 'lessons' },
-    { value: '30', label: 'practice questions' },
-    { value: '0', label: 'accounts' },
-  ],
+  lead: 'Push a neural network around. Tune a prompt until it behaves. Break a model, then fix it. Nothing leaves your device.',
   bento: {
     heading: 'Three modules. Three different ways to touch an idea.',
-    tiles: {
-      foundations: 'Neural Topology Swarm / up to 6,000 particles / 5 lessons',
-      synthesis: 'Anamorphic Prompt Console / 4 parameters / 4 presets',
-      ethics: 'Vulnerability Wireframe / 10,242 vertices / 4 failure modes',
-    },
   },
   gamification: {
     heading: 'Points for finishing, not for refreshing.',
     body: [
       'XP is paid once per step: 10 for seeing a lesson, 15 for practicing it, 25 for mastering it. A knowledge check pays only for improvement. After 400 XP in one day the rate drops to a quarter.',
       'A streak counts days when you learned something, not days you opened the tab. Each module ends in a badge, and a badge needs a lesson set, a centerpiece, a 4-of-5 check and a cleared challenge.',
-    ],
-  },
-  facts: {
-    heading: 'How it is built.',
-    items: [
-      {
-        value: '1',
-        label: 'WebAssembly module',
-        body: 'Rust kernels for neighbour search, noise and hashing, with a TypeScript twin for every one.',
-      },
-      {
-        value: '5',
-        label: 'compute paths',
-        body: 'WebGPU compute, WebGL2 float textures, a WASM worker, WASM on the main thread, plain TypeScript.',
-      },
-      {
-        value: '60',
-        label: 'frames per second target',
-        body: 'A quality governor trades particle count and effects for frame time, never the other way round.',
-      },
     ],
   },
 } as const;

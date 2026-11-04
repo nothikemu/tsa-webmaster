@@ -4,7 +4,6 @@ import { t } from '../core/assets';
 import { Spring } from '../core/spring';
 import { useServices } from '../core/services';
 import { Link } from '../router';
-import { Eyebrow } from './Chrome';
 import { useReducedMotion } from './a11y';
 import { useRecommendation } from './hooks';
 import { scrollState } from './motion';
@@ -118,7 +117,6 @@ export function HeroSection({
         <HeroNetwork />
         <div className="wrap hero-grid">
           <div className="hero-copy">
-            <Eyebrow>{HOME.eyebrow}</Eyebrow>
             <h1 id="hero-h" className="hero-title">
               {HOME.headline.map((line) => (
                 <span key={line} className="hero-line">
@@ -141,20 +139,8 @@ export function HeroSection({
                 {t('hero.all')}
               </Link>
             </div>
-            {started && <p className="hero-next muted">{t('hero.next', { label: rec.label })}</p>}
           </div>
-          <dl className="hero-stats mono">
-            {HOME.stats.map((s) => (
-              <div key={s.label}>
-                <dt>{s.label}</dt>
-                <dd className="num">{s.value}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
-        <p className="hero-scroll mono" aria-hidden="true">
-          {t('hero.scroll')}
-        </p>
       </div>
     </section>
   );

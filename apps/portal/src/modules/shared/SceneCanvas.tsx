@@ -3,7 +3,11 @@ import { getAsset, t } from '../../core/assets';
 import type { Frame } from '../../core/loop';
 import { useServices, type Services } from '../../core/services';
 import type { QualityTier } from '../../core/quality';
-import { createRenderHandle, type RenderHandle, type RendererKind } from '../../gpu/rendererFactory';
+import {
+  createRenderHandle,
+  type RenderHandle,
+  type RendererKind,
+} from '../../gpu/rendererFactory';
 import { useReducedMotion } from '../../ui/a11y';
 import { hairlineClass } from '../../ui/edge';
 
@@ -44,10 +48,16 @@ interface Props<S extends SceneController> {
   onReady?(info: { kind: RendererKind; scene: S; note: string }): void;
   onStatus?(status: SceneStatus, reason: string | null): void;
   onKeyDown?(event: KeyboardEvent, scene: S): void;
+  /** Renderer and compute tier, exposed as data-note for tests; never drawn. */
+  note?: string;
   children?: ReactNode;
 }
 
-function makeCanvas(label: string, describedBy: string, role: 'application' | 'img'): HTMLCanvasElement {
+function makeCanvas(
+  label: string,
+  describedBy: string,
+  role: 'application' | 'img',
+): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
   canvas.className = 'stage-canvas';
   canvas.setAttribute('role', role);
@@ -158,7 +168,10 @@ export function SceneCanvas<S extends SceneController>(props: Props<S>): ReactNo
       };
       const ro = new ResizeObserver(size);
       ro.observe(stage);
-      const sub = services.loop.subscribe((f) => live.scene.update(f), { element: stage, heavy: true });
+      const sub = services.loop.subscribe((f) => live.scene.update(f), {
+        element: stage,
+        heavy: true,
+      });
       const unbind = live.bind?.(liveCanvas);
       const onKey = (e: KeyboardEvent): void => latest.current.onKeyDown?.(e, live.scene as never);
       liveCanvas.addEventListener('keydown', onKey);
@@ -177,8 +190,14 @@ export function SceneCanvas<S extends SceneController>(props: Props<S>): ReactNo
       });
       setStatus('ready');
       latest.current.onStatus?.('ready', null);
-      latest.current.onReady?.({ kind: liveHandle.kind, scene: live.scene as never, note: live.note ?? '' });
-    })().catch((err: unknown) => fail(err instanceof Error ? err.message : 'The 3D scene could not start'));
+      latest.current.onReady?.({
+        kind: liveHandle.kind,
+        scene: live.scene as never,
+        note: live.note ?? '',
+      });
+    })().catch((err: unknown) =>
+      fail(err instanceof Error ? err.message : 'The 3D scene could not start'),
+    );
 
     return () => {
       disposed = true;
@@ -193,7 +212,12 @@ export function SceneCanvas<S extends SceneController>(props: Props<S>): ReactNo
   }, [tier]);
 
   return (
-    <div className={`stage ${props.className ?? ''}`} ref={stageRef} data-status={status}>
+    <div
+      className={`stage ${props.className ?? ''}`}
+      ref={stageRef}
+      data-status={status}
+      data-note={props.note || undefined}
+    >
       {status === 'loading' && (
         <div className="stage-status" aria-hidden="true">
           <span className={hairlineClass} />

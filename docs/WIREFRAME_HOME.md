@@ -1,5 +1,8 @@
 # Home page wireframe
 
+> **Update:** the later "minimal and zen" pass removed the eyebrow label, the stats row, the scroll hint, the progress strip, the progress tile and the "how it is built" facts from the home page, so the sections below that describe them are historical. The home page is now the hero, three module cards and one short section on points and badges. Across the site, slash-joined labels, native tooltips and decorative readouts are gone, and small labels are plain sentence-case text.
+
+
 Black ground (`#000`), elevated sections `#050507`, one mid-grey `#86868b`, white for primary text. The accent family (blue → violet → cyan) appears only on 3D elements, progress rings and focus states.
 
 ## Desktop (1440 wide)

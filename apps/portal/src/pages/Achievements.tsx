@@ -5,7 +5,6 @@ import { BadgeChecklist } from '../modules/ModulePage';
 import { useBadgeProgress } from '../modules/shared/badgeRows';
 import { Link } from '../router';
 import { Badge } from '../ui/Badges';
-import { Eyebrow } from '../ui/Chrome';
 import { useData } from '../ui/hooks';
 import { edgeClass } from '../ui/edge';
 
@@ -40,7 +39,6 @@ export default function Achievements(): ReactNode {
   return (
     <div className="wrap page">
       <header className="page-head">
-        <Eyebrow>{t('ach.eyebrow')}</Eyebrow>
         <h1 className="display">{t('ach.title')}</h1>
         <p className="lead">{t('ach.lead', { n: earned, total: MODULES.length })}</p>
       </header>
@@ -51,10 +49,8 @@ export default function Achievements(): ReactNode {
             <li key={m.id} className={`ach-row ${edgeClass}`} data-unlocked={unlocked}>
               <Badge module={m.id} unlocked={unlocked} size={200} anchor />
               <div>
-                <p className="mono">{m.label}</p>
                 <h2 className="h2">{m.badge.name}</h2>
                 <BadgeStatus module={m} />
-                <p className="prose">{m.badge.criteria}</p>
                 <BadgeChecklist module={m} />
                 <Link to={moduleHref(m.id)} className="link-arrow">
                   {t('ach.open', { title: m.title })}

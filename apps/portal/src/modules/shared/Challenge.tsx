@@ -5,7 +5,14 @@ import { t } from '../../core/assets';
 import { Link } from '../../router';
 import { useClock, useData, useGame } from '../../ui/hooks';
 import { Segmented } from '../../ui/Segmented';
-import { PARAM_KEYS, PARAM_META, checkRanges, paramsStore, useParams, type RangeMiss } from '../ModuleB/params';
+import {
+  PARAM_KEYS,
+  PARAM_META,
+  checkRanges,
+  paramsStore,
+  useParams,
+  type RangeMiss,
+} from '../ModuleB/params';
 
 type Mode = 'untimed' | 'timed';
 type Phase = 'ready' | 'running' | 'done';
@@ -38,25 +45,49 @@ function useRun(module: ModuleContent) {
     const ms = Math.round(performance.now() - startedAt.current + penalty + extraPenalty);
     setFinal({ score, ms });
     setPhase('done');
-    game({ type: 'CHALLENGE_FINISHED', module: module.id, score, elapsedMs: ms, timed: mode === 'timed' });
+    game({
+      type: 'CHALLENGE_FINISHED',
+      module: module.id,
+      score,
+      elapsedMs: ms,
+      timed: mode === 'timed',
+    });
   };
   const reset = (): void => {
     setPhase('ready');
     setFinal(null);
     setPenalty(0);
   };
-  return { mode, setMode, phase, start, finish, reset, elapsed, final, best, addPenalty: (ms: number) => setPenalty((p) => p + ms) };
+  return {
+    mode,
+    setMode,
+    phase,
+    start,
+    finish,
+    reset,
+    elapsed,
+    final,
+    best,
+    addPenalty: (ms: number) => setPenalty((p) => p + ms),
+  };
 }
 
-function Intro({ module, mode, setMode, start, best }: { module: ModuleContent; mode: Mode; setMode: (m: Mode) => void; start: () => void; best: { done: boolean; bestMs: number | null } }): ReactNode {
+function Intro({
+  module,
+  mode,
+  setMode,
+  start,
+}: {
+  module: ModuleContent;
+  mode: Mode;
+  setMode: (m: Mode) => void;
+  start: () => void;
+}): ReactNode {
   const c = module.challenge;
   return (
     <div className="challenge-intro">
       <p className="prose">{c.intro}</p>
-      <p className="mono">
-        {t('challenge.pass', { n: c.passMark })} / {t('challenge.par', { s: c.parSeconds })}
-        {best.done && best.bestMs !== null ? ` / ${t('challenge.best', { t: fmt(best.bestMs) })}` : ''}
-      </p>
+      <p className="muted">{t('challenge.pass', { n: c.passMark })}</p>
       <Segmented
         label={t('challenge.mode')}
         value={mode}
@@ -66,7 +97,9 @@ function Intro({ module, mode, setMode, start, best }: { module: ModuleContent; 
           { value: 'timed', label: t('challenge.timed') },
         ]}
       />
-      <p className="muted">{mode === 'timed' ? t('challenge.timedNote') : t('challenge.untimedNote')}</p>
+      <p className="muted">
+        {mode === 'timed' ? t('challenge.timedNote') : t('challenge.untimedNote')}
+      </p>
       <button type="button" className="btn" onClick={start}>
         {t('challenge.start')}
       </button>
@@ -74,7 +107,19 @@ function Intro({ module, mode, setMode, start, best }: { module: ModuleContent; 
   );
 }
 
-function Summary({ module, score, ms, timed, reset }: { module: ModuleContent; score: number; ms: number; timed: boolean; reset: () => void }): ReactNode {
+function Summary({
+  module,
+  score,
+  ms,
+  timed,
+  reset,
+}: {
+  module: ModuleContent;
+  score: number;
+  ms: number;
+  timed: boolean;
+  reset: () => void;
+}): ReactNode {
   const c = module.challenge;
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => ref.current?.focus(), []);
@@ -83,10 +128,13 @@ function Summary({ module, score, ms, timed, reset }: { module: ModuleContent; s
     <div className="quiz-result glass" ref={ref} tabIndex={-1} role="status">
       <p className="num quiz-score">
         {score}
-        <span className="muted"> / {c.kind === 'choice' ? c.items.length : c.scenarios.length}</span>
+        <span className="muted">
+          {' '}
+          / {c.kind === 'choice' ? c.items.length : c.scenarios.length}
+        </span>
       </p>
       <p>{passed ? t('challenge.cleared') : t('challenge.notYet', { n: c.passMark })}</p>
-      <p className="mono">{timed ? `${t('challenge.time', { t: fmt(ms) })} / ${t('challenge.par', { s: c.parSeconds })}` : t('challenge.untimedResult')}</p>
+      {timed && <p className="muted">{t('challenge.time', { t: fmt(ms) })}</p>}
       <div className="check-actions">
         <button type="button" className="btn btn-ghost" onClick={reset}>
           {t('challenge.again')}
@@ -131,14 +179,24 @@ function ChoiceRun({ module, challenge }: Shared & { challenge: ChoiceChallenge 
     else if (run.mode === 'timed') run.addPenalty(MISTAKE_PENALTY_MS);
   };
 
-  if (run.phase === 'ready') return <Intro module={module} mode={run.mode} setMode={run.setMode} start={begin} best={run.best} />;
-  if (run.phase === 'done' && run.final) return <Summary module={module} score={run.final.score} ms={run.final.ms} timed={run.mode === 'timed'} reset={run.reset} />;
+  if (run.phase === 'ready')
+    return <Intro module={module} mode={run.mode} setMode={run.setMode} start={begin} />;
+  if (run.phase === 'done' && run.final)
+    return (
+      <Summary
+        module={module}
+        score={run.final.score}
+        ms={run.final.ms}
+        timed={run.mode === 'timed'}
+        reset={run.reset}
+      />
+    );
   if (!item) return null;
   return (
     <div className="challenge-run">
-      <p className="mono challenge-hud">
-        {t('challenge.item', { n: index + 1, total: challenge.items.length })} / {t('challenge.score', { n: score })}
-        {run.mode === 'timed' && <span className="num"> / {fmt(run.elapsed)}</span>}
+      <p className="muted challenge-hud">
+        <span>{t('challenge.item', { n: index + 1, total: challenge.items.length })}</span>
+        {run.mode === 'timed' && <span className="num">{fmt(run.elapsed)}</span>}
       </p>
       <fieldset className="check glass">
         <legend className="check-prompt">{item.prompt}</legend>
@@ -157,10 +215,20 @@ function ChoiceRun({ module, challenge }: Shared & { challenge: ChoiceChallenge 
             </button>
           ))}
         </div>
-        <div role="status" aria-live="polite" className="feedback" data-result={picked === null ? 'idle' : picked === item.answer ? 'right' : 'wrong'}>
+        <div
+          role="status"
+          aria-live="polite"
+          className="feedback"
+          data-result={picked === null ? 'idle' : picked === item.answer ? 'right' : 'wrong'}
+        >
           {picked !== null && (
             <>
-              <strong>{picked === item.answer ? t('lesson.correct') : t('challenge.missed', { answer: challenge.options[item.answer]! })}</strong> {item.explain}
+              <strong>
+                {picked === item.answer
+                  ? t('lesson.correct')
+                  : t('challenge.missed', { answer: challenge.options[item.answer]! })}
+              </strong>{' '}
+              {item.explain}
             </>
           )}
         </div>
@@ -179,14 +247,12 @@ function TuningRun({ module, challenge }: Shared & { challenge: TuningChallenge 
   const params = useParams((s) => s.params);
   const [index, setIndex] = useState(0);
   const [misses, setMisses] = useState<RangeMiss[]>([]);
-  const [mistakes, setMistakes] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const scenario = challenge.scenarios[index];
 
   const begin = (): void => {
     setIndex(0);
     setMisses([]);
-    setMistakes(0);
     setShowHint(false);
     run.start();
   };
@@ -195,7 +261,6 @@ function TuningRun({ module, challenge }: Shared & { challenge: TuningChallenge 
     const missed = checkRanges(paramsStore.getState().params, scenario.ranges);
     setMisses(missed);
     if (missed.length > 0) {
-      setMistakes((m) => m + 1);
       if (run.mode === 'timed') run.addPenalty(MISTAKE_PENALTY_MS);
       return;
     }
@@ -206,14 +271,24 @@ function TuningRun({ module, challenge }: Shared & { challenge: TuningChallenge 
     }
   };
 
-  if (run.phase === 'ready') return <Intro module={module} mode={run.mode} setMode={run.setMode} start={begin} best={run.best} />;
-  if (run.phase === 'done' && run.final) return <Summary module={module} score={run.final.score} ms={run.final.ms} timed={run.mode === 'timed'} reset={run.reset} />;
+  if (run.phase === 'ready')
+    return <Intro module={module} mode={run.mode} setMode={run.setMode} start={begin} />;
+  if (run.phase === 'done' && run.final)
+    return (
+      <Summary
+        module={module}
+        score={run.final.score}
+        ms={run.final.ms}
+        timed={run.mode === 'timed'}
+        reset={run.reset}
+      />
+    );
   if (!scenario) return null;
   return (
     <div className="challenge-run">
-      <p className="mono challenge-hud">
-        {t('challenge.item', { n: index + 1, total: challenge.scenarios.length })} / {t('challenge.mistakes', { n: mistakes })}
-        {run.mode === 'timed' && <span className="num"> / {fmt(run.elapsed)}</span>}
+      <p className="muted challenge-hud">
+        <span>{t('challenge.item', { n: index + 1, total: challenge.scenarios.length })}</span>
+        {run.mode === 'timed' && <span className="num">{fmt(run.elapsed)}</span>}
       </p>
       <div className="check glass">
         <p className="check-prompt">{scenario.goal}</p>
@@ -230,17 +305,28 @@ function TuningRun({ module, challenge }: Shared & { challenge: TuningChallenge 
           <button type="button" className="btn" onClick={lock}>
             {t('challenge.lock')}
           </button>
-          <button type="button" className="btn btn-ghost" aria-expanded={showHint} onClick={() => setShowHint((v) => !v)}>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            aria-expanded={showHint}
+            onClick={() => setShowHint((v) => !v)}
+          >
             {showHint ? t('challenge.hideHint') : t('challenge.hint')}
           </button>
         </div>
         {showHint && <p className="prose">{scenario.hint}</p>}
-        <div role="status" aria-live="polite" className="feedback" data-result={misses.length ? 'wrong' : 'idle'}>
+        <div
+          role="status"
+          aria-live="polite"
+          className="feedback"
+          data-result={misses.length ? 'wrong' : 'idle'}
+        >
           {misses.length > 0 && (
             <ul className="misses">
               {misses.map((m) => (
                 <li key={m.key}>
-                  <strong>{PARAM_META[m.key].label}</strong> {t('challenge.miss', { v: m.value, lo: m.range[0], hi: m.range[1] })}
+                  <strong>{PARAM_META[m.key].label}</strong>{' '}
+                  {t('challenge.miss', { v: m.value, lo: m.range[0], hi: m.range[1] })}
                 </li>
               ))}
             </ul>
@@ -256,10 +342,14 @@ export function Challenge({ module }: Shared): ReactNode {
   const c = module.challenge;
   return (
     <section className="challenge" aria-labelledby="challenge-h">
-      <h2 id="challenge-h" className="lesson-title">
+      <h2 id="challenge-h" className="lesson-title sr-only">
         {c.title}
       </h2>
-      {c.kind === 'choice' ? <ChoiceRun module={module} challenge={c} /> : <TuningRun module={module} challenge={c} />}
+      {c.kind === 'choice' ? (
+        <ChoiceRun module={module} challenge={c} />
+      ) : (
+        <TuningRun module={module} challenge={c} />
+      )}
     </section>
   );
 }

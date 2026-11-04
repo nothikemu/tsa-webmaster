@@ -2,13 +2,12 @@ import { useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode 
 import { MODULES } from '../content';
 import { announce } from '../core/announce';
 import { t } from '../core/assets';
-import { XP_LESSON, levelInfo } from '../core/gamification';
+import { levelInfo } from '../core/gamification';
 import { exportProgress, parseImport } from '../core/persistence';
 import { dayKey, masteryRank } from '../core/schema';
 import { useServices } from '../core/services';
 import { Link } from '../router';
 import { Badge } from '../ui/Badges';
-import { Eyebrow } from '../ui/Chrome';
 import { Ring } from '../ui/Ring';
 import { useData, useOverall, useRecommendation, useSnapshot, useTween } from '../ui/hooks';
 import { edgeClass } from '../ui/edge';
@@ -94,7 +93,6 @@ function XpHistory(): ReactNode {
           );
         })}
       </svg>
-      <figcaption className="mono">{t('pd.xpCaption')}</figcaption>
       <p className="chart-summary">{summary}</p>
     </figure>
   );
@@ -118,12 +116,6 @@ function StreakCalendar(): ReactNode {
   const level = (n: number): number => (n === 0 ? 0 : n < 3 ? 1 : n < 6 ? 2 : 3);
   const past = cells.filter((c) => !c.future);
   const activeCount = past.filter((c) => c.count > 0).length;
-  const legend: Array<[number, string]> = [
-    [0, t('pd.cal0')],
-    [1, t('pd.cal1')],
-    [2, t('pd.cal2')],
-    [3, t('pd.cal3')],
-  ];
   return (
     <figure className="chart">
       <ul className="calendar" aria-label={t('pd.calLabel', { weeks: WEEKS })}>
@@ -134,15 +126,6 @@ function StreakCalendar(): ReactNode {
             aria-label={c.future ? undefined : t('pd.calDay', { day: c.key, n: c.count })}
             aria-hidden={c.future || undefined}
           />
-        ))}
-      </ul>
-      <ul className="cal-legend">
-        <li>{t('pd.calLegend')}</li>
-        {legend.map(([l, label]) => (
-          <li key={l}>
-            <i data-level={l} aria-hidden="true" />
-            {label}
-          </li>
         ))}
       </ul>
       <p className="chart-summary">
@@ -164,7 +147,7 @@ function Heatmap(): ReactNode {
     // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
     <div className="table-wrap" role="region" aria-label={t('pd.mastery')} tabIndex={0}>
       <table className="heatmap">
-        <caption className="mono">{t('pd.heatCaption')}</caption>
+        <caption className="sr-only">{t('pd.heatCaption')}</caption>
         <thead>
           <tr>
             <th scope="col">{t('pd.module')}</th>
@@ -220,7 +203,6 @@ function Heatmap(): ReactNode {
           })}
         </tbody>
       </table>
-      <p className="muted legend mono">{t('pd.legend')}</p>
     </div>
   );
 }
@@ -283,7 +265,6 @@ function DataControls(): ReactNode {
       <h2 id="data-h" className="h2">
         {t('pd.dataTitle')}
       </h2>
-      <p className="prose">{t('pd.dataBody')}</p>
       <div className="data-groups">
         <div className="data-group">
           <h3>{t('pd.backupTitle')}</h3>
@@ -372,13 +353,10 @@ export default function ProgressDashboard(): ReactNode {
   const rec = useRecommendation();
   const level = levelInfo(data.xp);
   const xpT = useTween(data.xp);
-  const empty = data.xp === 0 && overall === 0;
   return (
     <div className="wrap page dashboard">
       <header className="page-head">
-        <Eyebrow>{t('pd.eyebrow')}</Eyebrow>
         <h1 className="display">{t('pd.title')}</h1>
-        <p className="lead">{t('pd.lead')}</p>
       </header>
 
       <section className="dash-summary" aria-label={t('pd.summary')}>
@@ -402,21 +380,11 @@ export default function ProgressDashboard(): ReactNode {
         <div className={`dash-card dash-next ${edgeClass}`}>
           <p className="mono">{t('hub.next')}</p>
           <p className="dash-big">{rec.label}</p>
-          <p className="muted">{rec.reason}</p>
           <Link to={rec.href} className="btn btn-primary">
             {t('pd.go')}
           </Link>
         </div>
       </section>
-
-      {empty && (
-        <section className={`empty-state ${edgeClass}`} aria-labelledby="empty-h">
-          <h2 id="empty-h" className="dash-big">
-            {t('pd.emptyTitle')}
-          </h2>
-          <p className="prose">{t('pd.emptyBody', { xp: XP_LESSON.seen })}</p>
-        </section>
-      )}
 
       <section aria-labelledby="mods-h" className="dash-section">
         <h2 id="mods-h" className="h2">
@@ -425,7 +393,7 @@ export default function ProgressDashboard(): ReactNode {
         <ul className="mod-bars">
           {MODULES.map((m) => (
             <li key={m.id}>
-              <span className="mono">{m.label}</span>
+              <span>{m.title}</span>
               <span
                 className="bar"
                 role="img"

@@ -3,7 +3,7 @@ import { useRef, type KeyboardEvent, type ReactNode } from 'react';
 interface Option<T extends string> {
   value: T;
   label: string;
-  /** Short keyboard hint shown in the label, e.g. "1". */
+  /** Keyboard shortcut, announced to assistive technology and not drawn, e.g. "1". */
   hint?: string;
 }
 
@@ -19,9 +19,18 @@ interface Props<T extends string> {
  * A segmented control built as an ARIA radio group with a roving tabindex: one tab stop, arrow
  * keys move and select, Home and End jump to the ends.
  */
-export function Segmented<T extends string>({ label, value, options, onChange, className }: Props<T>): ReactNode {
+export function Segmented<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+  className,
+}: Props<T>): ReactNode {
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
-  const index = Math.max(0, options.findIndex((o) => o.value === value));
+  const index = Math.max(
+    0,
+    options.findIndex((o) => o.value === value),
+  );
 
   const move = (to: number): void => {
     const next = (to + options.length) % options.length;
@@ -65,15 +74,11 @@ export function Segmented<T extends string>({ label, value, options, onChange, c
           aria-checked={o.value === value}
           tabIndex={o.value === value ? 0 : -1}
           className="segmented-item"
+          aria-keyshortcuts={o.hint}
           onClick={() => onChange(o.value)}
           onKeyDown={onKey}
         >
           {o.label}
-          {o.hint && (
-            <kbd className="mono" aria-hidden="true">
-              {o.hint}
-            </kbd>
-          )}
         </button>
       ))}
     </div>

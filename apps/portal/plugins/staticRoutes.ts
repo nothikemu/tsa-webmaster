@@ -55,25 +55,21 @@ function doc(page: DocPageContent): string {
 }
 
 function moduleCard(m: ModuleContent, href: string): string {
-  return `<article><p class="eyebrow">${esc(m.label)}</p><h3><a href="${href}">${esc(m.title)}</a></h3><p>${esc(m.tagline)}</p><p>${esc(m.objective)}</p></article>`;
+  return `<article><h3><a href="${href}">${esc(m.title)}</a></h3><p>${esc(m.tagline)}</p><p>${esc(m.objective)}</p></article>`;
 }
 
 function homeBody(): string {
   return [
-    `<p class="eyebrow">${esc(HOME.eyebrow)}</p>`,
     `<h1>${HOME.headline.map(esc).join(' ')}</h1>`,
     `<p class="lead">${esc(HOME.lead)}</p>`,
     `<p><a href="${moduleHref('foundations')}">Start with Foundations</a> · <a href="/modules">See all modules</a></p>`,
-    `<dl>${HOME.stats.map((s) => `<div><dt>${esc(s.label)}</dt><dd>${esc(s.value)}</dd></div>`).join('')}</dl>`,
     `<section><h2>${esc(HOME.bento.heading)}</h2>${MODULES.map((m) => moduleCard(m, moduleHref(m.id))).join('')}</section>`,
     `<section><h2>${esc(HOME.gamification.heading)}</h2>${HOME.gamification.body.map((p) => `<p>${esc(p)}</p>`).join('')}</section>`,
-    `<section><h2>${esc(HOME.facts.heading)}</h2>${HOME.facts.items.map((f) => `<p><strong>${esc(f.value)} ${esc(f.label)}.</strong> ${esc(f.body)}</p>`).join('')}</section>`,
   ].join('');
 }
 
 function moduleBody(m: ModuleContent): string {
   return [
-    `<p class="eyebrow">${esc(m.label)}</p>`,
     `<h1>${esc(m.title)}</h1>`,
     `<p class="lead">${esc(m.tagline)}</p>`,
     `<section><h2>Learning objective</h2><p>${esc(m.objective)}</p></section>`,
@@ -89,7 +85,6 @@ function lessonBody(m: ModuleContent, n: number): string {
   const l = m.lessons[n - 1]!;
   const c = l.check;
   return [
-    `<p class="eyebrow">${esc(m.label)} / LESSON ${n} OF ${m.lessons.length} / ${esc(l.kicker.toUpperCase())}</p>`,
     `<h1>${esc(l.title)}</h1>`,
     l.body.map((p) => `<p>${esc(p)}</p>`).join(''),
     `<section><h2>Key points</h2>${ul(l.keyPoints)}</section>`,
@@ -100,7 +95,6 @@ function lessonBody(m: ModuleContent, n: number): string {
 
 function quizBody(m: ModuleContent): string {
   return [
-    `<p class="eyebrow">${esc(m.label)} / KNOWLEDGE CHECK</p>`,
     `<h1>${esc(m.title)} knowledge check</h1>`,
     `<p class="lead">Five questions. Score 4 to count toward the badge. The scored version needs JavaScript.</p>`,
     `<ol>${m.quiz.map((q) => `<li><p>${esc(q.prompt)}</p>${ul(q.options)}${details('Show the answer', `<p>${esc(q.options[q.answer]!)}</p><p>${esc(q.explain)}</p>`)}</li>`).join('')}</ol>`,
@@ -114,7 +108,6 @@ function challengeBody(m: ModuleContent): string {
       ? `<ol>${c.items.map((i) => `<li><p>${esc(i.prompt)}</p>${details('Show the answer', `<p>${esc(c.options[i.answer]!)}</p><p>${esc(i.explain)}</p>`)}</li>`).join('')}</ol><p>Options: ${esc(c.options.join(', '))}.</p>`
       : `<ol>${c.scenarios.map((s) => `<li><p>${esc(s.goal)}</p><p>${esc(s.hint)}</p></li>`).join('')}</ol>`;
   return [
-    `<p class="eyebrow">${esc(m.label)} / CHALLENGE</p>`,
     `<h1>${esc(c.title)}</h1>`,
     `<p class="lead">${esc(c.intro)}</p>`,
     items,

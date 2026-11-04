@@ -7,7 +7,7 @@ import { useServices } from '../../core/services';
 import { createSimulation } from '../../gpu/sim/createSim';
 import type { SimMode } from '../../gpu/sim/types';
 import { VisuallyHidden } from '../../ui/a11y';
-import { useClock, useGame } from '../../ui/hooks';
+import { useGame } from '../../ui/hooks';
 import { Segmented } from '../../ui/Segmented';
 import { SceneCanvas, type SceneBinding, type SceneContext } from '../shared/SceneCanvas';
 import { MODES, describeMode, type ModeInfo } from './modes';
@@ -23,19 +23,27 @@ export default function ModuleA({ module }: { module: ModuleContent }): ReactNod
   const [tier, setTier] = useState(() => services.quality.tier);
   const [mode, setModeState] = useState<ModeInfo['id']>('deflect');
   const [note, setNote] = useState('');
-  const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
+  const [, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
   const [altText, setAltText] = useState('');
   const sceneRef = useRef<SwarmScene | null>(null);
   const modeRef = useRef<ModeInfo>(MODES[0]!);
   const moves = useRef<Record<string, number>>({});
   const lastInteract = useRef(0);
-  const ticker = useClock(status === 'ready', 500);
 
-  useEffect(() => services.quality.subscribe(() => setTier(services.quality.tier)), [services.quality]);
+  useEffect(
+    () => services.quality.subscribe(() => setTier(services.quality.tier)),
+    [services.quality],
+  );
 
   const sendModule = useCallback(
-    (event: { type: 'MOUNT' } | { type: 'READY'; tier: string } | { type: 'FAIL'; reason: string } | { type: 'INTERACT' } | { type: 'UNMOUNT' }) =>
-      services.actor.send({ type: 'MODULE', module: module.id, event }),
+    (
+      event:
+        | { type: 'MOUNT' }
+        | { type: 'READY'; tier: string }
+        | { type: 'FAIL'; reason: string }
+        | { type: 'INTERACT' }
+        | { type: 'UNMOUNT' },
+    ) => services.actor.send({ type: 'MODULE', module: module.id, event }),
     [services.actor, module.id],
   );
   useEffect(() => {
@@ -81,7 +89,14 @@ export default function ModuleA({ module }: { module: ModuleContent }): ReactNod
       });
       let scene: SwarmScene;
       try {
-        scene = await SwarmScene.create({ handle: ctx.handle, sim, topology, links, reduced: ctx.reduced, asset: ctx.asset });
+        scene = await SwarmScene.create({
+          handle: ctx.handle,
+          sim,
+          topology,
+          links,
+          reduced: ctx.reduced,
+          asset: ctx.asset,
+        });
       } catch (err) {
         sim.dispose();
         throw err;
@@ -91,7 +106,10 @@ export default function ModuleA({ module }: { module: ModuleContent }): ReactNod
       const bind = (canvas: HTMLCanvasElement): (() => void) => {
         const move = (e: PointerEvent): void => {
           const r = canvas.getBoundingClientRect();
-          scene.pointerMove(((e.clientX - r.left) / r.width) * 2 - 1, -(((e.clientY - r.top) / r.height) * 2 - 1));
+          scene.pointerMove(
+            ((e.clientX - r.left) / r.width) * 2 - 1,
+            -(((e.clientY - r.top) / r.height) * 2 - 1),
+          );
           engage(modeRef.current);
         };
         const leave = (): void => scene.pointerLeave();
@@ -125,7 +143,12 @@ export default function ModuleA({ module }: { module: ModuleContent }): ReactNod
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent, scene: SwarmScene): void => {
-      const map: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
+      const map: Record<string, [number, number]> = {
+        ArrowLeft: [-1, 0],
+        ArrowRight: [1, 0],
+        ArrowUp: [0, 1],
+        ArrowDown: [0, -1],
+      };
       const dir = map[e.key];
       if (dir) {
         e.preventDefault();
@@ -147,9 +170,6 @@ export default function ModuleA({ module }: { module: ModuleContent }): ReactNod
     [engage, setMode],
   );
 
-  const influenced = status === 'ready' ? (sceneRef.current?.influenced ?? 0) : 0;
-  void ticker;
-
   return (
     <div className="stage-wrap">
       <SceneCanvas<SwarmScene>
@@ -159,6 +179,7 @@ export default function ModuleA({ module }: { module: ModuleContent }): ReactNod
         describedBy="swarm-desc"
         role="application"
         className="stage-swarm"
+        note={note}
         onKeyDown={onKeyDown}
         onStatus={(s, reason) => {
           setStatus(s);
@@ -168,14 +189,7 @@ export default function ModuleA({ module }: { module: ModuleContent }): ReactNod
           setNote(n);
           sendModule({ type: 'READY', tier: n });
         }}
-      >
-        <p className="stage-corner mono" aria-hidden="true">
-          {module.label}
-        </p>
-        <p className="stage-corner stage-corner-br mono" aria-hidden="true">
-          {note}
-        </p>
-      </SceneCanvas>
+      ></SceneCanvas>
       <VisuallyHidden id="swarm-desc">{`${module.centerpiece.description} ${t('a.keys')}`}</VisuallyHidden>
 
       <div className="stage-controls">
@@ -185,16 +199,6 @@ export default function ModuleA({ module }: { module: ModuleContent }): ReactNod
           onChange={setMode}
           options={MODES.map((m) => ({ value: m.id, label: m.label, hint: m.key }))}
         />
-        <dl className="readouts">
-          <div>
-            <dt className="mono">{t('a.influenced')}</dt>
-            <dd className="num">{influenced.toLocaleString('en-US')}</dd>
-          </div>
-          <div>
-            <dt className="mono">{t('a.radius')}</dt>
-            <dd className="num">0.85</dd>
-          </div>
-        </dl>
       </div>
       <p className="muted stage-hint">{t('a.hint')}</p>
 

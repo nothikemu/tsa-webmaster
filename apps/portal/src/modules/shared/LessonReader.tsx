@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Lesson, ModuleContent } from '../../content';
 import { lessonHref, quizHref } from '../../content';
 import { t } from '../../core/assets';
-import { BADGE_QUIZ_MIN, REVIEW_AFTER_MS } from '../../core/gamification';
+import { REVIEW_AFTER_MS } from '../../core/gamification';
 import { masteryRank, type Mastery } from '../../core/schema';
 import { Link } from '../../router';
 import { useData, useGame } from '../../ui/hooks';
@@ -118,15 +118,11 @@ export function LessonReader({ module, n }: { module: ModuleContent; n: number }
 
   if (!lesson) return <p>{t('lesson.missing')}</p>;
   const total = module.lessons.length;
-  const next = module.lessons[n];
   return (
     <article className="lesson" aria-labelledby="lesson-title">
       <div className="lesson-meta">
-        <p className="mono">
-          {t('lesson.counter', { n, total })} / {lesson.kicker.toUpperCase()} /{' '}
-          {t('lesson.minutes', { n: lesson.minutes })}
-        </p>
-        <MasteryPill state={state} />
+        <p className="muted">{t('lesson.minutes', { n: lesson.minutes })}</p>
+        {state !== 'unseen' && <MasteryPill state={state} />}
       </div>
       <h2 id="lesson-title" className="lesson-title sr-only">
         {lesson.title}
@@ -143,14 +139,6 @@ export function LessonReader({ module, n }: { module: ModuleContent; n: number }
         ))}
       </ul>
       <MicroCheck key={lesson.id} module={module} lesson={lesson} />
-      <div className="up-next">
-        <p className="mono">{t('lesson.upNextLabel')}</p>
-        <p>
-          {next
-            ? t('lesson.upNext', { n: n + 1, title: next.title, minutes: next.minutes })
-            : t('lesson.upNextQuiz', { min: BADGE_QUIZ_MIN, total: module.quiz.length })}
-        </p>
-      </div>
       <nav className="lesson-nav" aria-label={t('lesson.nav')}>
         {n > 1 ? (
           <Link to={lessonHref(module.id, n - 1)} className="btn btn-ghost">

@@ -17,7 +17,6 @@ import {
 import { t } from '../core/assets';
 import { BADGE_QUIZ_MIN } from '../core/gamification';
 import { Link } from '../router';
-import { Eyebrow } from '../ui/Chrome';
 import { Badge } from '../ui/Badges';
 import { useData } from '../ui/hooks';
 import { Challenge } from './shared/Challenge';
@@ -130,34 +129,6 @@ export function BadgeChecklist({ module }: { module: ModuleContent }): ReactNode
   );
 }
 
-/** One line under the tabs: how close the badge is, with a way to the full list when it is not already on screen. */
-function BadgeProgressLine({
-  module,
-  view,
-}: {
-  module: ModuleContent;
-  view: ModuleView;
-}): ReactNode {
-  const { done, total, earned } = useBadgeProgress(module);
-  return (
-    <div className="badge-progress">
-      <p>
-        {earned
-          ? t('module.badge', { name: module.badge.name }) + ': ' + t('ach.earned')
-          : t('module.badgeProgress', { name: module.badge.name, done, total })}
-      </p>
-      {view.kind !== 'overview' && (
-        <Link to={moduleHref(module.id)} className="link-arrow">
-          {t('module.seeRequirements')}
-        </Link>
-      )}
-      <a href="#interactive" className="link-arrow jump-link">
-        {t('module.jump')}
-      </a>
-    </div>
-  );
-}
-
 function Overview({ module }: { module: ModuleContent }): ReactNode {
   const data = useData().modules[module.id];
   return (
@@ -177,11 +148,10 @@ function Overview({ module }: { module: ModuleContent }): ReactNode {
             <li key={l.id}>
               <Link to={lessonHref(module.id, i + 1)} className="lesson-card">
                 <span className="num lesson-card-n">{i + 1}</span>
-                <span className="lesson-card-body">
-                  <span className="mono">{l.kicker}</span>
-                  <span className="lesson-card-title">{l.title}</span>
-                </span>
-                <MasteryPill state={data.lessons[l.id] ?? 'unseen'} />
+                <span className="lesson-card-title">{l.title}</span>
+                {(data.lessons[l.id] ?? 'unseen') !== 'unseen' && (
+                  <MasteryPill state={data.lessons[l.id] ?? 'unseen'} />
+                )}
               </Link>
             </li>
           ))}
@@ -216,15 +186,13 @@ export function ModulePage({ id, view }: { id: ModuleId; view: ModuleView }): Re
   return (
     <div className="wrap module-page" data-module={id}>
       <header className="module-head">
-        <Eyebrow>
-          {module.label} / {module.themeSection.toUpperCase()}
-        </Eyebrow>
+        {view.kind !== 'overview' && <p className="muted module-name">{module.title}</p>}
         <h1 className="display">{heading}</h1>
-        <p className="lead">
-          {view.kind === 'overview' ? module.tagline : module.title + ' / ' + module.tagline}
-        </p>
+        {view.kind === 'overview' && <p className="lead">{module.tagline}</p>}
         <Tabs module={module} view={view} />
-        <BadgeProgressLine module={module} view={view} />
+        <a href="#interactive" className="link-arrow jump-link">
+          {t('module.jump')}
+        </a>
       </header>
       <div className="module-grid">
         <div className="module-panel-col">
@@ -239,12 +207,9 @@ export function ModulePage({ id, view }: { id: ModuleId; view: ModuleView }): Re
           tabIndex={-1}
           aria-labelledby="interactive-h"
         >
-          <div className="stage-caption">
-            <p className="mono">{t('module.interactive')}</p>
-            <h2 id="interactive-h" className="stage-caption-name">
-              {module.centerpiece.name}
-            </h2>
-          </div>
+          <h2 id="interactive-h" className="sr-only">
+            {module.centerpiece.name}
+          </h2>
           <ErrorBoundary
             resetKey={id}
             fallback={(reset) => (

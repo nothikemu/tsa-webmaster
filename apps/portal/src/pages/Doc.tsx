@@ -1,12 +1,10 @@
 import type { ReactNode } from 'react';
 import type { DocPageContent } from '../content/site';
-import { Eyebrow } from '../ui/Chrome';
 
-export function Doc({ page, eyebrow, children }: { page: DocPageContent; eyebrow: string; children?: ReactNode }): ReactNode {
+export function Doc({ page, children }: { page: DocPageContent; children?: ReactNode }): ReactNode {
   return (
     <div className="wrap page prose-page">
       <header className="page-head">
-        <Eyebrow>{eyebrow}</Eyebrow>
         <h1 className="display">{page.title}</h1>
         <p className="lead">{page.lead}</p>
       </header>

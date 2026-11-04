@@ -109,13 +109,10 @@ button {
   outline-offset: -3px;
 }
 
-/* Small technical labels: monospace, 12px, calm tracking, and still 8:1 against the ground. */
+/* Quiet secondary labels: the page's own typeface, sentence case, muted. */
 .mono {
-  font-family: var(--font-mono);
   font-size: var(--fs-label);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
+  font-weight: 400;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
 }

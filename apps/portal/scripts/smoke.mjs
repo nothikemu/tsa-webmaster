@@ -99,7 +99,14 @@ async function open(path, opts = {}) {
 const boot = (page) => page.waitForFunction(() => ['ready', 'static'].includes(document.documentElement.dataset.boot ?? ''), null, { timeout: 30000 });
 const stageNote = async (page) => {
   await page.waitForSelector('.stage[data-status="ready"]', { timeout: 60000 });
-  return (await page.locator('.stage-corner-br').first().innerText()).toLowerCase();
+  // The renderer and compute tier are exposed as data-note (never drawn). The note can arrive a moment after "ready".
+  const stage = page.locator('.stage[data-status="ready"]').first();
+  for (let i = 0; i < 50; i++) {
+    const note = await stage.getAttribute('data-note');
+    if (note) return note.toLowerCase();
+    await page.waitForTimeout(100);
+  }
+  return '';
 };
 const xpOf = async (page) => {
   const toggle = page.locator('#hub-toggle');

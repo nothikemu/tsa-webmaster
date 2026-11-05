@@ -31,14 +31,14 @@
 
 | Page | Purpose | Key content |
 | --- | --- | --- |
-| Home | Explain the product in one screen and route the visitor to the right next step | Pinned hero, live progress strip, asymmetric bento of modules, gamification rules, build facts |
-| Module hub | Compare the three modules and resume | Progress ring, objective, centerpiece name and lesson count per module |
-| Module overview | Orient before starting | Objective, lesson cards with mastery state, badge checklist, the centerpiece |
-| Lesson | Teach one idea | Text, key points, one-question check; seen after 4 s, practiced and mastered through the check |
+| Home | Explain the product and route the visitor to the right next step | Headline and your record, the curriculum map built from saved progress, the method, three differently composed module panels, the points and badge ledger |
+| Module hub | Compare the three modules and resume | Three paths in a stepped layout: objective, centerpiece, lesson sequence with state, completion |
+| Module overview | Orient before starting | Objective, lesson sequence with state, badge requirements and the centerpiece, in an order and composition specific to each module |
+| Lesson | Teach one idea | Position in the module, completion meter, text, key points, one-question check, a single next step; seen after 4 s, practiced and mastered through the check |
 | Knowledge check | Assess the module | Five questions, scored together, per-answer feedback |
 | Challenge | Apply it under mild pressure | Choice sequence or live slider tuning; untimed or timed |
-| Progress dashboard | Show everything the system knows | Completion, XP history, streak calendar, mastery heatmap, next step, export/import/reset |
-| Achievements | Show badges and what they need | Three 3D-styled badges with live requirement checklists |
+| Progress dashboard | Show everything the system knows | Completion by module, the curriculum map, XP history, streak calendar, mastery heatmap, next step, export/import/reset |
+| Achievements | Show badges and what they need | Three badge records with each requirement marked met, remaining or locked |
 | Glossary | Reference | 26 terms with module tags, search, ten reading links |
 | About / team | Context and theme mapping | How the theme maps to the site, data policy |
 | Accessibility statement | Accountability | Built-in features, how they are checked, known limits |

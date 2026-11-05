@@ -32,14 +32,13 @@ Next steps, in order of expected gain: (1) load WebAssembly lazily and boot on t
 
 | Asset | Raw | Gzip | When it loads |
 | --- | --- | --- | --- |
-| Entry script (`index`, string-encoded) | 229 KB | 74 KB | Always |
+| Entry script (`index`, string-encoded) | 256 KB | 81 KB | Always |
 | `vendor-react` | 140 KB | 46 KB | Always |
 | `vendor-state` (XState, Zustand, Comlink) | 44 KB | 15 KB | Always |
-| CSS | 50 KB | 11 KB | Always |
+| CSS | 69 KB | 14 KB | Always |
 | WebAssembly (SIMD or scalar) | 51 KB | 24 KB | Always, one of the two |
 | Encrypted asset blob | 28 KB | 28 KB | Always |
-| Home page chunk | 32 KB | 11 KB | Home |
-| `vendor-motion` (GSAP, ScrollTrigger, Lenis) | 133 KB | 50 KB | Home only |
+| Home page chunk | 17 KB | 5 KB | Home |
 | `vendor-three` | 752 KB | 193 KB | Module pages (WebGL2 path) |
 | `vendor-three-gpu` | 732 KB | 207 KB | Only when WebGPU is used |
 | `vendor-post` (bloom, aberration, grain) | 321 KB | 112 KB | Module A and C at quality tiers 2 and 3 |
@@ -48,7 +47,7 @@ Next steps, in order of expected gain: (1) load WebAssembly lazily and boot on t
 ## Budget rules
 
 - No new always-loaded dependency without a measured reason.
-- Heavy code stays in lazy chunks: three, post-processing, GSAP and every page.
+- Heavy code stays in lazy chunks: three, post-processing and every page.
 - Off-screen canvases are paused (IntersectionObserver) and the loop stops when the tab is hidden.
 - Pointer, touch and scroll listeners are passive. Device pixel ratio is capped at 2 (and 1 to 1.5 on lower tiers).
 - Geometries, materials and vectors are created once per scene and reused. Particle data lives in typed arrays.

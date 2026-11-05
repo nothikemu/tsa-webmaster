@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
+import { MODULES } from '../content';
 import { t } from '../core/assets';
 import { HUB_TOGGLE_ID } from '../core/machines/hub';
 import { levelInfo } from '../core/gamification';
@@ -64,6 +65,17 @@ export function TelemetryHub(): ReactNode {
           >
             <span style={{ transform: `scaleX(${Math.max(0.02, level.fraction)})` }} />
           </div>
+          <ul className="hub-modules">
+            {MODULES.map((m) => (
+              <li key={m.id} data-module={m.id}>
+                <span className="mod-bar-n" aria-hidden="true">
+                  {String(m.index).padStart(2, '0')}
+                </span>
+                <span>{m.title}</span>
+                <span className="num">{data.modules[m.id].progress}%</span>
+              </li>
+            ))}
+          </ul>
           <Link to={rec.href} className="hub-next">
             <span className="mono">{t('hub.next')}</span>
             <span>{rec.label}</span>

@@ -1,0 +1,157 @@
+/* ---- pages: shared head ------------------------------------------------------------------------------ */
+.page {
+  padding-block: clamp(var(--s-6), 5vw, var(--s-8)) var(--section);
+}
+.page-head {
+  display: grid;
+  gap: var(--s-4);
+  margin-bottom: clamp(var(--s-6), 5vw, var(--s-8));
+  justify-items: start;
+}
+
+/* ---- the sequence list: shape, number, title, state in words ----------------------------------------- */
+.path {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+}
+.path li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: var(--tap);
+  border-top: 1px solid var(--line);
+}
+.path li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.path li[data-current] {
+  background: linear-gradient(90deg, var(--amber-soft), transparent 70%);
+}
+.path li[data-current]::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--amber);
+}
+.path-step {
+  border-top-style: dashed !important;
+}
+.path-link {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  align-items: baseline;
+  min-height: var(--tap);
+  padding-block: var(--s-2);
+  color: var(--text);
+  text-decoration: none;
+}
+.path-link:hover .path-title {
+  text-decoration: underline;
+  text-decoration-color: var(--m, var(--accent));
+}
+.path-n {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  color: var(--text-3);
+}
+.path-meta {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  text-align: right;
+}
+.mn-mark {
+  --m: var(--m-foundations);
+  flex: none;
+}
+[data-module='synthesis'] .mn-mark {
+  --m: var(--m-synthesis);
+}
+[data-module='ethics'] .mn-mark {
+  --m: var(--m-ethics);
+}
+
+/* ---- catalog: three paths, three widths, a descending stair ---------------------------------------- */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--s-5);
+  align-items: start;
+}
+.cat-path {
+  position: relative;
+  display: grid;
+  gap: var(--s-4);
+  align-content: start;
+  padding: var(--s-5);
+  background: var(--fill);
+  border: 1px solid var(--line-2);
+  border-top: 3px solid var(--m);
+  border-radius: var(--r-lg);
+}
+.cat-path-a {
+  grid-column: 1 / span 5;
+}
+.cat-path-b {
+  grid-column: 6 / span 4;
+  margin-top: var(--s-7);
+}
+.cat-path-c {
+  grid-column: 10 / span 3;
+  margin-top: var(--s-9);
+}
+.cat-head {
+  display: grid;
+  gap: var(--s-2);
+}
+.cat-title {
+  font-size: var(--t-h2);
+}
+.cat-link {
+  color: var(--text);
+  text-decoration: none;
+}
+.cat-link:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--m);
+}
+.cat-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.cat-objective {
+  color: var(--text-2);
+  font-size: var(--fs-small);
+}
+.cat-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-4);
+}
+.cat-foot .link-arrow {
+  margin-left: auto;
+  position: relative;
+  z-index: 1;
+}
+/* The path list's own links must stay clickable above the card's stretched title link. */
+.cat-path .path,
+.cat-path .path-link {
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 1100px) {
+  .cat-path-a,
+  .cat-path-b,
+  .cat-path-c {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+}

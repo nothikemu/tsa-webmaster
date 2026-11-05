@@ -25,7 +25,7 @@ export interface LinkGeometry {
 }
 
 export const LAYER_X = [-2.2, -1.1, 0, 1.1, 2.2] as const;
-const NODES_PER_LAYER = [10, 8, 7, 8, 4] as const;
+export const NODES_PER_LAYER = [10, 8, 7, 8, 4] as const;
 const FAN_OUT = [3, 3, 3, 2] as const;
 const CLUSTER_SHARE = 0.36;
 const CLUSTER_SIGMA = 0.095;

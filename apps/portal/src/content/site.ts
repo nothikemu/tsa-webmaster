@@ -29,15 +29,41 @@ export const FOOTER_LINKS: readonly NavItem[] = [
 ];
 
 export const HOME = {
+  kicker: 'Interactive AI learning portal',
   headline: ['Learn how', 'machines learn.'],
   lead: 'Push a neural network around. Tune a prompt until it behaves. Break a model, then fix it. Nothing leaves your device.',
+  map: {
+    heading: 'The whole course, on one page',
+    body: 'Fifteen lessons in three chains, each ending in a knowledge check, a challenge and a badge. Every node is a link, and every node shows where you are.',
+  },
+  method: {
+    heading: 'How a module works',
+    steps: [
+      {
+        name: 'Read',
+        body: 'Each lesson is a few minutes of text with the key points set apart. Opening one for a few seconds marks it seen.',
+      },
+      {
+        name: 'Try',
+        body: 'Every module has one interactive centerpiece. You change a real parameter and watch what happens, and each one has a text alternative.',
+      },
+      {
+        name: 'Check',
+        body: 'A one-question check closes every lesson. A five-question knowledge check closes the module, and only a better score pays XP.',
+      },
+      {
+        name: 'Earn',
+        body: 'A challenge and a badge finish the module. A badge needs a lesson set, the centerpiece, a 4-of-5 check and a cleared challenge, not just visits.',
+      },
+    ],
+  },
   bento: {
     heading: 'Three modules. Three different ways to touch an idea.',
   },
   gamification: {
     heading: 'Points for finishing, not for refreshing.',
     body: [
-      'XP is paid once per step: 10 for seeing a lesson, 15 for practicing it, 25 for mastering it. A knowledge check pays only for improvement. After 400 XP in one day the rate drops to a quarter.',
+      'XP is paid once per step, so rereading earns nothing. A knowledge check pays only for improvement. After 400 XP in one day the rate drops to a quarter.',
       'A streak counts days when you learned something, not days you opened the tab. Each module ends in a badge, and a badge needs a lesson set, a centerpiece, a 4-of-5 check and a cleared challenge.',
     ],
   },
@@ -72,7 +98,7 @@ export const ABOUT: DocPageContent = {
     {
       heading: 'Design brief',
       paragraphs: [
-        "The interface is a black ground, the reader's own system typeface and one blue accent. The accent marks things you can act on, where you are, and how far you have come. Nothing else is colored, and large type does the work decoration usually does.",
+        "The interface is a midnight-ink ground with layered surfaces, the reader's own system fonts with a serif for headlines, one cool signal color for actions, links and progress, and a warm amber held back for the selected step and for milestones. Every diagram is drawn from the lesson content or from your saved progress, and state is always shown by a shape or a word as well as by color.",
         'Every interactive scene has a text alternative and a keyboard path. Motion respects the reduced-motion setting. The site is a set of static files and runs from any web host.',
       ],
     },
@@ -105,7 +131,7 @@ export const ACCESSIBILITY: DocPageContent = {
         'Every canvas has an accessible name and a plain-text description next to it. Each centerpiece also has a text alternative with the same controls.',
         'Pointer-only interactions have keyboard equivalents: arrow keys move the particle pointer, the prompt divider and the sliders; Enter and Space activate vulnerability markers; 1, 2, 3 and M switch pointer modes.',
         'Progress changes are announced through a polite live region.',
-        'Text and interface colors meet AA contrast on the black background. Progress is never shown by color alone: every state also has a word or a shape.',
+        'Text and interface colors meet AA contrast on the dark ground. Progress is never shown by color alone: every state also has a word or a shape.',
         'The prefers-reduced-motion setting turns off ambient drift, camera movement, tilt, particle bursts and spring overshoot.',
         'Without JavaScript, every page still shows its text content.',
       ],
@@ -152,13 +178,6 @@ export const CREDIT_LIBRARIES: readonly CreditEntry[] = [
   { name: 'XState', version: '5.33.3', license: 'MIT', use: 'State machines' },
   { name: 'Zustand', version: '5.0.16', license: 'MIT', use: 'Application store' },
   { name: 'Comlink', version: '4.4.2', license: 'Apache-2.0', use: 'Web Worker messaging' },
-  {
-    name: 'GSAP and ScrollTrigger',
-    version: '3.15.0',
-    license: 'GSAP Standard License',
-    use: 'Scroll choreography',
-  },
-  { name: 'Lenis', version: '1.3.27', license: 'MIT', use: 'Smooth scrolling' },
   {
     name: 'wasm-bindgen',
     version: '0.2.130',

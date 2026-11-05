@@ -125,9 +125,9 @@ export class MasterLoop {
   }
 
   /**
-   * requestAnimationFrame-compatible one-shot request, served by the next master frame. Third-party
-   * code that insists on calling requestAnimationFrame (ScrollTrigger does) can be pointed here so
-   * the page still has exactly one native animation-frame loop.
+   * requestAnimationFrame-compatible one-shot request, served by the next master frame. Code
+   * that insists on calling requestAnimationFrame can be pointed here so the page still has exactly
+   * one native animation-frame loop.
    */
   requestFrame(cb: FrameRequestCallback): number {
     const id = ++this.#queueId;

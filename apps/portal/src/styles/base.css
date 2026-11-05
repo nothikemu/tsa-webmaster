@@ -11,7 +11,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scroll-behavior: auto;
-  scrollbar-color: #2a2a2e transparent;
+  scrollbar-color: #26344d transparent;
   scrollbar-width: thin;
 }
 
@@ -28,7 +28,7 @@ body {
 
 ::selection {
   background: var(--accent-solid);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 ::-webkit-scrollbar {
@@ -39,12 +39,12 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2e;
+  background: #26344d;
   border-radius: 10px;
-  border: 2px solid #000;
+  border: 2px solid var(--bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #4a4a50;
+  background: #3b4d6e;
 }
 
 h1,
@@ -64,7 +64,8 @@ h1,
 h2,
 h3,
 h4 {
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 500;
   letter-spacing: var(--track-display);
   line-height: var(--lh-tight);
   text-wrap: balance;
@@ -118,6 +119,7 @@ button {
 
 /* Quiet secondary labels: the page's own typeface, sentence case, muted. */
 .mono {
+  font-family: var(--font-sans);
   font-size: var(--fs-label);
   font-weight: 400;
   color: var(--text-3);
@@ -138,24 +140,44 @@ button {
 }
 
 .display {
+  font-family: var(--font-display);
   font-size: var(--t-display);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: var(--track-display);
-  line-height: 1.07;
+  line-height: 1.04;
   color: var(--text);
 }
 
 .h2 {
+  font-family: var(--font-display);
   font-size: var(--t-h2);
+  font-weight: 500;
   letter-spacing: var(--track-display);
 }
 
 .lead {
   font-size: var(--t-lead);
   color: var(--text-2);
-  max-width: 44ch;
+  max-width: 48ch;
   font-weight: 400;
-  line-height: 1.38;
+  line-height: 1.45;
+}
+/* A short technical label: mono, small capitals, drawn from real state or real structure. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.label b {
+  font-weight: 500;
+  color: var(--text);
+}
+.serif {
+  font-family: var(--font-display);
 }
 
 .sub {

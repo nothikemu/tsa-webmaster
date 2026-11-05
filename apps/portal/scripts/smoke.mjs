@@ -124,7 +124,7 @@ const xpOf = async (page) => {
 };
 
 // ---- 1. boot, loop, budget ----------------------------------------------------------------------
-await check('home boots with no console errors; exactly one rAF loop', async () => {
+await check('home boots with no console errors; one rAF loop at most, idle when static', async () => {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   await ctx.addInitScript(() => {
     const native = window.requestAnimationFrame.bind(window);
@@ -147,7 +147,13 @@ await check('home boots with no console errors; exactly one rAF loop', async () 
   const ratio = (b.raf - a.raf) / Math.max(1, frames);
   await ctx.close();
   assert(errors.length === 0, `console errors: ${errors.join(' | ')}`);
-  assert(frames > 20, `master loop barely ticked (${frames} frames)`);
+  // The home page is static: nothing subscribes to the master loop, so it must sit idle. Any other
+  // state must run exactly one requestAnimationFrame loop.
+  if (frames <= 2) {
+    const calls = b.raf - a.raf;
+    assert(calls <= 4, `the static home page made ${calls} requestAnimationFrame calls in 2.5 s`);
+    return `idle: ${calls} rAF calls in 2.5 s`;
+  }
   assert(ratio <= 1.25, `requestAnimationFrame called ${ratio.toFixed(2)}x per master frame; expected one loop`);
   return `${(frames / 2.5).toFixed(0)} fps, ${ratio.toFixed(2)} rAF/frame`;
 });

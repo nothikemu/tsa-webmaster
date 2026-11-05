@@ -1,0 +1,611 @@
+/* ---- shared drawing vocabulary: rules, nodes, tracks ---------------------------------------------- */
+.section-head {
+  display: grid;
+  gap: var(--s-3);
+  max-width: 62ch;
+  margin-bottom: var(--s-6);
+}
+
+/* A track: one segment per lesson, filled by how well it is known. Words sit beside it. */
+.track {
+  display: inline-flex;
+  gap: 3px;
+  vertical-align: middle;
+}
+.track i {
+  display: block;
+  width: 22px;
+  height: 8px;
+  border-radius: 1px;
+  background: var(--fill-3);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.track i[data-state='seen'] {
+  background:
+    linear-gradient(var(--m), var(--m)) left / 35% 100% no-repeat,
+    var(--fill-3);
+}
+.track i[data-state='practiced'] {
+  background:
+    linear-gradient(var(--m), var(--m)) left / 65% 100% no-repeat,
+    var(--fill-3);
+}
+.track i[data-state='mastered'] {
+  background: var(--m);
+  box-shadow: none;
+}
+
+/* ---- curriculum map ---------------------------------------------------------------------------------- */
+.cmap {
+  position: relative;
+  margin: 0;
+  padding: var(--s-5) var(--s-5) var(--s-4);
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 100% 48px,
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 48px 100%,
+    var(--fill);
+  background-blend-mode: normal;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+}
+.cmap > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.cmap > .cmap-tall {
+  display: none;
+  max-width: 440px;
+  margin-inline: auto;
+}
+.mn-node {
+  cursor: pointer;
+  outline: none;
+}
+.mn-shape {
+  fill: var(--fill);
+  stroke: var(--m);
+  stroke-width: 1.6;
+}
+.mn-node[data-state='none'] .mn-shape {
+  stroke: var(--text-3);
+}
+.mn-fill {
+  fill: var(--m);
+}
+.mn-badge.mn-fill {
+  fill: var(--amber);
+}
+.mn-badge.mn-shape {
+  stroke: var(--amber);
+}
+.mn-node[data-kind='badge'][data-state='none'] .mn-shape {
+  stroke: var(--text-3);
+}
+.mn-tick {
+  fill: none;
+  stroke: var(--on-accent);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mn-link {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+.mn-link[data-lit='true'] {
+  stroke: var(--m);
+  stroke-width: 1.6;
+}
+.mn-halo {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 2;
+  transition: stroke 200ms var(--ease);
+}
+.mn-hit {
+  fill: transparent;
+  stroke: none;
+}
+.mn-node:hover .mn-halo {
+  stroke: var(--line-strong);
+}
+.mn-node:focus-visible .mn-halo {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+.mn-numeral {
+  font-family: var(--font-display);
+  font-size: 46px;
+  fill: var(--m);
+}
+.mn-name {
+  font-size: 15px;
+  fill: var(--text-2);
+}
+.mn-n {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  fill: var(--text-3);
+}
+.cmap-legend {
+  margin-top: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.cmap-legend ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-5);
+  list-style: none;
+  padding: 0;
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+.cmap-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.mn-legend-mark .mn-shape {
+  stroke: var(--text-3);
+}
+.cmap-compact {
+  padding: var(--s-4);
+}
+.cmap-summary {
+  display: grid;
+  gap: var(--s-3);
+  margin: var(--s-4) 0 0;
+}
+.cmap-summary div {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 1fr) minmax(0, 5fr);
+  gap: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.cmap-summary dt {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  color: var(--m);
+}
+.cmap-summary dd {
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  max-width: 70ch;
+}
+@media (max-width: 520px) {
+  /* Narrow screens give the map the room: nodes stay 44px targets at 320px. */
+  .cmap {
+    padding: var(--s-4) var(--s-3) var(--s-3);
+  }
+}
+@media (max-width: 900px) {
+  .cmap > .cmap-wide {
+    display: none;
+  }
+  .cmap > .cmap-tall {
+    display: block;
+  }
+  .cmap-summary div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-1);
+  }
+}
+
+/* ---- module drawings --------------------------------------------------------------------------------- */
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.art-edge {
+  stroke: var(--line-strong);
+  stroke-width: 0.8;
+}
+.art-node {
+  fill: var(--m);
+}
+.art-rule {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+.art-col {
+  fill: var(--m);
+}
+.art-axis {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  fill: var(--text-3);
+}
+.art-axis-strong {
+  fill: var(--text-2);
+}
+.art-marker {
+  fill: var(--bg);
+  stroke: var(--m);
+  stroke-width: 1.5;
+}
+.art-marker-fill {
+  fill: var(--m);
+}
+
+/* ---- home: hero --------------------------------------------------------------------------------------- */
+.home-hero {
+  padding-block: clamp(var(--s-7), 7vw, var(--s-9)) var(--s-6);
+}
+.home-hero-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--s-6) var(--s-5);
+  align-items: end;
+}
+.home-hero-copy {
+  grid-column: 1 / span 8;
+  display: grid;
+  gap: var(--s-5);
+  justify-items: start;
+}
+.hero-title {
+  font-size: var(--t-hero);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+}
+.hero-line {
+  display: block;
+}
+.hero-line:nth-child(2) {
+  font-style: italic;
+  color: var(--accent-bright);
+  padding-left: clamp(0px, 4vw, 3.5rem);
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-6);
+}
+.record {
+  grid-column: 9 / span 4;
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  background: var(--fill);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+}
+.record dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4) var(--s-5);
+  margin: 0;
+}
+.record dt {
+  font-size: var(--fs-small);
+  color: var(--text-3);
+}
+.record dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  line-height: 1.1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.record dd span {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+.record-next {
+  display: grid;
+  gap: var(--s-1);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.record-next a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.record-next a:hover {
+  text-decoration: underline;
+}
+.home-map {
+  padding-top: var(--s-7);
+}
+
+/* ---- home: method ------------------------------------------------------------------------------------- */
+.home-method {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--s-6) var(--s-5);
+  padding-top: var(--section);
+}
+.home-method-head {
+  grid-column: 1 / span 4;
+  display: grid;
+  gap: var(--s-3);
+  align-content: start;
+}
+.steps {
+  grid-column: 6 / span 7;
+  list-style: none;
+  padding: 0;
+  display: grid;
+}
+.steps li {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: var(--s-4);
+  padding-block: var(--s-5);
+  border-top: 1px solid var(--line-2);
+}
+.steps li:last-child {
+  border-bottom: 1px solid var(--line-2);
+}
+.step-n {
+  grid-row: 1 / span 2;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  color: var(--amber);
+  padding-top: 0.45rem;
+}
+.steps h3 {
+  font-size: var(--t-h3);
+}
+.steps p {
+  max-width: 58ch;
+  color: var(--text-2);
+  margin-top: var(--s-1);
+}
+
+/* ---- home: modules, each composed differently ------------------------------------------------------- */
+.home-mods {
+  padding-top: var(--section);
+}
+.home-mods-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--s-5);
+  align-items: start;
+}
+.home-mod {
+  position: relative;
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  background: var(--fill);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  transition:
+    border-color 200ms var(--ease),
+    background-color 200ms var(--ease);
+}
+.home-mod:hover,
+.home-mod:focus-within {
+  border-color: var(--m);
+  background: var(--fill-2);
+}
+.mod-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s-4);
+  align-items: start;
+}
+.mod-numeral {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  line-height: 0.9;
+  color: var(--m);
+}
+.mod-title {
+  font-size: var(--t-h2);
+}
+.mod-tagline {
+  margin-top: var(--s-2);
+  color: var(--text-2);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-lead-sm);
+}
+.mod-objective {
+  color: var(--text-2);
+  max-width: 56ch;
+}
+.mod-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-3) var(--s-5);
+  margin: var(--s-4) 0;
+}
+.mod-facts div {
+  padding-top: var(--s-2);
+  border-top: 1px solid var(--line);
+}
+.mod-facts dt {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--text-3);
+}
+.mod-facts dd {
+  margin: 0;
+  font-size: var(--fs-small);
+}
+.mod-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+.mod-percent {
+  color: var(--text-2);
+  font-size: var(--fs-small);
+}
+.mod-cta {
+  margin-left: auto;
+  color: var(--accent);
+}
+.mod-cta::after {
+  content: '\203A';
+  margin-left: 0.2em;
+  font-size: 1.35em;
+  line-height: 1;
+}
+
+/* Foundations: wide, the drawing leads. */
+.home-mod-a {
+  grid-column: 1 / span 8;
+  grid-template-columns: minmax(0, 1fr);
+}
+.home-mod-a .mod-art {
+  order: 2;
+  padding: var(--s-3) 0;
+}
+.home-mod-a .mod-body {
+  order: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--s-5);
+}
+.home-mod-a .mod-facts {
+  margin: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+.home-mod-a .mod-foot {
+  grid-column: 1 / -1;
+}
+/* Synthesis: tall and narrow, text first, drawing last, pushed down the page. */
+.home-mod-b {
+  grid-column: 9 / span 4;
+  margin-top: var(--s-8);
+}
+.home-mod-b .mod-head {
+  grid-template-columns: minmax(0, 1fr);
+}
+.home-mod-b .mod-art {
+  order: 3;
+}
+.home-mod-b .mod-body {
+  order: 2;
+}
+/* Ethics: offset to the right of the page, drawing beside the text. */
+.home-mod-c {
+  grid-column: 3 / span 9;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+  grid-template-areas:
+    'head art'
+    'body art';
+  column-gap: var(--s-6);
+}
+.home-mod-c .mod-head {
+  grid-area: head;
+}
+.home-mod-c .mod-body {
+  grid-area: body;
+}
+.home-mod-c .mod-art {
+  grid-area: art;
+  align-self: center;
+}
+
+/* ---- home: ledger ----------------------------------------------------------------------------------- */
+.home-ledger {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--s-6) var(--s-5);
+  padding-top: var(--section);
+  align-items: start;
+}
+.ledger-copy {
+  grid-column: 1 / span 5;
+  display: grid;
+  gap: var(--s-4);
+}
+.ledger {
+  grid-column: 7 / span 6;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  background: var(--fill);
+}
+.ledger caption {
+  text-align: left;
+  padding: var(--s-3) var(--s-4);
+  caption-side: top;
+  background: var(--fill-3);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+}
+.ledger th,
+.ledger td {
+  padding: var(--s-3) var(--s-4);
+  border-top: 1px solid var(--line);
+  text-align: left;
+  font-weight: 400;
+  color: var(--text-2);
+}
+.ledger td {
+  text-align: right;
+  font-family: var(--font-mono);
+  color: var(--amber);
+}
+
+@media (max-width: 1040px) {
+  .home-hero-grid,
+  .home-method,
+  .home-mods-grid,
+  .home-ledger {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-hero-copy,
+  .record,
+  .home-method-head,
+  .steps,
+  .ledger-copy,
+  .ledger {
+    grid-column: 1 / -1;
+  }
+  .record dl {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .home-mod-a,
+  .home-mod-b,
+  .home-mod-c {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+  .home-mod-c {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'head' 'art' 'body';
+  }
+}
+@media (max-width: 640px) {
+  .record dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .home-mod-a .mod-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mod-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mod-foot {
+    flex-wrap: wrap;
+  }
+  .mod-cta {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}

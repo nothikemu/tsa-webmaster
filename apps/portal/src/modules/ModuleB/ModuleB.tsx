@@ -325,6 +325,7 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
 
         <div className="pane pane-right" ref={rightRef}>
           <h3 className="mono pane-title">{t('b.output')}</h3>
+          <p className="mono sim-note">{t('b.noModel')}</p>
           <div
             className="token-bars"
             ref={barsRef}

@@ -14,7 +14,7 @@
 
 | Question to check in the official guide | If "restricted" | Action |
 | --- | --- | --- |
-| Are frameworks and libraries (React, three.js, GSAP) allowed? | Not allowed | Use the **plain profile** below |
+| Are frameworks and libraries (React, three.js) allowed? | Not allowed | Use the **plain profile** below |
 | Are build tools (Vite, TypeScript, Rust) allowed, or must the site be hand-written? | Hand-written only | Plain profile; the compiled `dist/` can still be submitted if only the output is judged, but the team must be able to explain every line |
 | Is WebAssembly or compiled code allowed? | Not allowed | Delete `src/wasm`, run `pnpm build` without `pnpm wasm`: every kernel falls back to its TypeScript twin automatically (`REQUIRE_WASM` is off by default) |
 | Is AI-generated code or text allowed, and how must it be disclosed? | Not allowed, or disclosure required | See "AI assistance" below |

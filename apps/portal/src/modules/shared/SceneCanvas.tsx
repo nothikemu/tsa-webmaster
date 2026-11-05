@@ -92,12 +92,22 @@ export function SceneCanvas<S extends SceneController>(props: Props<S>): ReactNo
     if (!stage) return undefined;
     let disposed = false;
     const cleanups: Array<() => void> = [];
+    let settled = false;
     const fail = (why: string): void => {
       if (disposed) return;
+      settled = true;
       setStatus('failed');
       setReason(why);
       latest.current.onStatus?.('failed', why);
     };
+    // A scene that neither starts nor fails within 15 seconds is treated as failed, so the visitor
+    // gets the explanation and the text alternative instead of a permanent loading state.
+    const watchdog = window.setTimeout(() => {
+      if (settled || disposed) return;
+      fail(t('stage.timeout'));
+      disposed = true;
+    }, 15000);
+    cleanups.push(() => window.clearTimeout(watchdog));
 
     void (async () => {
       setStatus('loading');
@@ -188,6 +198,7 @@ export function SceneCanvas<S extends SceneController>(props: Props<S>): ReactNo
         liveHandle.dispose();
         liveCanvas.remove();
       });
+      settled = true;
       setStatus('ready');
       latest.current.onStatus?.('ready', null);
       latest.current.onReady?.({

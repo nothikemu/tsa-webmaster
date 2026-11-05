@@ -1,5 +1,7 @@
 # Apple design research and how it was applied
 
+> **Superseded for visual direction.** The later redesign moved from a black, Apple-like surface to a midnight-ink scientific learning lab (see `DESIGN_SYSTEM.md`). The accessibility, target-size, focus and reduced-motion judgments recorded here still apply and are kept in the current design; the color, type and radius values below are historical.
+
 The portal follows the *judgment* in Apple's Human Interface Guidelines (HIG): clarity, restraint, hierarchy from size and spacing rather than decoration, and controls that look like controls. It does not copy Apple's logos, icons, photography or page compositions. The HIG is written for native platforms, so every web value below is a translation, not an Apple rule.
 
 ## Sources read

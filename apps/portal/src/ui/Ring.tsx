@@ -50,8 +50,8 @@ export function Ring({
             x2={size}
             y2={size}
           >
-            <stop offset="0" stopColor="#0091ff" />
-            <stop offset="1" stopColor="#0091ff" />
+            <stop offset="0" stopColor="#5cc8ff" />
+            <stop offset="1" stopColor="#5cc8ff" />
           </linearGradient>
           <mask id={`m${uid}`}>
             <circle

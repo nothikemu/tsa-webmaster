@@ -21,15 +21,13 @@ No stock photography, video, audio, icon packs or downloaded fonts are used. Tex
 | XState | 5.33.3 | MIT | https://stately.ai/docs/xstate | State machines |
 | Zustand | 5.0.16 | MIT | https://github.com/pmndrs/zustand | Store |
 | Comlink | 4.4.2 | Apache-2.0 | https://github.com/GoogleChromeLabs/comlink | Worker messaging |
-| GSAP, ScrollTrigger | 3.15.0 | GSAP Standard License | https://gsap.com | Scroll progress |
-| Lenis | 1.3.27 | MIT | https://lenis.darkroom.engineering | Smooth scrolling |
 | wasm-bindgen | 0.2.130 | MIT or Apache-2.0 | https://github.com/rustwasm/wasm-bindgen | Rust bindings |
 | Vite, Tailwind CSS, TypeScript | 7.3.7, 4.3.3, 5.9.3 | MIT, MIT, Apache-2.0 | project sites | Build tooling |
 | javascript-obfuscator, Terser, Binaryen | 5.9.1, 5.51.2, 132.0.0 | BSD-2-Clause, BSD-2-Clause, Apache-2.0 | project sites | Build hardening and WASM optimisation |
 | Vitest, Playwright, @axe-core/playwright | 3.2.7, 1.64.1, 4.14.0 | MIT, Apache-2.0, MPL-2.0 | project sites | Tests |
 | 3D simplex noise (GLSL) | n/a | MIT | Ashima Arts and Stefan Gustavson, https://github.com/ashima/webgl-noise | `wire.vert.glsl` |
 
-GSAP's license should be re-read by the team before submission; it is free to use but has terms.
+The redesign removed GSAP, ScrollTrigger and Lenis. The home page no longer pins or scroll-jacks; nothing animates until the visitor acts, so the dependency, its license terms and about 133 KB of script are gone.
 
 ## Research cited in lessons
 

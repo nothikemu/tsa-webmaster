@@ -1,28 +1,32 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens. One place for type, spacing, color, borders, radii, widths, focus and control sizes.
- * Components read these; they do not invent new values. Fonts are the platform's own: nothing is
- * downloaded, so text paints immediately and matches the reader's operating system.
+ * Parameter design tokens: a midnight-ink laboratory with an editorial voice.
+ * Type: a system serif for display, the system sans for reading, system mono for numbers and short
+ * labels. Nothing is downloaded. Color: layered ink surfaces, one cool action color, one warm
+ * accent held back for selected states and milestones. Every text pair below is checked for AA.
  */
 
 @theme {
-  --color-ink: #000000;
-  --color-elev: #0a0a0c;
-  --color-muted: #a1a1a6;
-  --color-hair: rgb(255 255 255 / 0.14);
-  --color-blue: #0091ff;
-  --color-violet: #8f6bff;
-  --color-cyan: #4de6ff;
-  --color-warn: #ffb14d;
+  --color-ink: #060a12;
+  --color-elev: #0b111c;
+  --color-muted: #8d9db4;
+  --color-hair: rgb(122 154 196 / 0.18);
+  --color-blue: #5cc8ff;
+  --color-violet: #a9b8ff;
+  --color-cyan: #5cc8ff;
+  --color-warn: #ff8f6b;
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --font-display:
+    ui-serif, 'New York', 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia,
+    'Times New Roman', serif;
   --font-mono:
     ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   --ease-portal: cubic-bezier(0.16, 1, 0.3, 1);
-  --radius-tile: 28px;
-  --radius-panel: 28px;
+  --radius-tile: 12px;
+  --radius-panel: 12px;
 }
 
 :root {
@@ -34,58 +38,74 @@
   /* Used only for the loader's exit, so enter and exit differ on purpose. */
   --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
 
-  /* ---- color: depth. A black base and two lighter levels that come forward ----------------- */
-  --bg: #000000;
-  --bg-elev: #161617; /* the footer and other full-width bands */
-  --fill: #1c1c1e; /* cards and controls: one step above the base */
-  --fill-2: #2c2c2e; /* hover and pressed fills: two steps above */
+  /* ---- ink: five layers, each one a step toward the reader ------------------------------------ */
+  --bg: #060a12; /* the ground */
+  --bg-elev: #0b111c; /* bands: the footer, the stage wells */
+  --fill: #0e1624; /* panels */
+  --fill-2: #152033; /* raised panels, hover */
+  --fill-3: #1c2a41; /* pressed, dense headers */
   --surface: var(--fill);
   --surface-hover: var(--fill-2);
 
-  /* ---- color: text. Contrast on --bg: text 19:1, text-2 14:1, text-3 8:1 -------------------- */
-  --text: #f5f5f7;
-  --text-2: #d2d2d7;
-  --text-3: #a1a1a6;
+  /* ---- text. Contrast on --bg: text 17:1, text-2 11:1, text-3 7:1 --------------------------- */
+  --text: #e9eff8;
+  --text-2: #b4c0d3;
+  --text-3: #8d9db4;
   --fg: var(--text);
   --muted: var(--text-3);
 
-  /* ---- color: lines. --line separates; --line-control and --line-strong outline controls ----- */
-  --line: rgb(84 84 88 / 0.65);
-  --line-strong: #636366; /* 3.5:1 on black */
-  --line-control: #8e8e93; /* 6.2:1 on black */
+  /* ---- rules. --line is a drawn rule; --line-strong and --line-control outline controls ------- */
+  --line: rgb(122 154 196 / 0.18);
+  --line-2: rgb(122 154 196 / 0.32);
+  --line-strong: #55698a; /* 3.6:1 on the ground */
+  --line-control: #7f93b3; /* 6.3:1 on the ground */
   --hair: var(--line);
 
-  /* ---- color: accent. One blue, for actions, links and progress. Nothing else is colored ----- */
-  --accent: #0091ff; /* links, focus ring, chart marks: 6.5:1 on black */
-  --accent-solid: #0071e3; /* primary button fill: 4.7:1 against white text */
-  --accent-solid-hover: #0066cc; /* pressed and hover: 5.6:1 against white text */
-  --accent-soft: rgb(0 145 255 / 0.16);
-  --accent-bright: #5ab4ff; /* accent text on --accent-soft: 6.5:1 */
-  --on-accent: #ffffff;
-  --selected: #f5f5f7; /* the selected tab, chip or segment, with --selected-text on it */
-  --selected-text: #1d1d1f;
-  --warn: #ff9f0a; /* destructive actions and wrong answers: 10:1 on black */
-  --blue: var(--accent);
-  --violet: #8f6bff;
-  --cyan: #4de6ff;
+  /* ---- signal (cool): actions, links, focus, progress ---------------------------------------- */
+  --accent: #5cc8ff; /* 10:1 on the ground */
+  --accent-solid: #5cc8ff; /* button fill, with --on-accent text: 10:1 */
+  --accent-solid-hover: #8bdaff;
+  --accent-soft: rgb(92 200 255 / 0.14);
+  --accent-bright: #8bdaff;
+  --on-accent: #04101c;
 
-  /* ---- type: the system typeface. 17px body, regular for reading, semibold for headings ------ */
-  --fs-label: 0.875rem; /* 14px: the smallest size used */
+  /* ---- amber (warm): selected state and milestones only --------------------------------------- */
+  --amber: #f2b35e; /* 10:1 on the ground */
+  --amber-soft: rgb(242 179 94 / 0.14);
+  --selected: #f2b35e;
+  --selected-text: #1a1204;
+
+  /* ---- coral: destructive actions and wrong answers ------------------------------------------- */
+  --warn: #ff8f6b;
+  --danger: #ff8f6b;
+
+  /* ---- one character per module; all three clear 7:1 ---------------------------------------- */
+  --m-foundations: #5cc8ff;
+  --m-synthesis: #a9b8ff;
+  --m-ethics: #f2b35e;
+  --m: var(--accent);
+  --blue: var(--accent);
+  --violet: #a9b8ff;
+  --cyan: #5cc8ff;
+
+  /* ---- type ---------------------------------------------------------------------------------- */
+  --fs-label: 0.8125rem; /* 13px: short mono labels and numbers */
   --fs-small: 0.875rem;
   --fs-body: 1.0625rem; /* 17px */
   --fs-lead-sm: 1.1875rem;
-  --t-lead: clamp(1.1875rem, 0.5vw + 1.07rem, 1.3125rem); /* 19 to 21px */
-  --t-h3: clamp(1.375rem, 1vw + 1.1rem, 1.75rem);
-  --t-h2: clamp(1.75rem, 2.2vw + 1rem, 2.5rem);
-  --t-display: clamp(2rem, 3.4vw + 1rem, 3.5rem);
-  --t-hero: clamp(2.5rem, 7.4vw, 5rem);
-  --lh-body: 1.47;
-  --lh-tight: 1.1;
-  --track-display: -0.015em;
-  --track-label: 0;
-  --measure: 64ch;
+  --t-lead: clamp(1.1875rem, 0.5vw + 1.08rem, 1.375rem);
+  --t-h3: clamp(1.3125rem, 0.9vw + 1.1rem, 1.625rem);
+  --t-h2: clamp(1.75rem, 2.2vw + 1rem, 2.625rem);
+  --t-display: clamp(2.25rem, 4.6vw + 1rem, 4.25rem);
+  --t-hero: clamp(2.75rem, 7.2vw + 0.5rem, 6.25rem);
+  --t-numeral: clamp(4rem, 12vw, 9rem);
+  --lh-body: 1.6;
+  --lh-tight: 1.06;
+  --track-display: -0.012em;
+  --track-label: 0.06em;
+  --measure: 66ch;
 
-  /* ---- space: a 4px base ------------------------------------------------------------------- */
+  /* ---- space: a 4px base -------------------------------------------------------------------- */
   --s-1: 0.25rem;
   --s-2: 0.5rem;
   --s-3: 0.75rem;
@@ -95,20 +115,32 @@
   --s-7: 3rem;
   --s-8: 4rem;
   --s-9: 6rem;
-  --section: clamp(4rem, 9vw, 8rem);
-  --gutter: clamp(16px, 4vw, 40px);
-  --max: 1080px;
+  --section: clamp(4rem, 8vw, 7.5rem);
+  --gutter: clamp(16px, 4vw, 48px);
+  --max: 1240px;
 
-  /* ---- shape ------------------------------------------------------------------------------- */
-  --r-sm: 12px; /* inputs, small marks */
-  --r-md: 18px; /* options, rows inside a panel */
-  --r-lg: 28px; /* panels, stages, tiles */
-  --r-pill: 999px; /* buttons, chips, tabs */
+  /* ---- shape: crisp, drawn, not bubbly ------------------------------------------------------ */
+  --r-sm: 4px; /* inputs, small marks */
+  --r-md: 8px; /* rows, options, controls */
+  --r-lg: 12px; /* panels and instruments */
+  --r-pill: 8px; /* buttons, tabs, chips: a rounded rectangle, not a capsule */
+  --r-round: 999px; /* dots and rings only */
 
   /* ---- interaction ------------------------------------------------------------------------- */
   --tap: 44px; /* minimum target size */
   --focus-ring: 3px solid var(--accent);
   --focus-offset: 3px;
-  --header-h: 48px;
+  --header-h: 56px;
   --hub-clearance: 6rem; /* bottom space so the floating progress control never covers content */
+}
+
+/* Module character: the same system, a different key color. */
+[data-module='foundations'] {
+  --m: var(--m-foundations);
+}
+[data-module='synthesis'] {
+  --m: var(--m-synthesis);
+}
+[data-module='ethics'] {
+  --m: var(--m-ethics);
 }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Lesson, ModuleContent } from '../../content';
 import { lessonHref, quizHref } from '../../content';
 import { t } from '../../core/assets';
-import { REVIEW_AFTER_MS } from '../../core/gamification';
+import { BADGE_QUIZ_MIN, REVIEW_AFTER_MS } from '../../core/gamification';
 import { masteryRank, type Mastery } from '../../core/schema';
 import { Link } from '../../router';
 import { useData, useGame } from '../../ui/hooks';
@@ -39,8 +39,8 @@ function MicroCheck({ module, lesson }: { module: ModuleContent; lesson: Lesson 
   };
 
   return (
-    <fieldset className="check glass">
-      <legend className="mono">{t('lesson.check')}</legend>
+    <fieldset className="check">
+      <legend className="label">{t('lesson.check')}</legend>
       <p className="check-prompt">{check.prompt}</p>
       <div className="options" role="radiogroup" aria-label={check.prompt}>
         {check.options.map((option, i) => (
@@ -118,44 +118,74 @@ export function LessonReader({ module, n }: { module: ModuleContent; n: number }
 
   if (!lesson) return <p>{t('lesson.missing')}</p>;
   const total = module.lessons.length;
+  const next = module.lessons[n];
+  const reached = masteryRank(state);
+  const steps: Array<[Mastery, string]> = [
+    ['seen', t('mastery.seen')],
+    ['practiced', t('mastery.practiced')],
+    ['mastered', t('mastery.mastered')],
+  ];
   return (
     <article className="lesson" aria-labelledby="lesson-title">
       <div className="lesson-meta">
-        <p className="muted">{t('lesson.minutes', { n: lesson.minutes })}</p>
-        {state !== 'unseen' && <MasteryPill state={state} />}
+        <p className="label">
+          <b>{t('lesson.of', { n, total })}</b>
+        </p>
+        <p className="label">{t('lesson.minutes', { n: lesson.minutes })}</p>
+        <ol className="meter" aria-label={t('lesson.progress')}>
+          {steps.map(([key, word], i) => (
+            <li key={key} data-reached={reached >= i + 1}>
+              <i aria-hidden="true" />
+              {word}
+            </li>
+          ))}
+        </ol>
       </div>
       <h2 id="lesson-title" className="lesson-title sr-only">
         {lesson.title}
       </h2>
-      {lesson.body.map((p) => (
-        <p key={p.slice(0, 32)} className="prose">
-          {p}
-        </p>
-      ))}
-      <h3 className="mono sub">{t('lesson.keyPoints')}</h3>
-      <ul className="keypoints">
-        {lesson.keyPoints.map((k) => (
-          <li key={k}>{k}</li>
+      <div className="lesson-body">
+        {lesson.body.map((p) => (
+          <p key={p.slice(0, 32)}>{p}</p>
         ))}
-      </ul>
+      </div>
+      <aside className="keypoints-box" aria-labelledby="kp-h">
+        <h3 id="kp-h" className="label">
+          {t('lesson.keyPoints')}
+        </h3>
+        <ol className="keypoints">
+          {lesson.keyPoints.map((k) => (
+            <li key={k}>{k}</li>
+          ))}
+        </ol>
+      </aside>
       <MicroCheck key={lesson.id} module={module} lesson={lesson} />
-      <nav className="lesson-nav" aria-label={t('lesson.nav')}>
-        {n > 1 ? (
-          <Link to={lessonHref(module.id, n - 1)} className="btn btn-ghost">
-            {t('lesson.prev')}
-          </Link>
-        ) : (
-          <span />
-        )}
-        {n < total ? (
-          <Link to={lessonHref(module.id, n + 1)} className="btn">
-            {t('lesson.next')}
-          </Link>
-        ) : (
-          <Link to={quizHref(module.id)} className="btn">
-            {t('lesson.toQuiz')}
-          </Link>
-        )}
+      <nav className="next-step" aria-label={t('lesson.nav')}>
+        <div className="next-copy">
+          <p className="label">{next ? t('lesson.next') : t('lesson.toQuiz')}</p>
+          <p className="next-title">{next ? next.title : t('quiz.title')}</p>
+          <p className="next-meta">
+            {next
+              ? t('lesson.upNextMeta', { minutes: next.minutes })
+              : t('lesson.upNextQuiz', { min: BADGE_QUIZ_MIN, total: module.quiz.length })}
+          </p>
+        </div>
+        <div className="next-actions">
+          {n > 1 && (
+            <Link to={lessonHref(module.id, n - 1)} className="btn btn-ghost">
+              {t('lesson.prev')}
+            </Link>
+          )}
+          {next ? (
+            <Link to={lessonHref(module.id, n + 1)} className="btn btn-primary">
+              {t('lesson.next')}
+            </Link>
+          ) : (
+            <Link to={quizHref(module.id)} className="btn btn-primary">
+              {t('lesson.toQuiz')}
+            </Link>
+          )}
+        </div>
       </nav>
     </article>
   );

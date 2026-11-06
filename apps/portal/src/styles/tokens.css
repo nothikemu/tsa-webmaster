@@ -1,32 +1,35 @@
 @import 'tailwindcss';
 
 /*
- * Parameter design tokens: a midnight-ink laboratory with an editorial voice.
- * Type: a system serif for display, the system sans for reading, system mono for numbers and short
- * labels. Nothing is downloaded. Color: layered ink surfaces, one cool action color, one warm
- * accent held back for selected states and milestones. Every text pair below is checked for AA.
+ * Parameter design tokens: the aero lab.
+ *
+ * A midnight-ultraviolet ground, lit from inside. Surfaces are tinted glass with a pearlescent
+ * edge; the light that passes through them is aqua, orchid and acid lime. Display type is wide and
+ * round (the early-2000s future), reading type is a calm grotesk, and one word per headline is set
+ * in an italic serif. Every text pair below was measured for WCAG AA against the ground, every panel
+ * layer and a worst-case ambient tint (docs/DESIGN_SYSTEM.md has the table).
  */
 
 @theme {
-  --color-ink: #060a12;
-  --color-elev: #0b111c;
-  --color-muted: #8d9db4;
-  --color-hair: rgb(122 154 196 / 0.18);
-  --color-blue: #5cc8ff;
-  --color-violet: #a9b8ff;
-  --color-cyan: #5cc8ff;
-  --color-warn: #ff8f6b;
+  --color-ink: #06051a;
+  --color-elev: #0a0928;
+  --color-muted: #b4afdb;
+  --color-hair: rgb(190 180 255 / 0.16);
+  --color-blue: #5cf1ff;
+  --color-violet: #b3a5ff;
+  --color-cyan: #5cf1ff;
+  --color-warn: #ff8d7c;
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+    'Param Sans', 'Param Sans Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   --font-display:
-    ui-serif, 'New York', 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia,
-    'Times New Roman', serif;
+    'Param Display', 'Param Display Fallback', 'Arial Black', ui-sans-serif, system-ui, sans-serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+    'Param Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+    monospace;
   --ease-portal: cubic-bezier(0.16, 1, 0.3, 1);
-  --radius-tile: 12px;
-  --radius-panel: 12px;
+  --radius-tile: 24px;
+  --radius-panel: 24px;
 }
 
 :root {
@@ -35,77 +38,148 @@
   /* ---- motion ---------------------------------------------------------------------------- */
   /* The one easing curve. JavaScript mirrors it in core/spring.ts (EASE_CSS). */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  /* Used only for the loader's exit, so enter and exit differ on purpose. */
   --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 160ms;
+  --dur: 320ms;
+  --dur-slow: 720ms;
 
-  /* ---- ink: five layers, each one a step toward the reader ------------------------------------ */
-  --bg: #060a12; /* the ground */
-  --bg-elev: #0b111c; /* bands: the footer, the stage wells */
-  --fill: #0e1624; /* panels */
-  --fill-2: #152033; /* raised panels, hover */
-  --fill-3: #1c2a41; /* pressed, dense headers */
+  /* ---- ground: ultraviolet ink in five layers ----------------------------------------------- */
+  --bg: #06051a; /* the ground */
+  --bg-elev: #0a0928; /* bands: footer, stage wells */
+  --fill: #0d0c2b; /* panels */
+  --fill-2: #15143c; /* raised, hover */
+  --fill-3: #1e1c50; /* pressed, dense headers */
   --surface: var(--fill);
   --surface-hover: var(--fill-2);
 
-  /* ---- text. Contrast on --bg: text 17:1, text-2 11:1, text-3 7:1 --------------------------- */
-  --text: #e9eff8;
-  --text-2: #b4c0d3;
-  --text-3: #8d9db4;
+  /* ---- text. Contrast on the ground 18:1 / 13:1 / 9.3:1; on the worst panel tint 12 / 8.5 / 6.3 --- */
+  --text: #f6f3ff;
+  --text-2: #cfcaf0;
+  --text-3: #b4afdb;
   --fg: var(--text);
   --muted: var(--text-3);
 
-  /* ---- rules. --line is a drawn rule; --line-strong and --line-control outline controls ------- */
-  --line: rgb(122 154 196 / 0.18);
-  --line-2: rgb(122 154 196 / 0.32);
-  --line-strong: #55698a; /* 3.6:1 on the ground */
-  --line-control: #7f93b3; /* 6.3:1 on the ground */
+  /* ---- rules ---------------------------------------------------------------------------------- */
+  --line: rgb(190 180 255 / 0.16);
+  --line-2: rgb(190 180 255 / 0.3);
+  --line-strong: #6d67ad; /* 4:1 on the ground */
+  --line-control: #8f89c8; /* 6.3:1 on the ground */
   --hair: var(--line);
 
-  /* ---- signal (cool): actions, links, focus, progress ---------------------------------------- */
-  --accent: #5cc8ff; /* 10:1 on the ground */
-  --accent-solid: #5cc8ff; /* button fill, with --on-accent text: 10:1 */
-  --accent-solid-hover: #8bdaff;
-  --accent-soft: rgb(92 200 255 / 0.14);
-  --accent-bright: #8bdaff;
-  --on-accent: #04101c;
+  /* ---- light: the four hues ------------------------------------------------------------------- */
+  --acid: #c8ff4a; /* the go color: primary action, mastery */
+  --aqua: #5cf1ff; /* links, focus, Foundations */
+  --orchid: #ff74dc; /* Ethics, the hot accent */
+  --ultra: #b3a5ff; /* Synthesis */
+  --amber: #ffc16e; /* caution and the simulation tag */
+  --coral: #ff8d7c; /* wrong answers and destructive actions */
 
-  /* ---- amber (warm): selected state and milestones only --------------------------------------- */
-  --amber: #f2b35e; /* 10:1 on the ground */
-  --amber-soft: rgb(242 179 94 / 0.14);
-  --selected: #f2b35e;
-  --selected-text: #1a1204;
+  --accent: var(--aqua);
+  --accent-solid: var(--acid);
+  --accent-solid-hover: #dcff85;
+  --accent-soft: rgb(92 241 255 / 0.14);
+  --accent-bright: #a6f7ff;
+  --on-accent: #0a1000; /* text on acid or aqua: 16:1 */
+  --amber-soft: rgb(255 193 110 / 0.14);
+  --acid-soft: rgb(200 255 74 / 0.12);
+  --selected: var(--acid);
+  --selected-text: #0a1000;
+  --warn: var(--coral);
+  --danger: var(--coral);
 
-  /* ---- coral: destructive actions and wrong answers ------------------------------------------- */
-  --warn: #ff8f6b;
-  --danger: #ff8f6b;
-
-  /* ---- one character per module; all three clear 7:1 ---------------------------------------- */
-  --m-foundations: #5cc8ff;
-  --m-synthesis: #a9b8ff;
-  --m-ethics: #f2b35e;
+  /* ---- one character per module ------------------------------------------------------------- */
+  --m-foundations: #5cf1ff;
+  --m-synthesis: #b3a5ff;
+  --m-ethics: #ff74dc;
   --m: var(--accent);
-  --blue: var(--accent);
-  --violet: #a9b8ff;
-  --cyan: #5cc8ff;
+  --blue: var(--aqua);
+  --violet: var(--ultra);
+  --cyan: var(--aqua);
 
-  /* ---- type ---------------------------------------------------------------------------------- */
-  --fs-label: 0.8125rem; /* 13px: short mono labels and numbers */
+  /* ---- materials ------------------------------------------------------------------------------ */
+  /* Pearl: the iridescent sweep, used for hairlines, fills and the occasional large gesture. */
+  --pearl: linear-gradient(112deg, #5cf1ff 0%, #b3a5ff 34%, #ff74dc 62%, #c8ff4a 100%);
+  --pearl-soft: linear-gradient(
+    112deg,
+    rgb(92 241 255 / 0.55),
+    rgb(179 165 255 / 0.5) 38%,
+    rgb(255 116 220 / 0.5) 66%,
+    rgb(200 255 74 / 0.55)
+  );
+  /* Chrome: a liquid-metal gradient for display type and rims. */
+  --chrome: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #e4e0ff 26%,
+    #9a94dc 47%,
+    #f4f1ff 53%,
+    #ffffff 78%,
+    #cfc9ff 100%
+  );
+  /* Gel: the glossy acid fill of a primary button. */
+  --gel: linear-gradient(180deg, #e8ff9a 0%, #c8ff4a 46%, #a9ec24 54%, #d6ff68 100%);
+  --gel-hover: linear-gradient(180deg, #f1ffb8 0%, #d6ff6e 46%, #b9f23a 54%, #e4ff88 100%);
+  /* Glass: the panel recipe. A tinted pane with a light edge. */
+  --glass:
+    linear-gradient(
+      158deg,
+      rgb(255 255 255 / 0.085),
+      rgb(255 255 255 / 0.02) 36%,
+      rgb(150 130 255 / 0.05)
+    ),
+    rgb(13 12 43 / 0.7);
+  --glass-strong:
+    linear-gradient(
+      158deg,
+      rgb(255 255 255 / 0.1),
+      rgb(255 255 255 / 0.03) 36%,
+      rgb(150 130 255 / 0.07)
+    ),
+    rgb(16 15 52 / 0.86);
+  --glass-edge: linear-gradient(
+    150deg,
+    rgb(255 255 255 / 0.5),
+    rgb(170 160 255 / 0.14) 32%,
+    rgb(92 241 255 / 0.2) 60%,
+    rgb(255 116 220 / 0.34)
+  );
+  --glass-blur: blur(20px) saturate(1.5);
+  --shadow-glass:
+    inset 0 1px 0 rgb(255 255 255 / 0.14), inset 0 -1px 0 rgb(0 0 0 / 0.32),
+    0 30px 60px -30px rgb(2 0 24 / 0.9), 0 2px 8px rgb(2 0 24 / 0.4);
+  --shadow-lift: 0 22px 48px -18px rgb(2 0 24 / 0.9), 0 0 0 1px rgb(255 255 255 / 0.06);
+  --glow-acid: 0 0 0 1px rgb(200 255 74 / 0.5), 0 8px 34px -6px rgb(200 255 74 / 0.45);
+  --glow-aqua: 0 0 0 1px rgb(92 241 255 / 0.5), 0 8px 34px -6px rgb(92 241 255 / 0.4);
+
+  /* ---- type ----------------------------------------------------------------------------------- */
+  --font-sans:
+    'Param Sans', 'Param Sans Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --font-display:
+    'Param Display', 'Param Display Fallback', 'Arial Black', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Param Serif', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --font-mono:
+    'Param Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+    monospace;
+
+  --fs-label: 0.75rem; /* 12px: mono labels, set in caps with tracking */
   --fs-small: 0.875rem;
   --fs-body: 1.0625rem; /* 17px */
   --fs-lead-sm: 1.1875rem;
-  --t-lead: clamp(1.1875rem, 0.5vw + 1.08rem, 1.375rem);
-  --t-h3: clamp(1.3125rem, 0.9vw + 1.1rem, 1.625rem);
-  --t-h2: clamp(1.75rem, 2.2vw + 1rem, 2.625rem);
-  --t-display: clamp(2.25rem, 4.6vw + 1rem, 4.25rem);
-  --t-hero: clamp(2.75rem, 7.2vw + 0.5rem, 6.25rem);
+  --t-lead: clamp(1.125rem, 0.5vw + 1.02rem, 1.3125rem);
+  --t-h3: clamp(1.1875rem, 0.7vw + 1.02rem, 1.5rem);
+  --t-h2: clamp(1.625rem, 2vw + 0.9rem, 2.5rem);
+  --t-display: clamp(2rem, 3.8vw + 1rem, 3.75rem);
+  --t-hero: clamp(2.5rem, 7.4vw + 0.4rem, 6.5rem);
   --t-numeral: clamp(4rem, 12vw, 9rem);
-  --lh-body: 1.6;
-  --lh-tight: 1.06;
-  --track-display: -0.012em;
-  --track-label: 0.06em;
-  --measure: 66ch;
+  --lh-body: 1.62;
+  --lh-tight: 1.04;
+  --track-display: -0.035em;
+  --track-label: 0.12em;
+  --measure: 64ch;
 
-  /* ---- space: a 4px base -------------------------------------------------------------------- */
+  /* ---- space: a 4px base --------------------------------------------------------------------- */
   --s-1: 0.25rem;
   --s-2: 0.5rem;
   --s-3: 0.75rem;
@@ -115,26 +189,32 @@
   --s-7: 3rem;
   --s-8: 4rem;
   --s-9: 6rem;
-  --section: clamp(4rem, 8vw, 7.5rem);
+  --section: clamp(4.5rem, 9vw, 8.5rem);
   --gutter: clamp(16px, 4vw, 48px);
-  --max: 1240px;
+  --max: 1280px;
 
-  /* ---- shape: crisp, drawn, not bubbly ------------------------------------------------------ */
-  --r-sm: 4px; /* inputs, small marks */
-  --r-md: 8px; /* rows, options, controls */
-  --r-lg: 12px; /* panels and instruments */
-  --r-pill: 8px; /* buttons, tabs, chips: a rounded rectangle, not a capsule */
-  --r-round: 999px; /* dots and rings only */
+  /* ---- shape: soft and liquid, the capsule is the signature ----------------------------------- */
+  --r-sm: 8px; /* inputs, small marks */
+  --r-md: 14px; /* rows, options */
+  --r-lg: 24px; /* panels and instruments */
+  --r-xl: 34px; /* hero surfaces */
+  --r-pill: 999px; /* buttons, tabs, chips */
+  --r-round: 999px;
 
-  /* ---- interaction ------------------------------------------------------------------------- */
+  /* ---- interaction --------------------------------------------------------------------------- */
   --tap: 44px; /* minimum target size */
-  --focus-ring: 3px solid var(--accent);
+  --focus-ring: 3px solid var(--aqua);
   --focus-offset: 3px;
-  --header-h: 56px;
+  --header-h: 72px;
   --hub-clearance: 6rem; /* bottom space so the floating progress control never covers content */
+
+  /* ---- live values written by the motion layer (ui/fx.ts); at rest they are zero ------------------ */
+  --px: 0; /* pointer, -1 to 1 */
+  --py: 0;
+  --sy: 0; /* scroll, in px */
 }
 
-/* Module character: the same system, a different key color. */
+/* Module character: the same system, a different light. */
 [data-module='foundations'] {
   --m: var(--m-foundations);
 }

@@ -5,9 +5,7 @@
 .mp-head {
   display: grid;
   gap: var(--s-4);
-  margin-bottom: var(--s-6);
-  padding-bottom: var(--s-4);
-  border-bottom: 1px solid var(--line-2);
+  margin-bottom: var(--s-7);
 }
 .crumbs ol {
   display: flex;
@@ -62,7 +60,7 @@
   min-width: min(100%, 14rem);
 }
 
-/* The stepper: every step of the module, its state drawn as a shape, the current one in amber. */
+/* The stepper: every step of the module, its state drawn as a shape, the current one ringed in lime. */
 .stepper ul {
   display: flex;
   flex-wrap: wrap;
@@ -77,26 +75,37 @@
   gap: 0.5em;
   min-height: var(--tap);
   min-width: var(--tap);
-  padding: 0 var(--s-3);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r-md);
-  background: transparent;
+  padding: 0 var(--s-4);
+  border: 0;
+  border-radius: var(--r-pill);
+  background: rgb(255 255 255 / 0.055);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    inset 0 0 0 1px rgb(220 214 255 / 0.2);
   color: var(--text-2);
   font-size: var(--fs-small);
+  font-weight: 500;
   text-decoration: none;
   transition:
-    background-color 200ms var(--ease),
-    border-color 200ms var(--ease),
-    color 200ms var(--ease);
+    background-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    color var(--dur) var(--ease);
 }
 .stepper a:not(.link-arrow):hover {
-  background: var(--fill-2);
+  background: rgb(255 255 255 / 0.11);
   color: var(--text);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    inset 0 0 0 1px rgb(92 241 255 / 0.55);
 }
 .stepper a[aria-current='page'] {
-  border-color: var(--amber);
-  background: var(--amber-soft);
+  background: var(--acid-soft);
   color: var(--text);
+  font-weight: 650;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    inset 0 0 0 1.5px var(--acid),
+    0 8px 24px -10px rgb(200 255 74 / 0.5);
 }
 .stepper-jump {
   display: none;
@@ -122,9 +131,8 @@
   display: grid;
   gap: var(--s-3);
   padding: var(--s-3);
-  background: var(--fill);
-  border: 1px solid var(--line-2);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-xl);
+  background: var(--glass-strong);
 }
 .instrument:focus-visible {
   outline: none;
@@ -141,17 +149,19 @@
 }
 .instrument-kind {
   flex: none;
-  padding: 2px var(--s-2);
-  border: 1px solid var(--m);
-  border-radius: var(--r-sm);
+  padding: 3px var(--s-3);
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--m) 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--m) 70%, transparent);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--m);
 }
 .instrument-kind[data-kind='simulation'] {
-  border-color: var(--amber);
+  background: var(--amber-soft);
+  box-shadow: inset 0 0 0 1px var(--amber);
   color: var(--amber);
 }
 @media (min-width: 1041px) and (min-height: 760px) {
@@ -217,16 +227,23 @@
   color: var(--text-2);
 }
 .lesson-body p:first-child {
-  font-family: var(--font-display);
-  font-size: 1.375rem;
-  line-height: 1.5;
+  font-size: 1.3125rem;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  line-height: 1.55;
   color: var(--text);
 }
 .keypoints-box {
   display: grid;
   gap: var(--s-3);
-  padding: var(--s-4) 0 var(--s-4) var(--s-5);
-  border-left: 2px solid var(--m);
+  padding: var(--s-5);
+  border-radius: var(--r-lg);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--m) 13%, transparent), transparent 62%),
+    var(--glass);
+  box-shadow:
+    inset 3px 0 0 var(--m),
+    var(--shadow-glass);
 }
 .keypoints {
   list-style: none;
@@ -253,11 +270,15 @@
   grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--s-4) var(--s-6);
   align-items: end;
-  padding: var(--s-5);
-  background: var(--fill);
-  border: 1px solid var(--line-2);
-  border-top: 2px solid var(--m);
-  border-radius: var(--r-lg);
+  padding: var(--s-5) var(--s-6);
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(
+      90% 120% at 0% 0%,
+      color-mix(in srgb, var(--m) 16%, transparent),
+      transparent 70%
+    ),
+    var(--glass-strong);
 }
 .next-copy {
   display: grid;
@@ -265,6 +286,8 @@
 }
 .next-title {
   font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.04em;
   font-size: var(--t-h3);
   line-height: 1.15;
 }
@@ -290,10 +313,13 @@
   gap: var(--s-3);
 }
 .mp-objective > p:not(.label) {
-  font-family: var(--font-display);
-  font-size: var(--t-h3);
-  line-height: 1.35;
-  max-width: 34ch;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.6rem, 2.6vw, 2.35rem);
+  line-height: 1.16;
+  letter-spacing: -0.005em;
+  color: var(--text);
+  max-width: 26ch;
 }
 .mp-sequence {
   display: grid;
@@ -310,13 +336,15 @@
   display: grid;
   gap: var(--s-3);
   padding: var(--s-5);
-  background: var(--fill);
-  border: 1px solid var(--line-2);
-  border-top: 2px solid var(--amber);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(100% 100% at 100% 0%, rgb(200 255 74 / 0.1), transparent 60%),
+    var(--glass-strong);
 }
 .mp-badge-name {
   font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.04em;
   font-size: var(--t-h3);
 }
 .requirements {
@@ -342,7 +370,8 @@
   color: var(--text-3);
 }
 .requirements li[data-done='true'] .req-mark {
-  color: var(--amber);
+  color: var(--acid);
+  filter: drop-shadow(0 0 6px rgb(200 255 74 / 0.55));
 }
 
 /* Foundations: the drawing in the header, a narrow reading column, the instrument large on the right. */

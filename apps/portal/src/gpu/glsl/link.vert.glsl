@@ -30,9 +30,9 @@ void main() {
   float fall = 1.0 - smoothstep(uMaxLen * 0.4, uMaxLen, len);
   float infl = uPresence * (1.0 - smoothstep(0.0, uRadius, length(p - uPointer)));
   vA = aBase * fall * uOpacity * (1.0 + infl * 1.6);
-  vec3 blue = vec3(0.30, 0.52, 1.00);
-  vec3 violet = vec3(0.56, 0.42, 1.00);
-  vec3 cyan = vec3(0.30, 0.90, 1.00);
+  vec3 blue = vec3(0.70, 0.65, 1.00);
+  vec3 violet = vec3(1.00, 0.45, 0.86);
+  vec3 cyan = vec3(0.36, 0.95, 1.00);
   vC = mix(mix(blue, violet, aT), cyan, clamp(infl, 0.0, 1.0));
   gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
 }

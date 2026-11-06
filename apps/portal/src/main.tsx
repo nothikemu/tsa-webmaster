@@ -1,14 +1,17 @@
 import { checksums } from 'virtual:integrity';
 import { createRoot, type Root } from 'react-dom/client';
 import { createActor } from 'xstate';
+import './styles/fonts.css';
 import './styles/tokens.css';
 import './styles/base.css';
+import './styles/material.css';
 import './styles/components.css';
 import './styles/shell.css';
 import './styles/home.css';
 import './styles/catalog.css';
 import './styles/module.css';
 import './styles/pages.css';
+import './styles/fx.css';
 import { App } from './App';
 import { bootAssets, prefetchAssets } from './core/assets';
 import { chooseComputeTier, probeCaps, readOverrides } from './core/caps';

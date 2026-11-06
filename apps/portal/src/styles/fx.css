@@ -1,0 +1,170 @@
+/*
+ * Motion. Everything here is an enhancement: with the motion layer off (reduced motion, no script)
+ * the page is complete and still. ui/fx.ts sets html[data-fx='on'] only when motion is welcome.
+ */
+
+/* ---- the live atmosphere ------------------------------------------------------------------------------ */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1600ms var(--ease);
+  view-transition-name: ambient;
+}
+.ambient[data-ready='true'] {
+  opacity: 0.92;
+}
+
+/* ---- reveals --------------------------------------------------------------------------------------------- */
+html[data-fx='on'] [data-reveal]:not(.in) {
+  opacity: 0;
+}
+html[data-fx='on'] [data-reveal].in {
+  animation: reveal-up 1000ms var(--ease) var(--rd, 0ms) backwards;
+}
+html[data-fx='on'] [data-reveal='fade'].in {
+  animation-name: reveal-fade;
+}
+html[data-fx='on'] [data-reveal='scale'].in {
+  animation-name: reveal-scale;
+}
+html[data-fx='on'] [data-reveal='clip'].in {
+  animation-name: reveal-clip;
+  animation-duration: 1300ms;
+}
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 34px, 0);
+    filter: blur(8px);
+  }
+}
+@keyframes reveal-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes reveal-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+    filter: blur(10px);
+  }
+}
+@keyframes reveal-clip {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0 round var(--r-lg));
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round var(--r-lg));
+  }
+}
+
+/* A headline that rises line by line out of a mask, each line a beat after the last. */
+.hero-line {
+  display: block;
+  overflow: hidden;
+  padding: 0.04em 0.12em 0.1em 0.04em;
+  margin: -0.04em -0.12em -0.1em -0.04em;
+}
+.hero-line > span {
+  display: inline-block;
+}
+html[data-fx='on'][data-boot='ready'] .hero-line > span {
+  animation: line-rise 1200ms var(--ease) calc(var(--i, 0) * 120ms + 120ms) backwards;
+}
+@keyframes line-rise {
+  from {
+    transform: translate3d(0, 112%, 0) rotate(2.5deg);
+    opacity: 0;
+  }
+}
+
+/* ---- page changes: a cross-fade with depth ------------------------------------------------------------ */
+.site-header {
+  view-transition-name: site-header;
+}
+.hub {
+  view-transition-name: hub;
+}
+::view-transition-group(site-header),
+::view-transition-group(ambient),
+::view-transition-group(hub) {
+  animation-duration: 0s;
+}
+::view-transition-old(root) {
+  animation: vt-out 380ms var(--ease-soft) both;
+}
+::view-transition-new(root) {
+  animation: vt-in 760ms var(--ease) both;
+}
+/* The two images keep the browser's plus-lighter blend, so the cross-fade never dips. */
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: translate3d(0, -16px, 0) scale(0.994);
+    filter: blur(8px);
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0) scale(0.996);
+    filter: blur(12px);
+  }
+}
+
+/* ---- the drift of the aurora is slower when the page is not the point ------------------------------------ */
+html[data-fx='off']::before {
+  animation: none;
+}
+
+/* ---- ambient motion shared by components ------------------------------------------------------------ */
+@keyframes sheen-slide {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes float-y {
+  from {
+    transform: translate3d(0, -6px, 0);
+  }
+  to {
+    transform: translate3d(0, 8px, 0);
+  }
+}
+@keyframes wave-x {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marquee-x {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}

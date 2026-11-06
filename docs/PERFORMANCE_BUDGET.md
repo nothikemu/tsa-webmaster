@@ -32,13 +32,14 @@ Next steps, in order of expected gain: (1) load WebAssembly lazily and boot on t
 
 | Asset | Raw | Gzip | When it loads |
 | --- | --- | --- | --- |
-| Entry script (`index`, string-encoded) | 256 KB | 81 KB | Always |
+| Entry script (`index`, string-encoded) | 277 KB | 88 KB | Always |
 | `vendor-react` | 140 KB | 46 KB | Always |
 | `vendor-state` (XState, Zustand, Comlink) | 44 KB | 15 KB | Always |
-| CSS | 69 KB | 14 KB | Always |
+| CSS | 96 KB | 20 KB | Always |
+| Typefaces (four Latin woff2 files) | 131 KB | 131 KB | Each face when the page first uses it (`font-display: swap`) |
 | WebAssembly (SIMD or scalar) | 51 KB | 24 KB | Always, one of the two |
 | Encrypted asset blob | 28 KB | 28 KB | Always |
-| Home page chunk | 17 KB | 5 KB | Home |
+| Home page chunk | 26 KB | 8 KB | Home |
 | `vendor-three` | 752 KB | 193 KB | Module pages (WebGL2 path) |
 | `vendor-three-gpu` | 732 KB | 207 KB | Only when WebGPU is used |
 | `vendor-post` (bloom, aberration, grain) | 321 KB | 112 KB | Module A and C at quality tiers 2 and 3 |
@@ -49,6 +50,8 @@ Next steps, in order of expected gain: (1) load WebAssembly lazily and boot on t
 - No new always-loaded dependency without a measured reason.
 - Heavy code stays in lazy chunks: three, post-processing and every page.
 - Off-screen canvases are paused (IntersectionObserver) and the loop stops when the tab is hidden.
+- The live background field is one fragment shader on a canvas drawn at 0.42 of CSS size and 30 frames a second, with no assets. It is a master-loop subscriber marked heavy, so the quality governor sees its cost; it freezes on pages with a scene, under reduced motion and on quality tier 0, and without WebGL the CSS aurora is the background.
+- Motion that is not the background (reveals, the pointer spotlight, the magnetic pull) is batched into one requestAnimationFrame per event burst and writes custom properties only; none of it runs on touch devices except reveals and scroll values.
 - Pointer, touch and scroll listeners are passive. Device pixel ratio is capped at 2 (and 1 to 1.5 on lower tiers).
 - Geometries, materials and vectors are created once per scene and reused. Particle data lives in typed arrays.
 - DOM writes in animation loops go straight to attributes and CSS variables, not through React state, except for readouts throttled to a few updates per second.

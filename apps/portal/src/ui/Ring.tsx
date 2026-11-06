@@ -50,8 +50,9 @@ export function Ring({
             x2={size}
             y2={size}
           >
-            <stop offset="0" stopColor="#5cc8ff" />
-            <stop offset="1" stopColor="#5cc8ff" />
+            <stop offset="0" stopColor="#5cf1ff" />
+            <stop offset="0.55" stopColor="#b3a5ff" />
+            <stop offset="1" stopColor="#ff74dc" />
           </linearGradient>
           <mask id={`m${uid}`}>
             <circle
@@ -74,7 +75,7 @@ export function Ring({
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="rgba(255,255,255,.16)"
+          stroke="rgba(190,180,255,.18)"
           strokeWidth={stroke}
         />
         <circle

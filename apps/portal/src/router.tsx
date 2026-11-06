@@ -14,8 +14,10 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react';
+import { flushSync } from 'react-dom';
 import { announce } from './core/announce';
 import { isModuleId, type ModuleId } from './content';
+import { preloadRoute } from './preload';
 
 export type Route =
   | { name: 'home' }
@@ -31,6 +33,17 @@ export type Route =
   | { name: 'accessibility' }
   | { name: 'credits' }
   | { name: 'notfound' };
+
+
+type ViewTransitionDocument = Document & { startViewTransition(update: () => void): unknown };
+let navigationToken = 0;
+
+/** View transitions are used when the browser has them, the app is running and motion is welcome. */
+function canTransition(): boolean {
+  if (!('startViewTransition' in document) || document.visibilityState !== 'visible') return false;
+  if (document.documentElement.dataset.fx !== 'on') return false;
+  return true;
+}
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -100,11 +113,32 @@ export function RouterProvider({ children, onRoute }: { children: ReactNode; onR
     const next = normalizePath(to.startsWith(BASE) && BASE ? to : withBase(to));
     if (options?.replace) history.replaceState(null, '', withBase(next));
     else history.pushState(null, '', withBase(next));
-    setPath(next);
+    const token = ++navigationToken;
+    if (!canTransition()) {
+      setPath(next);
+      return;
+    }
+    // A page change is a cross-fade with a little depth. The next page's code is fetched first (for at
+    // most half a second) so the transition lands on finished content, not on a loading state.
+    const settle = new Promise<void>((resolve) => setTimeout(resolve, 500));
+    void Promise.race([preloadRoute(next).catch(() => undefined), settle]).then(() => {
+      if (token !== navigationToken) return;
+      try {
+        (document as ViewTransitionDocument).startViewTransition(() => {
+          flushSync(() => setPath(next));
+          window.scrollTo(0, 0);
+        });
+      } catch {
+        setPath(next);
+      }
+    });
   }, []);
 
   useEffect(() => {
-    const onPop = (): void => setPath(normalizePath(location.pathname));
+    const onPop = (): void => {
+      navigationToken++;
+      setPath(normalizePath(location.pathname));
+    };
     addEventListener('popstate', onPop);
     return () => removeEventListener('popstate', onPop);
   }, []);

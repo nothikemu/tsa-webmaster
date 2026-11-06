@@ -426,6 +426,9 @@ export default function ProgressDashboard(): ReactNode {
   return (
     <div className="wrap page dashboard">
       <header className="page-head">
+        <p className="label section-n" data-reveal="fade">
+          <span className="spark" aria-hidden="true" /> 02
+        </p>
         <h1 className="display">{t('pd.title')}</h1>
       </header>
 

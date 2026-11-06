@@ -11,8 +11,9 @@ function Path({ m, slot }: { m: ModuleContent; slot: 'a' | 'b' | 'c' }): ReactNo
   const d = useData().modules[m.id];
   return (
     <article
-      className={`cat-path cat-path-${slot}`}
+      className={`cat-path cat-path-${slot} glass edge`}
       data-module={m.id}
+      data-reveal="up"
       aria-labelledby={`cat-${m.id}`}
     >
       <header className="cat-head">
@@ -47,6 +48,9 @@ export default function ModuleHub() {
   return (
     <div className="wrap page catalog">
       <header className="page-head cat-page-head">
+        <p className="label section-n" data-reveal="fade">
+          <span className="spark" aria-hidden="true" /> 01
+        </p>
         <h1 className="display">{t('hub.title')}</h1>
         <p className="lead">{HOME.bento.heading}</p>
       </header>

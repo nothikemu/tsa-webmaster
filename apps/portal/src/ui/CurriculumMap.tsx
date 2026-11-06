@@ -298,7 +298,7 @@ export function CurriculumMap({ compact = false }: { compact?: boolean }): React
   const w = useMemo(() => wide(data), [data]);
   const v = useMemo(() => tall(data), [data]);
   return (
-    <figure className={`cmap${compact ? ' cmap-compact' : ''}`}>
+    <figure className={`cmap glass edge${compact ? ' cmap-compact' : ''}`}>
       <svg
         className="cmap-wide"
         viewBox={`0 0 ${w.w} ${w.h}`}

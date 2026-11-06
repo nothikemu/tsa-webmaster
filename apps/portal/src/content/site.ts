@@ -98,7 +98,7 @@ export const ABOUT: DocPageContent = {
     {
       heading: 'Design brief',
       paragraphs: [
-        "The interface is a midnight-ink ground with layered surfaces, the reader's own system fonts with a serif for headlines, one cool signal color for actions, links and progress, and a warm amber held back for the selected step and for milestones. Every diagram is drawn from the lesson content or from your saved progress, and state is always shown by a shape or a word as well as by color.",
+        'The interface is an ultraviolet-ink ground lit by aqua, orchid and acid lime. Surfaces are tinted glass with a pearlescent edge, buttons are glossy gel capsules, and headlines are set in a wide, round display face with one italic serif word for emphasis. A slow liquid field moves behind the page and freezes on pages with a 3D scene, under reduced motion and on slower devices. Every diagram is drawn from the lesson content or from your saved progress, and state is always shown by a shape or a word as well as by color.',
         'Every interactive scene has a text alternative and a keyboard path. Motion respects the reduced-motion setting. The site is a set of static files and runs from any web host.',
       ],
     },
@@ -132,7 +132,7 @@ export const ACCESSIBILITY: DocPageContent = {
         'Pointer-only interactions have keyboard equivalents: arrow keys move the particle pointer, the prompt divider and the sliders; Enter and Space activate vulnerability markers; 1, 2, 3 and M switch pointer modes.',
         'Progress changes are announced through a polite live region.',
         'Text and interface colors meet AA contrast on the dark ground. Progress is never shown by color alone: every state also has a word or a shape.',
-        'The prefers-reduced-motion setting turns off ambient drift, camera movement, tilt, particle bursts and spring overshoot.',
+        'The prefers-reduced-motion setting turns off the moving background, page transitions, scroll reveals, the pull of buttons toward the pointer, camera movement, tilt, particle bursts and spring overshoot.',
         'Without JavaScript, every page still shows its text content.',
       ],
     },
@@ -178,6 +178,12 @@ export const CREDIT_LIBRARIES: readonly CreditEntry[] = [
   { name: 'XState', version: '5.33.3', license: 'MIT', use: 'State machines' },
   { name: 'Zustand', version: '5.0.16', license: 'MIT', use: 'Application store' },
   { name: 'Comlink', version: '4.4.2', license: 'Apache-2.0', use: 'Web Worker messaging' },
+  {
+    name: 'Unbounded, Hanken Grotesk, Instrument Serif, Geist Mono',
+    version: '5.3.0 (each, as @fontsource packages)',
+    license: 'SIL Open Font License 1.1',
+    use: 'Typefaces: display, reading, accent and label. Served from this site, Latin subset only',
+  },
   {
     name: 'wasm-bindgen',
     version: '0.2.130',

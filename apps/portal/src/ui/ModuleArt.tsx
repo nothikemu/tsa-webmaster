@@ -66,7 +66,7 @@ function Topology(): ReactNode {
 
 function Fingerprints(): ReactNode {
   const W = 360;
-  const H = 262;
+  const H = 278;
   const letters = PARAM_KEYS.map((k) => PARAM_META[k].label.charAt(0));
   return (
     <svg
@@ -78,10 +78,14 @@ function Fingerprints(): ReactNode {
     >
       {PRESETS.map((p, c) => {
         const x0 = 6 + c * 88;
-        const words =
-          p.name.split(/\s|-/).length > 1
-            ? [p.name.split(' ')[0]!, p.name.split(' ').slice(1).join(' ')]
-            : [p.name];
+        // Two short lines per label so neighbouring names never touch.
+        const words = p.name
+          .split(' ')
+          .flatMap((w) =>
+            w.length > 10 && w.includes('-')
+              ? [w.slice(0, w.lastIndexOf('-') + 1), w.slice(w.lastIndexOf('-') + 1)]
+              : [w],
+          );
         return (
           <g key={p.id}>
             <line className="art-rule" x1={x0} y1={150} x2={x0 + 74} y2={150} />
@@ -111,9 +115,11 @@ function Fingerprints(): ReactNode {
           </g>
         );
       })}
-      <text className="art-axis" x={6} y={H - 4}>
-        {PARAM_KEYS.map((k, i) => `${letters[i]} ${PARAM_META[k].label}`).join('  ')}
-      </text>
+      {[PARAM_KEYS.slice(0, 2), PARAM_KEYS.slice(2)].map((keys, row) => (
+        <text key={row} className="art-axis" x={6} y={H - 22 + row * 16}>
+          {keys.map((k) => `${letters[PARAM_KEYS.indexOf(k)]} ${PARAM_META[k].label}`).join('   ')}
+        </text>
+      ))}
     </svg>
   );
 }

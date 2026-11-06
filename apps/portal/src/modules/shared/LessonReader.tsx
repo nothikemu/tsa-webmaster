@@ -160,7 +160,7 @@ export function LessonReader({ module, n }: { module: ModuleContent; n: number }
         </ol>
       </aside>
       <MicroCheck key={lesson.id} module={module} lesson={lesson} />
-      <nav className="next-step" aria-label={t('lesson.nav')}>
+      <nav className="next-step glass edge" aria-label={t('lesson.nav')}>
         <div className="next-copy">
           <p className="label">{next ? t('lesson.next') : t('lesson.toQuiz')}</p>
           <p className="next-title">{next ? next.title : t('quiz.title')}</p>

@@ -61,6 +61,9 @@ export default function Achievements(): ReactNode {
   return (
     <div className="wrap page">
       <header className="page-head">
+        <p className="label section-n" data-reveal="fade">
+          <span className="spark" aria-hidden="true" /> 03
+        </p>
         <h1 className="display">{t('ach.title')}</h1>
         <p className="lead">{t('ach.lead', { n: earned, total: MODULES.length })}</p>
       </header>

@@ -1,4 +1,4 @@
-/* Base: ground, type, focus, selection, scrollbar and the staged load sequence. */
+/* Base: ground, atmosphere, grain, type, focus, selection and the staged load. */
 html {
   background: var(--bg);
   color: var(--text);
@@ -11,23 +11,69 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scroll-behavior: auto;
-  scrollbar-color: #26344d transparent;
+  scrollbar-color: rgb(179 165 255 / 0.38) transparent;
   scrollbar-width: thin;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--bg);
+  background: transparent; /* the atmosphere below shows through */
   color: var(--text);
   font-size: var(--fs-body);
   font-weight: 400;
   line-height: var(--lh-body);
+  font-feature-settings: 'ss01', 'cv11';
   overflow-x: clip;
 }
 
+/* ---- atmosphere --------------------------------------------------------------------------------------
+ * Two fixed layers sit behind everything. The first is a slow aurora made of four tinted fields; it is
+ * the whole background when WebGL is unavailable and the base the live field (ui/Ambient.tsx) draws
+ * over. The second is film grain, a tiled noise image at a few percent, which keeps large gradients
+ * from banding and gives the glass something to refract. Both are static images moved by transform
+ * only, so they cost nothing to composite. */
+html::before {
+  content: '';
+  position: fixed;
+  inset: -24vmax;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(42vmax 34vmax at 84% 6%, rgb(255 116 220 / 0.2), transparent 70%),
+    radial-gradient(50vmax 38vmax at 4% 16%, rgb(92 241 255 / 0.15), transparent 70%),
+    radial-gradient(44vmax 36vmax at 72% 96%, rgb(130 110 255 / 0.22), transparent 70%),
+    radial-gradient(32vmax 26vmax at 18% 104%, rgb(200 255 74 / 0.08), transparent 70%);
+  transform: translate3d(calc(var(--px) * -1.4vmax), calc(var(--py) * -1.4vmax), 0);
+  animation: aurora-drift 46s var(--ease-soft) infinite alternate;
+}
+@keyframes aurora-drift {
+  from {
+    transform: translate3d(calc(var(--px) * -1.4vmax - 2vmax), calc(var(--py) * -1.4vmax), 0)
+      rotate(-2deg);
+  }
+  to {
+    transform: translate3d(
+        calc(var(--px) * -1.4vmax + 2vmax),
+        calc(var(--py) * -1.4vmax + 2vmax),
+        0
+      )
+      rotate(2deg) scale(1.06);
+  }
+}
+html::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
 ::selection {
-  background: var(--accent-solid);
+  background: var(--acid);
   color: var(--on-accent);
 }
 
@@ -39,12 +85,12 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #26344d;
+  background: rgb(179 165 255 / 0.32);
   border-radius: 10px;
   border: 2px solid var(--bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b4d6e;
+  background: rgb(179 165 255 / 0.55);
 }
 
 h1,
@@ -60,14 +106,21 @@ figure {
   margin: 0;
 }
 
+/* Headlines are wide and round (Unbounded); small headings drop to the reading face so they stay legible. */
 h1,
-h2,
-h3,
-h4 {
+h2 {
   font-family: var(--font-display);
   font-weight: 500;
   letter-spacing: var(--track-display);
   line-height: var(--lh-tight);
+  text-wrap: balance;
+}
+h3,
+h4 {
+  font-family: var(--font-sans);
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
   text-wrap: balance;
 }
 
@@ -80,10 +133,10 @@ dd {
 a {
   color: inherit;
   text-decoration-color: var(--line-strong);
-  text-underline-offset: 0.2em;
+  text-underline-offset: 0.22em;
   transition:
-    text-decoration-color 300ms var(--ease),
-    color 300ms var(--ease);
+    text-decoration-color var(--dur) var(--ease),
+    color var(--dur) var(--ease);
 }
 a:hover {
   text-decoration-color: currentColor;
@@ -91,7 +144,7 @@ a:hover {
 .prose a,
 .doc-list a,
 .res-list a {
-  color: var(--accent);
+  color: var(--aqua);
   text-decoration: underline;
   text-decoration-color: currentColor;
 }
@@ -117,7 +170,7 @@ button {
   outline-offset: -3px;
 }
 
-/* Quiet secondary labels: the page's own typeface, sentence case, muted. */
+/* Quiet secondary text: the reading face, small and muted. */
 .mono {
   font-family: var(--font-sans);
   font-size: var(--fs-label);
@@ -153,6 +206,7 @@ button {
   font-size: var(--t-h2);
   font-weight: 500;
   letter-spacing: var(--track-display);
+  line-height: 1.08;
 }
 
 .lead {
@@ -160,12 +214,12 @@ button {
   color: var(--text-2);
   max-width: 48ch;
   font-weight: 400;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 /* A short technical label: mono, small capitals, drawn from real state or real structure. */
 .label {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--fs-label);
   font-weight: 500;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
@@ -176,8 +230,20 @@ button {
   font-weight: 500;
   color: var(--text);
 }
-.serif {
-  font-family: var(--font-display);
+/* One accent word per headline, in the italic serif, with a chrome fill. */
+.serif,
+.accent-word {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.accent-word {
+  background: var(--chrome);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-inline: 0.04em 0.08em;
 }
 
 .sub {
@@ -199,12 +265,12 @@ button {
   left: 12px;
   top: -80px;
   z-index: 2000;
-  padding: var(--s-3) var(--s-4);
-  background: #fff;
-  color: #000;
-  font-weight: 600;
+  padding: var(--s-3) var(--s-5);
+  background: var(--gel);
+  color: var(--on-accent);
+  font-weight: 700;
   border-radius: var(--r-pill);
-  transition: top 300ms var(--ease);
+  transition: top var(--dur) var(--ease);
 }
 .skip-link:focus {
   top: 12px;
@@ -222,12 +288,13 @@ h1:focus {
   box-shadow: none;
 }
 
-/* Staged load: black, a hairline sweeping across the top, then the content reveals. */
+/* ---- staged load ---------------------------------------------------------------------------------------
+ * Before the app is ready the page shows a pearl ring around a breathing glass orb. The app then fades
+ * in. If it is not ready after 1.4 s (a slow device or network) the pre-rendered readable page is shown
+ * instead, so there is never a permanent blank screen. */
 #root {
-  transition: opacity 900ms var(--ease);
+  transition: opacity var(--dur-slow) var(--ease);
 }
-/* The app normally reveals itself when ready. If it is not ready after 1.4 s (slow device or network),
-   the pre-rendered readable page is shown instead of a black screen. */
 @media (scripting: enabled) {
   html:not([data-boot]) #root {
     opacity: 0;
@@ -239,34 +306,61 @@ h1:focus {
     opacity: 1;
   }
 }
+body::before,
 body::after {
   content: '';
   position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #fff 50%, transparent);
-  transform-origin: left center;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
   opacity: 0;
   pointer-events: none;
   z-index: 1000;
   transition: opacity 600ms var(--ease-exit);
 }
+body::before {
+  width: 72px;
+  height: 72px;
+  margin: -36px 0 0 -36px;
+  background: conic-gradient(from 0deg, transparent 0 18%, #5cf1ff, #b3a5ff, #ff74dc, #c8ff4a);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+}
+body::after {
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  background:
+    radial-gradient(circle at 34% 26%, rgb(255 255 255 / 0.95) 0 9%, transparent 22%),
+    radial-gradient(circle at 50% 120%, rgb(200 255 74 / 0.9), transparent 60%),
+    radial-gradient(circle at 50% 40%, #8fe9ff, #5a4bd6 78%);
+  box-shadow: 0 0 28px rgb(92 241 255 / 0.5);
+}
 @media (scripting: enabled) {
+  html:not([data-boot]) body::before {
+    opacity: 1;
+    animation:
+      boot-spin 1.15s linear infinite,
+      boot-off 0s 6s forwards;
+  }
   html:not([data-boot]) body::after {
     opacity: 1;
     animation:
-      boot-line 1.5s var(--ease) infinite,
+      boot-breathe 2.2s var(--ease-soft) infinite alternate,
       boot-off 0s 6s forwards;
   }
 }
-@keyframes boot-line {
+@keyframes boot-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes boot-breathe {
   from {
-    transform: translateX(-100%) scaleX(0.4);
+    transform: scale(0.82);
   }
   to {
-    transform: translateX(100%) scaleX(1);
+    transform: scale(1.1);
   }
 }
 @keyframes boot-off {

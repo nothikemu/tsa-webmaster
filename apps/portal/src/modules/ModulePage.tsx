@@ -219,7 +219,12 @@ function Instrument({ module }: { module: ModuleContent }): ReactNode {
   const Scene = STAGES[module.id];
   const simulated = module.id === 'synthesis';
   return (
-    <section className="instrument" id="interactive" tabIndex={-1} aria-labelledby="interactive-h">
+    <section
+      className="instrument glass edge"
+      id="interactive"
+      tabIndex={-1}
+      aria-labelledby="interactive-h"
+    >
       <header className="instrument-bar">
         <h2 id="interactive-h" className="instrument-name">
           {module.centerpiece.name}
@@ -287,7 +292,7 @@ function Overview({ module }: { module: ModuleContent }): ReactNode {
       </section>
     ),
     badge: (
-      <section key="badge" className="mp-badge" aria-labelledby="badge-h">
+      <section key="badge" className="mp-badge glass edge" aria-labelledby="badge-h">
         <div className="mp-badge-head">
           <div>
             <h2 id="badge-h" className="label">
@@ -349,7 +354,7 @@ export function ModulePage({ id, view }: { id: ModuleId; view: ModuleView }): Re
             <h1 className="display">{heading}</h1>
             {view.kind === 'overview' && <p className="mod-tagline">{module.tagline}</p>}
           </div>
-          {view.kind === 'overview' && id === 'foundations' && (
+          {view.kind === 'overview' && id !== 'ethics' && (
             <div className="mp-head-art" aria-hidden="true">
               <ModuleArt id={id} />
             </div>

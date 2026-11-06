@@ -70,7 +70,7 @@ async function createWebGpuHandle(canvas: HTMLCanvasElement): Promise<RenderHand
     renderer.dispose();
     throw new Error('WebGPURenderer fell back to a non-WebGPU backend');
   }
-  renderer.setClearColor(0x000000, 1);
+  renderer.setClearColor(0x05040f, 1);
   let lostCb: ((reason: string) => void) | null = null;
   void backend.device?.lost.then((info) => lostCb?.(info.message || info.reason));
   return {
@@ -114,7 +114,7 @@ async function createWebGl2Handle(canvas: HTMLCanvasElement, initialPost: PostLe
     powerPreference: 'high-performance',
     stencil: false,
   });
-  renderer.setClearColor(0x000000, 1);
+  renderer.setClearColor(0x05040f, 1);
   let post: PostLevel = initialPost;
   let size = { w: 1, h: 1 };
   let state: PostState | null = null;

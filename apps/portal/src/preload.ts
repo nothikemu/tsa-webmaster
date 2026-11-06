@@ -4,40 +4,32 @@ import { parseRoute, normalizePath } from './router';
  * Starts downloading the page chunk for the current URL while boot is still running, so the first
  * render does not wait for a second round trip. Importing the same module again later is free.
  */
-export function preloadRoute(pathname: string): void {
+export function preloadRoute(pathname: string): Promise<unknown> {
   const route = parseRoute(normalizePath(pathname));
   switch (route.name) {
     case 'home':
-      void import('./pages/Home');
-      break;
+      return import('./pages/Home');
     case 'hub':
-      void import('./pages/ModuleHub');
-      break;
+      return import('./pages/ModuleHub');
     case 'module':
     case 'lesson':
     case 'quiz':
     case 'challenge':
-      void (route.id === 'foundations' ? import('./modules/ModuleA/ModuleA') : route.id === 'synthesis' ? import('./modules/ModuleB/ModuleB') : import('./modules/ModuleC/ModuleC'));
-      break;
+      return route.id === 'foundations' ? import('./modules/ModuleA/ModuleA') : route.id === 'synthesis' ? import('./modules/ModuleB/ModuleB') : import('./modules/ModuleC/ModuleC');
     case 'progress':
-      void import('./pages/ProgressDashboard');
-      break;
+      return import('./pages/ProgressDashboard');
     case 'achievements':
-      void import('./pages/Achievements');
-      break;
+      return import('./pages/Achievements');
     case 'glossary':
-      void import('./pages/Glossary');
-      break;
+      return import('./pages/Glossary');
     case 'about':
-      void import('./pages/About');
-      break;
+      return import('./pages/About');
     case 'accessibility':
-      void import('./pages/Accessibility');
-      break;
+      return import('./pages/Accessibility');
     case 'credits':
-      void import('./pages/Credits');
-      break;
+      return import('./pages/Credits');
     case 'notfound':
       break;
   }
+  return Promise.resolve();
 }

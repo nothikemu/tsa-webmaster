@@ -239,7 +239,7 @@
   cursor: not-allowed;
   --face: #26323d;
   --edge-c: #11181f;
-  --on: #a9b2bb;
+  --on: #d3dae0;
   filter: drop-shadow(0 2px 0 var(--edge-c));
 }
 .btn:disabled::before,

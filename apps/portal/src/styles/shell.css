@@ -162,7 +162,7 @@ html[data-scrolled='true'] .read-line {
     padding-inline: 0.9rem;
     font-size: 1.0625rem;
   }
-  .site-rank span {
+  .site-rank span:not(.sr-only) {
     display: none;
   }
 }

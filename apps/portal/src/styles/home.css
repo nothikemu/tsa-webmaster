@@ -657,6 +657,35 @@
 }
 
 @media (max-width: 1180px) {
+  /* A banner on a narrow screen: the picture is a block of its own and the words sit under it on a solid ground,
+     so text never lands on the art. */
+  .realm {
+    display: block;
+    min-height: 0;
+  }
+  .realm .realm-art {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    display: block;
+    width: 100%;
+    height: clamp(12rem, 42vw, 19rem);
+  }
+  .realm-shade {
+    display: none;
+  }
+  .realm-n {
+    top: var(--s-3);
+    left: var(--s-4);
+    z-index: 1;
+    font-size: 5.5rem;
+  }
+  .realm-body {
+    background: var(--navy-0);
+    padding: var(--s-5) var(--s-5) calc(var(--s-5) + 28px);
+  }
+}
+@media (max-width: 1180px) {
   .record {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }

@@ -253,7 +253,6 @@ button {
   font-weight: 800;
   letter-spacing: var(--track-hud);
   text-transform: uppercase;
-  transition: top var(--dur) var(--ease);
 }
 .skip-link:focus {
   top: 12px;

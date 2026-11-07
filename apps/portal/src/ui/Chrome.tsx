@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 're
 import { FOOTER_LINKS, NAV, SITE } from '../content/site';
 import { t } from '../core/assets';
 import { Link, useRouter } from '../router';
-import { Icon, type IconName } from './Icons';
 
 /** "page" on the exact route; "true" on a route inside it, so a module page marks "Modules". */
 function locationState(path: string, href: string): 'page' | 'true' | undefined {
@@ -11,30 +10,20 @@ function locationState(path: string, href: string): 'page' | 'true' | undefined 
 }
 
 /**
- * The mark: a four-point star held in an armillary, the instrument that models the sky. Two tilted
- * rings and an outer ring in gold, a blue star at the center. Drawn here so it needs no asset.
+ * The mark: a notched orange square printed over a cyan one that is slightly out of register, with
+ * a slider drawn in ink: a rule with a square knob, the thing a parameter is. Drawn here so it needs no asset.
  */
 export function Glyph({ size = 32 }: { size?: number }): ReactNode {
   return (
     <svg className="glyph" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      <circle cx="16" cy="16" r="14.2" fill="none" stroke="#e9c46a" strokeWidth="1.4" />
-      <ellipse cx="16" cy="16" rx="14.2" ry="5.4" fill="none" stroke="#c9983a" strokeWidth="1.2" transform="rotate(-32 16 16)" />
-      <ellipse cx="16" cy="16" rx="14.2" ry="5.4" fill="none" stroke="#c9983a" strokeWidth="1.2" transform="rotate(32 16 16)" />
-      <path d="M16 6.2l2.3 7.5 7.5 2.3-7.5 2.3L16 25.8l-2.3-7.5L6.2 16l7.5-2.3z" fill="#5fd4ff" />
-      <path d="M16 6.2l2.3 7.5 7.5 2.3-7.5 2.3L16 25.8" fill="#bff0ff" fillOpacity="0.45" />
-      <circle cx="16" cy="16" r="1.9" fill="#fff" />
+      <path d="M5 5h17l5 5v17H10l-5-5z" fill="#2cd5f4" />
+      <path d="M2 2h17l5 5v17H7l-5-5z" fill="#ff6a1f" />
+      <path d="M6.5 13.5h13" stroke="#0a0b10" strokeWidth="2.4" strokeLinecap="square" />
+      <path d="M6.5 18.5h13" stroke="#0a0b10" strokeWidth="2.4" strokeLinecap="square" />
+      <rect x="13" y="10.5" width="5" height="11" fill="#0a0b10" />
     </svg>
   );
 }
-
-const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI'];
-const NAV_ICON: Record<string, IconName> = {
-  '/modules': 'compass',
-  '/progress': 'chart',
-  '/achievements': 'crest',
-  '/glossary': 'quill',
-  '/about': 'eye',
-};
 
 function NavList({ path }: { path: string }): ReactNode {
   const list = useRef<HTMLUListElement>(null);
@@ -42,7 +31,7 @@ function NavList({ path }: { path: string }): ReactNode {
   const current = NAV.findIndex((n) => locationState(path, n.href) !== undefined);
   const target = hover ?? current;
 
-  // The glide: one pearl pane that slides to the item under the pointer or focus, and rests on the current section.
+  // The glide: one orange tab that slides to the item under the pointer or focus, and rests on the current section.
   useLayoutEffect(() => {
     const ul = list.current;
     if (!ul) return undefined;
@@ -89,10 +78,6 @@ function NavList({ path }: { path: string }): ReactNode {
           onFocus={() => setHover(i)}
         >
           <Link to={n.href} aria-current={locationState(path, n.href)}>
-            <span className="nav-n" aria-hidden="true">
-              {ROMAN[i]}
-            </span>
-            <Icon name={NAV_ICON[n.href] ?? 'compass'} size={18} />
             {n.label}
           </Link>
         </li>
@@ -166,16 +151,11 @@ export function Footer(): ReactNode {
             ))}
           </ul>
         </nav>
-        <p className="label colophon-event">
-          <span className="spark" aria-hidden="true" /> {SITE.event}
+        <p className="colophon-event">
+          <span className="stamp">{SITE.event}</span>
         </p>
       </div>
-      <div className="rule foot-rule" aria-hidden="true">
-        <i />
-      </div>
-      <p className="foot-mark" aria-hidden="true">
-        {SITE.name}
-      </p>
+      <p className="foot-mark giant" data-word={SITE.name} aria-hidden="true" />
     </footer>
   );
 }

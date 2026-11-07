@@ -426,14 +426,11 @@ export default function ProgressDashboard(): ReactNode {
   return (
     <div className="wrap page dashboard">
       <header className="page-head">
-        <p className="label section-n" data-reveal="fade">
-          <span className="spark" aria-hidden="true" /> 02
-        </p>
         <h1 className="display">{t('pd.title')}</h1>
       </header>
 
       <section className="pd-top" aria-label={t('pd.summary')}>
-        <div className="pd-level">
+        <div className="pd-level glass edge">
           <p className="label">{t('hub.level', { level: level.level })}</p>
           <p className="pd-level-n num">{level.level}</p>
           <div className="pd-level-copy">
@@ -456,17 +453,17 @@ export default function ProgressDashboard(): ReactNode {
             {t('hub.toNext', { xp: Math.max(0, level.span - level.into), level: level.level + 1 })}
           </p>
         </div>
-        <div className="pd-stat">
+        <div className="pd-stat glass">
           <p className="label">{t('pd.streak')}</p>
           <p className="pd-stat-n num">{data.streak.current}</p>
           <p className="muted">{t('pd.streakBest', { n: data.streak.best })}</p>
         </div>
-        <div className="pd-stat">
+        <div className="pd-stat glass">
           <p className="label">{t('home.overall')}</p>
           <p className="pd-stat-n num">{overall}%</p>
           <p className="muted">{t('pd.byModule')}</p>
         </div>
-        <div className="pd-next">
+        <div className="pd-next glass edge">
           <p className="label">{t('hub.next')}</p>
           <p className="pd-next-title">{rec.label}</p>
           <p className="muted">{rec.reason}</p>

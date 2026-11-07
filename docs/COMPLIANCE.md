@@ -7,7 +7,7 @@
 - The shipped artifact is a **static folder** of HTML, CSS and JavaScript (plus one WebAssembly binary and one encrypted data file). It runs from any static host, with no server and no database.
 - Every page is a **real HTML file with readable content**, so it works with JavaScript off and is indexable.
 - All imagery, icons, badges, shaders and 3D geometry are **authored in this repository**. No stock media.
-- Every library, font and third-party snippet is listed with license and source (`ORIGINALITY_AND_CREDITS.md`, `/credits`). The four typefaces are open-licensed (SIL OFL 1.1) and bundled, so they work offline and send no request to a font host.
+- Every library, font and third-party snippet is listed with license and source (`ORIGINALITY_AND_CREDITS.md`, `/credits`). The three typefaces are open-licensed (SIL OFL 1.1) and bundled, so they work offline and send no request to a font host.
 - `DEV_LOG.md` is a structured template for the **team's own** planning and process record. It contains no invented history.
 
 ## Decision points the team must resolve before submission

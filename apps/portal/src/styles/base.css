@@ -1,4 +1,4 @@
-/* Base: the night, its atmosphere, type, focus, selection and the staged load. */
+/* Base: the ground, type, focus, selection and the staged load. */
 html {
   background: var(--bg);
   color: var(--text);
@@ -11,14 +11,14 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scroll-behavior: auto;
-  scrollbar-color: #8a6a2a #0a0d1a;
+  scrollbar-color: #6d7184 #0e1018;
   scrollbar-width: thin;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: transparent; /* the sky below shows through */
+  background: transparent; /* the ground and its ticks show through */
   color: var(--text);
   font-size: var(--fs-body);
   font-weight: 400;
@@ -28,24 +28,21 @@ body {
   overflow-x: clip;
 }
 
-/* ---- atmosphere --------------------------------------------------------------------------------------
- * Three fixed layers sit behind everything. The first is a static sky of stars, a cold glow overhead
- * and a warm one at the horizon; it is the whole background when WebGL is unavailable and the base the
- * live sky (ui/Ambient.tsx) draws over. The second is the vignette and a film grain, which pull the eye
- * to the middle of the page and keep large gradients from banding. Nothing here moves except by transform. */
+/* ---- the ground ----------------------------------------------------------------------------------------
+ * Two fixed layers and no animation. Behind: a blueprint of hairlines every 120px with a small plus where
+ * they cross. In front: paper grain, a few percent of noise, which keeps flat color from looking digital.
+ * This is the whole background; there is no shader and no star field. */
 html::before {
   content: '';
   position: fixed;
-  inset: -4vmax;
+  inset: 0;
   z-index: -2;
   pointer-events: none;
-  background:
-    radial-gradient(70vmax 46vmax at 50% -14%, rgb(80 120 230 / 0.26), transparent 70%),
-    radial-gradient(60vmax 30vmax at 50% 118%, rgb(255 150 70 / 0.16), transparent 70%),
-    radial-gradient(30vmax 22vmax at 12% 30%, rgb(79 227 180 / 0.07), transparent 70%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520'%3E%3Cg fill='%23f4ecd6'%3E%3Ccircle cx='41' cy='63' r='1.1' opacity='.9'/%3E%3Ccircle cx='133' cy='211' r='.8' opacity='.6'/%3E%3Ccircle cx='219' cy='37' r='1.4' opacity='.95'/%3E%3Ccircle cx='307' cy='149' r='.7' opacity='.55'/%3E%3Ccircle cx='389' cy='71' r='1' opacity='.8'/%3E%3Ccircle cx='471' cy='233' r='.9' opacity='.7'/%3E%3Ccircle cx='77' cy='331' r='.7' opacity='.5'/%3E%3Ccircle cx='181' cy='419' r='1.2' opacity='.85'/%3E%3Ccircle cx='263' cy='311' r='.8' opacity='.6'/%3E%3Ccircle cx='353' cy='463' r='1' opacity='.75'/%3E%3Ccircle cx='443' cy='389' r='.7' opacity='.5'/%3E%3Ccircle cx='23' cy='479' r='.9' opacity='.65'/%3E%3Ccircle cx='497' cy='97' r='.6' opacity='.5'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: auto, auto, auto, 520px 520px;
-  transform: translate3d(calc(var(--px) * -0.8vmax), calc(var(--py) * -0.8vmax), 0);
+  background-image:
+    linear-gradient(to right, rgb(244 240 230 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(244 240 230 / 0.045) 1px, transparent 1px);
+  background-size: 120px 120px;
+  background-position: calc(50% - 60px) 0;
 }
 html::after {
   content: '';
@@ -53,30 +50,29 @@ html::after {
   inset: 0;
   z-index: 900;
   pointer-events: none;
-  background-image:
-    radial-gradient(ellipse 120% 100% at 50% 45%, transparent 52%, rgb(2 3 9 / 0.62) 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .95 0 0 0 0 .8 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 100% 100%, 180px 180px;
+  opacity: 0.55;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .96 0 0 0 0 .86 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
 }
 
 ::selection {
-  background: var(--gold);
-  color: var(--gold-ink);
+  background: var(--signal);
+  color: var(--ink-on);
 }
 
 ::-webkit-scrollbar {
-  width: 11px;
-  height: 11px;
+  width: 12px;
+  height: 12px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0d1a;
+  background: #0e1018;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, #7a5a1f, #c9983a, #7a5a1f);
-  border: 2px solid #0a0d1a;
+  background: #6d7184;
+  border: 3px solid #0e1018;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(90deg, #a87a28, #f0cf7a, #a87a28);
+  background: var(--signal);
 }
 
 h1,
@@ -92,22 +88,23 @@ figure {
   margin: 0;
 }
 
-/* Titles are inscriptional capitals (Cinzel); lower case is set as small capitals by the face. */
+/* Titles are set in the display face: condensed, heavy, capitals, tightly leaded. */
 h1,
 h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: var(--track-display);
   line-height: var(--lh-tight);
+  text-transform: uppercase;
   text-wrap: balance;
 }
 h3,
 h4 {
-  font-weight: 650;
-  letter-spacing: 0.05em;
-  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
 }
 
 p,
@@ -119,6 +116,7 @@ dd {
 a {
   color: inherit;
   text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 2px;
   text-underline-offset: 0.22em;
   transition:
     text-decoration-color var(--dur) var(--ease),
@@ -130,7 +128,7 @@ a:hover {
 .prose a,
 .doc-list a,
 .res-list a {
-  color: var(--azure);
+  color: var(--accent);
   text-decoration: underline;
   text-decoration-color: currentColor;
 }
@@ -150,22 +148,34 @@ button {
 :focus-visible {
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
+  box-shadow: 0 0 0 calc(var(--focus-offset) + 3px) #0a0b10;
+}
+/* The tab shapes (trapezoids) are clipped, so their ring is drawn inward; on an orange fill it is ink. */
+:focus-visible:where(.segmented-item, .stepper a, .nav-list a) {
+  outline-offset: -6px;
+  box-shadow: none;
+}
+.segmented-item[aria-checked='true']:focus-visible,
+.nav-list a:focus-visible {
+  outline-color: #0a0b10;
 }
 /* Inside clipped or dense containers the ring is drawn inward so it is never cut off. */
 :focus-visible:where(.stage-canvas, .divider, .grid-key) {
   outline-offset: -3px;
+  box-shadow: none;
 }
 
-/* Quiet secondary text: the reading face, small and muted. */
 .mono {
-  font-family: var(--font-sans);
+  font-family: var(--font-num);
   font-size: var(--fs-label);
-  font-weight: 400;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
 }
 
 .num {
+  font-family: var(--font-num);
   font-variant-numeric: lining-nums tabular-nums;
 }
 
@@ -181,18 +191,20 @@ button {
 .display {
   font-family: var(--font-display);
   font-size: var(--t-display);
-  font-weight: 600;
+  font-weight: 900;
   letter-spacing: var(--track-display);
-  line-height: 1.06;
+  line-height: 0.88;
+  text-transform: uppercase;
   color: var(--text);
 }
 
 .h2 {
   font-family: var(--font-display);
   font-size: var(--t-h2);
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  line-height: 1.12;
+  font-weight: 900;
+  letter-spacing: 0.005em;
+  line-height: 0.9;
+  text-transform: uppercase;
 }
 
 .lead {
@@ -202,9 +214,9 @@ button {
   font-weight: 400;
   line-height: 1.5;
 }
-/* An engraved label: compact capitals, drawn from real state or real structure. */
+/* A label: small capitals in the body face with generous tracking. Drawn from real state or structure. */
 .label {
-  font-family: var(--font-ui);
+  font-family: var(--font-sans);
   font-size: var(--fs-label);
   font-weight: 600;
   letter-spacing: var(--track-label);
@@ -216,21 +228,14 @@ button {
   font-weight: 700;
   color: var(--text);
 }
-/* One word per title in the italic serif, with a gold fill. */
+/* One word per title printed in the signal color, offset a few pixels as if out of register. */
 .serif,
 .accent-word {
-  font-family: var(--font-sans);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
+  color: var(--signal);
+  font-style: normal;
 }
 .accent-word {
-  background: var(--metal);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  padding-inline: 0.04em 0.08em;
+  text-shadow: 0.045em 0.045em 0 rgb(0 0 0 / 0.55);
 }
 
 .sub {
@@ -253,11 +258,12 @@ button {
   top: -80px;
   z-index: 2000;
   padding: var(--s-3) var(--s-5);
-  background: var(--gel);
-  color: var(--gold-ink);
-  font-family: var(--font-ui);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  background: var(--signal);
+  color: var(--ink-on);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   transition: top var(--dur) var(--ease);
 }
@@ -278,9 +284,9 @@ h1:focus {
 }
 
 /* ---- staged load ---------------------------------------------------------------------------------------
- * Before the app is ready the page shows an armillary ring turning around a small blue star. The app then
- * fades in. If it is not ready after 1.4 s (a slow device or network) the pre-rendered readable page is
- * shown instead, so there is never a permanent blank screen. */
+ * Before the app is ready the page shows a diamond turning beside a bar that fills. The app then fades in.
+ * If it is not ready after 1.4 s (a slow device or network) the pre-rendered readable page is shown
+ * instead, so there is never a permanent blank screen. */
 #root {
   transition: opacity var(--dur-slow) var(--ease);
 }
@@ -301,56 +307,49 @@ body::after {
   position: fixed;
   left: 50%;
   top: 50%;
-  border-radius: 50%;
   opacity: 0;
   pointer-events: none;
   z-index: 1000;
-  transition: opacity 600ms var(--ease-exit);
+  transition: opacity 400ms var(--ease-exit);
 }
 body::before {
-  width: 84px;
-  height: 84px;
-  margin: -42px 0 0 -42px;
-  background:
-    conic-gradient(from 0deg, transparent 0 12%, #7a5a1f, #e9c46a 40%, #fff3c8 52%, #c9983a 70%, transparent 88%);
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  background: var(--signal);
+  box-shadow: var(--offset) var(--offset) 0 var(--cyan);
 }
 body::after {
-  width: 18px;
-  height: 18px;
-  margin: -9px 0 0 -9px;
-  background: radial-gradient(circle at 36% 30%, #fff 0 12%, #9fe6ff 30%, #2f86c8 80%);
-  box-shadow:
-    0 0 24px 6px rgb(95 212 255 / 0.5),
-    0 0 0 28px rgb(233 196 106 / 0.08);
+  width: 120px;
+  height: 6px;
+  margin: 34px 0 0 -60px;
+  background: linear-gradient(90deg, var(--text) 50%, #282d3f 50%) 100% 0 / 200% 100%;
 }
 @media (scripting: enabled) {
   html:not([data-boot]) body::before {
     opacity: 1;
     animation:
-      boot-spin 1.6s linear infinite,
+      boot-spin 1.1s var(--ease) infinite,
       boot-off 0s 6s forwards;
   }
   html:not([data-boot]) body::after {
     opacity: 1;
     animation:
-      boot-breathe 2s var(--ease-soft) infinite alternate,
+      boot-bar 1.4s linear infinite,
       boot-off 0s 6s forwards;
   }
 }
 @keyframes boot-spin {
+  from {
+    transform: rotate(45deg) scale(0.8);
+  }
   to {
-    transform: rotate(360deg);
+    transform: rotate(225deg) scale(1);
   }
 }
-@keyframes boot-breathe {
-  from {
-    transform: scale(0.8);
-    opacity: 0.7;
-  }
+@keyframes boot-bar {
   to {
-    transform: scale(1.15);
+    background-position: 0 0;
   }
 }
 @keyframes boot-off {
@@ -371,7 +370,7 @@ body::after {
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid var(--hair);
+  border-bottom: 3px solid var(--signal);
   padding-bottom: 1rem;
   margin-bottom: 3rem;
 }
@@ -383,10 +382,16 @@ body::after {
   list-style: none;
   padding: 0;
 }
+.static-page h1,
+.static-page h2,
+.static-page h3 {
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1;
+}
 .static-page h1 {
   font-size: var(--t-display);
-  font-weight: 700;
-  letter-spacing: var(--track-display);
+  font-weight: 900;
   margin-bottom: 1.2rem;
 }
 .static-page h2 {
@@ -394,7 +399,7 @@ body::after {
   margin: 2.5rem 0 1rem;
 }
 .static-page h3 {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   margin: 1.5rem 0 0.5rem;
 }
 .static-page p,
@@ -418,8 +423,7 @@ body::after {
 }
 .static-page details {
   margin: 0.5rem 0 1rem;
-  border: 1px solid var(--hair);
-  border-radius: var(--r-md);
+  border: 1px solid var(--line-2);
   padding: 0.7rem 1rem;
 }
 .static-page summary {
@@ -428,13 +432,15 @@ body::after {
 }
 .static-page footer {
   margin-top: 4rem;
-  border-top: 1px solid var(--hair);
+  border-top: 1px solid var(--line-2);
   padding-top: 1.5rem;
 }
 .static-page .wordmark {
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  font-size: 1.4rem;
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 1.8rem;
   text-decoration: none;
 }
 

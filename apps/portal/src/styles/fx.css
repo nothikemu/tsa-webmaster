@@ -1,30 +1,17 @@
 /*
  * Motion. Everything here is an enhancement: with the motion layer off (reduced motion, no script)
  * the page is complete and still. ui/fx.ts sets html[data-fx='on'] only when motion is welcome.
+ *
+ * The vocabulary is a snap, not a drift: things slide into place on one fast curve and stop. A page
+ * change is a diagonal wipe. There is no blur, no glow and no looping ornament except the ticker.
  */
-
-/* ---- the live atmosphere ------------------------------------------------------------------------------ */
-.ambient {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 1600ms var(--ease);
-  view-transition-name: ambient;
-}
-.ambient[data-ready='true'] {
-  opacity: 0.92;
-}
 
 /* ---- reveals --------------------------------------------------------------------------------------------- */
 html[data-fx='on'] [data-reveal]:not(.in) {
   opacity: 0;
 }
 html[data-fx='on'] [data-reveal].in {
-  animation: reveal-up 1000ms var(--ease) var(--rd, 0ms) backwards;
+  animation: reveal-up 700ms var(--ease) var(--rd, 0ms) backwards;
 }
 html[data-fx='on'] [data-reveal='fade'].in {
   animation-name: reveal-fade;
@@ -34,13 +21,12 @@ html[data-fx='on'] [data-reveal='scale'].in {
 }
 html[data-fx='on'] [data-reveal='clip'].in {
   animation-name: reveal-clip;
-  animation-duration: 1300ms;
+  animation-duration: 900ms;
 }
 @keyframes reveal-up {
   from {
     opacity: 0;
-    transform: translate3d(0, 34px, 0);
-    filter: blur(8px);
+    transform: translate3d(0, 40px, 0);
   }
 }
 @keyframes reveal-fade {
@@ -51,18 +37,16 @@ html[data-fx='on'] [data-reveal='clip'].in {
 @keyframes reveal-scale {
   from {
     opacity: 0;
-    transform: scale(0.94);
-    filter: blur(10px);
+    transform: translate3d(0, 24px, 0) scale(0.97);
   }
 }
 @keyframes reveal-clip {
   from {
     opacity: 0;
-    clip-path: inset(0 0 100% 0 round var(--r-lg));
-    transform: translate3d(0, 18px, 0);
+    clip-path: inset(0 100% 0 0);
   }
   to {
-    clip-path: inset(0 0 0 0 round var(--r-lg));
+    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -70,23 +54,23 @@ html[data-fx='on'] [data-reveal='clip'].in {
 .hero-line {
   display: block;
   overflow: hidden;
-  padding: 0.04em 0.12em 0.1em 0.04em;
-  margin: -0.04em -0.12em -0.1em -0.04em;
+  padding: 0.04em 0.12em 0.06em 0.04em;
+  margin: -0.04em -0.12em -0.06em -0.04em;
 }
 .hero-line > span {
   display: inline-block;
 }
 html[data-fx='on'][data-boot='ready'] .hero-line > span {
-  animation: line-rise 1200ms var(--ease) calc(var(--i, 0) * 120ms + 120ms) backwards;
+  animation: line-rise 800ms var(--ease) calc(var(--i, 0) * 90ms + 80ms) backwards;
 }
 @keyframes line-rise {
   from {
-    transform: translate3d(0, 112%, 0) rotate(2.5deg);
+    transform: translate3d(0, 108%, 0) skewY(4deg);
     opacity: 0;
   }
 }
 
-/* ---- page changes: a cross-fade with depth ------------------------------------------------------------ */
+/* ---- page changes: a diagonal wipe --------------------------------------------------------------------- */
 .site-header {
   view-transition-name: site-header;
 }
@@ -94,77 +78,41 @@ html[data-fx='on'][data-boot='ready'] .hero-line > span {
   view-transition-name: hub;
 }
 ::view-transition-group(site-header),
-::view-transition-group(ambient),
 ::view-transition-group(hub) {
   animation-duration: 0s;
 }
+/* The new page is revealed by a slanted edge travelling left to right; the old page steps back and dims. */
+::view-transition-image-pair(root) {
+  isolation: isolate;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+}
 ::view-transition-old(root) {
-  animation: vt-out 380ms var(--ease-soft) both;
+  animation: vt-out 560ms var(--ease) both;
 }
 ::view-transition-new(root) {
-  animation: vt-in 760ms var(--ease) both;
+  animation: vt-in 560ms var(--ease) both;
 }
-/* The two images keep the browser's plus-lighter blend, so the cross-fade never dips. */
 @keyframes vt-out {
   to {
-    opacity: 0;
-    transform: translate3d(0, -16px, 0) scale(0.994);
-    filter: blur(8px);
+    transform: translate3d(-3%, 0, 0);
+    filter: brightness(0.5);
   }
 }
 @keyframes vt-in {
   from {
-    opacity: 0;
-    transform: translate3d(0, 30px, 0) scale(0.996);
-    filter: blur(12px);
+    clip-path: polygon(0 0, 0 0, -28% 100%, 0 100%);
+  }
+  to {
+    clip-path: polygon(0 0, 128% 0, 100% 100%, 0 100%);
   }
 }
 
-/* ---- the drift of the aurora is slower when the page is not the point ------------------------------------ */
-html[data-fx='off']::before {
-  animation: none;
-}
-
-/* ---- ambient motion shared by components ------------------------------------------------------------ */
-@keyframes sheen-slide {
-  from {
-    background-position: 200% 0;
-  }
-  to {
-    background-position: -100% 0;
-  }
-}
-@keyframes spin-slow {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes float-y {
-  from {
-    transform: translate3d(0, -6px, 0);
-  }
-  to {
-    transform: translate3d(0, 8px, 0);
-  }
-}
-@keyframes wave-x {
-  to {
-    transform: translateX(-50%);
-  }
-}
+/* ---- the ticker ----------------------------------------------------------------------------------------- */
 @keyframes marquee-x {
   to {
     transform: translateX(-50%);
-  }
-}
-@keyframes pulse-soft {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: scale(0.92);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.08);
   }
 }

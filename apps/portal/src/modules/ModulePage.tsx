@@ -21,7 +21,8 @@ import { BADGE_QUIZ_MIN } from '../core/gamification';
 import { Link } from '../router';
 import { Badge } from '../ui/Badges';
 import { Mark, lessonNodeState, type MarkState } from '../ui/CurriculumMap';
-import { ModuleArt, Track } from '../ui/ModuleArt';
+import { RealmArt } from '../ui/RealmArt';
+import { Track } from '../ui/ModuleArt';
 import { PathList } from '../ui/PathList';
 import { useData } from '../ui/hooks';
 import { Challenge } from './shared/Challenge';
@@ -134,24 +135,31 @@ function Stepper({ module, view }: { module: ModuleContent; view: ModuleView }):
   );
 }
 
-/** A requirement is met (filled circle with a tick) or open (empty circle). Shape, not color, says which. */
+/** A requirement is met (filled square with a tick) or open (empty square). Shape, not color, says which. */
 function RequirementMark({ done }: { done: boolean }): ReactNode {
   return (
     <svg className="req-mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
       {done ? (
         <>
-          <circle cx="10" cy="10" r="9" fill="currentColor" />
+          <rect x="1" y="1" width="18" height="18" fill="currentColor" />
           <path
-            d="M5.8 10.4l2.9 2.9 5.5-5.9"
+            d="M5.4 10.2l3.1 3.1 6-6.4"
             fill="none"
-            stroke="var(--on-accent)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            stroke="var(--req-tick, #0a0b10)"
+            strokeWidth="2.6"
+            strokeLinecap="square"
           />
         </>
       ) : (
-        <circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <rect
+          x="2"
+          y="2"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.4"
+        />
       )}
     </svg>
   );
@@ -340,40 +348,44 @@ export function ModulePage({ id, view }: { id: ModuleId; view: ModuleView }): Re
           : module.title;
 
   return (
-    <div className="wrap module-page" data-module={id}>
-      <header className="mp-head">
-        <Crumbs module={module} view={view} />
-        <div className="mp-title">
-          {view.kind === 'overview' && (
-            <span className="mod-numeral" aria-hidden="true">
-              {String(module.index).padStart(2, '0')}
-            </span>
-          )}
-          <div>
-            {view.kind === 'overview' && <p className="label">{module.themeSection}</p>}
-            <h1 className="display">{heading}</h1>
-            {view.kind === 'overview' && <p className="mod-tagline">{module.tagline}</p>}
-          </div>
-          {view.kind === 'overview' && id !== 'ethics' && (
-            <div className="mp-head-art" aria-hidden="true">
-              <ModuleArt id={id} />
+    <div className="module-page" data-module={id} data-view={view.kind}>
+      <header className="mp-head slab">
+        <div className="wrap mp-head-inner">
+          <Crumbs module={module} view={view} />
+          <div className="mp-title">
+            {view.kind === 'overview' && (
+              <span className="mod-numeral" aria-hidden="true">
+                {String(module.index).padStart(2, '0')}
+              </span>
+            )}
+            <div>
+              {view.kind === 'overview' && <p className="label">{module.themeSection}</p>}
+              <h1 className="display">{heading}</h1>
+              {view.kind === 'overview' && <p className="mod-tagline">{module.tagline}</p>}
             </div>
-          )}
-        </div>
-        <Stepper module={module} view={view} />
-      </header>
-      {view.kind === 'overview' ? (
-        <Overview module={module} />
-      ) : (
-        <div className="mp-grid">
-          <div className="mp-panel">
-            {view.kind === 'lesson' && <LessonReader key={view.n} module={module} n={view.n} />}
-            {view.kind === 'quiz' && <Quiz module={module} />}
-            {view.kind === 'challenge' && <Challenge module={module} />}
+            {view.kind === 'overview' && (
+              <div className="mp-head-art" aria-hidden="true">
+                <RealmArt id={id} />
+              </div>
+            )}
           </div>
-          <Instrument module={module} />
+          <Stepper module={module} view={view} />
         </div>
-      )}
+      </header>
+      <div className="wrap mp-main">
+        {view.kind === 'overview' ? (
+          <Overview module={module} />
+        ) : (
+          <div className="mp-grid">
+            <div className="mp-panel" data-surface={view.kind === 'lesson' ? 'paper' : undefined}>
+              {view.kind === 'lesson' && <LessonReader key={view.n} module={module} n={view.n} />}
+              {view.kind === 'quiz' && <Quiz module={module} />}
+              {view.kind === 'challenge' && <Challenge module={module} />}
+            </div>
+            <Instrument module={module} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface RingProps {
   /** 0-100. */
@@ -11,7 +11,7 @@ interface RingProps {
 }
 
 /**
- * A progress ring drawn as a gradient revealed through a mask. The mask's stroke-dashoffset
+ * A progress ring: a flat track and a flat arc in the realm color, butt-capped. The arc's stroke-dashoffset
  * transitions on the portal easing curve (a CSS transition on the --ease token), so the fill
  * glides to each new value. The numeric value is also exposed to assistive technology.
  */
@@ -23,7 +23,6 @@ export function Ring({
   children,
   className,
 }: RingProps): ReactNode {
-  const uid = useId().replace(/:/g, '');
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const clamped = Math.max(0, Math.min(100, value));
@@ -41,51 +40,24 @@ export function Ring({
         aria-hidden="true"
         focusable="false"
       >
-        <defs>
-          <linearGradient
-            id={`g${uid}`}
-            gradientUnits="userSpaceOnUse"
-            x1="0"
-            y1="0"
-            x2={size}
-            y2={size}
-          >
-            <stop offset="0" stopColor="#fff3c8" />
-            <stop offset="0.5" stopColor="#e9c46a" />
-            <stop offset="1" stopColor="#c9983a" />
-          </linearGradient>
-          <mask id={`m${uid}`}>
-            <circle
-              className="ring-mask"
-              cx={size / 2}
-              cy={size / 2}
-              r={r}
-              fill="none"
-              stroke="#fff"
-              strokeWidth={stroke}
-              strokeLinecap="round"
-              strokeDasharray={c}
-              strokeDashoffset={c * (1 - clamped / 100)}
-              transform={`rotate(-90 ${size / 2} ${size / 2})`}
-            />
-          </mask>
-        </defs>
         <circle
+          className="ring-track"
           cx={size / 2}
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="rgba(233,196,106,.2)"
           strokeWidth={stroke}
         />
         <circle
+          className="ring-arc ring-mask"
           cx={size / 2}
           cy={size / 2}
           r={r}
           fill="none"
-          stroke={`url(#g${uid})`}
           strokeWidth={stroke}
-          mask={`url(#m${uid})`}
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - clamped / 100)}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </svg>
       <div className="ring-center">{children}</div>

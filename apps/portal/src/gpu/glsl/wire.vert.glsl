@@ -96,8 +96,8 @@ void main() {
   vec3 world = (p + offset) * 1.35;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(world, 1.0);
 
-  vec3 cool = mix(vec3(0.70, 0.65, 1.0), vec3(0.36, 0.95, 1.0), p.y * 0.5 + 0.5);
-  vec3 warn = vec3(1.0, 0.55, 0.42);
+  vec3 cool = mix(vec3(1.0, 0.31, 0.5), vec3(0.96, 0.94, 0.9), p.y * 0.5 + 0.5);
+  vec3 warn = vec3(1.0, 0.82, 0.18);
   float w = clamp(uWarn * (0.3 + stress * 1.6), 0.0, 1.0);
   vColor = mix(cool, warn, w);
   vAlpha = 0.11 + 0.2 * clamp(stress * 1.5, 0.0, 1.0) + 0.05 * uWarn;

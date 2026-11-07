@@ -9,7 +9,11 @@
 - The Rust crate `crates/core` (SHA-256, HMAC, ChaCha20, Perlin noise, spatial hash, particle integrator). Test vectors for SHA-256, HMAC and ChaCha20 come from the public standards (FIPS 180-4, RFC 4231, RFC 8439) and were cross-checked against OpenSSL.
 - The gamification engine, persistence, integrity layers, router, spring solver, master loop, quality governor and build plugins.
 
-No stock photography, video, audio or icon packs are used. Four open-licensed typefaces (SIL Open Font License 1.1) are bundled and served from this site, Latin subset only: Unbounded (display), Hanken Grotesk (reading), Instrument Serif italic (accent) and Geist Mono (labels). They are installed as the `@fontsource` packages, listed below and on `/credits`; no request leaves the site for them. If a face must go, delete `src/styles/fonts.css` and the package, and the system stack named after it in `tokens.css` takes over.
+No stock photography, video, audio or icon packs are used. Three open-licensed typefaces (SIL Open Font License 1.1) are bundled and served from this site, Latin subset only: Big Shoulders Display (display), Barlow (text) and Barlow Condensed (numerals). They are installed as the `@fontsource` packages, listed below and on `/credits`; no request leaves the site for them. If a face must go, delete `src/styles/fonts.css` and the package, and the system stack named after it in `tokens.css` takes over.
+
+## Visual references
+
+The visual direction was developed from studying principles in a game interface (VALORANT), and in the key art of three animated series (Samurai Champloo, One Piece, Fireball), together with a few secondary sources; see [DESIGN_RESEARCH.md](DESIGN_RESEARCH.md) for what was read, what was looked at and what could not be verified. What was taken are principles only: flat color that carries a state, giant cropped condensed type, banner cards, a print-shop mix of old and new. No artwork, logo, character, typeface, color value or layout from those works is used. The realm prints, the badges, the mark and every other illustration are drawn from scratch in this repository, and several are built from the learner's own saved state.
 
 ## Third-party code and assets
 
@@ -21,7 +25,7 @@ No stock photography, video, audio or icon packs are used. Four open-licensed ty
 | XState | 5.33.3 | MIT | https://stately.ai/docs/xstate | State machines |
 | Zustand | 5.0.16 | MIT | https://github.com/pmndrs/zustand | Store |
 | Comlink | 4.4.2 | Apache-2.0 | https://github.com/GoogleChromeLabs/comlink | Worker messaging |
-| Unbounded, Hanken Grotesk, Instrument Serif, Geist Mono (`@fontsource` packages) | 5.3.0 each | SIL OFL 1.1 | https://fontsource.org | Typefaces, served locally |
+| Big Shoulders Display, Barlow, Barlow Condensed (`@fontsource` packages) | 5.3.0 each | SIL OFL 1.1 | https://fontsource.org | Typefaces, served locally |
 | wasm-bindgen | 0.2.130 | MIT or Apache-2.0 | https://github.com/rustwasm/wasm-bindgen | Rust bindings |
 | Vite, Tailwind CSS, TypeScript | 7.3.7, 4.3.3, 5.9.3 | MIT, MIT, Apache-2.0 | project sites | Build tooling |
 | javascript-obfuscator, Terser, Binaryen | 5.9.1, 5.51.2, 132.0.0 | BSD-2-Clause, BSD-2-Clause, Apache-2.0 | project sites | Build hardening and WASM optimisation |

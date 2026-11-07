@@ -5,7 +5,6 @@ import { useServices } from './core/services';
 import { ModulePage } from './modules/ModulePage';
 import { Link, RouterProvider, pageTitle, useRouter, type Route } from './router';
 import { LiveRegion, SkipLink } from './ui/a11y';
-import { Ambient } from './ui/Ambient';
 import { startFx } from './ui/fx';
 import { BurstOverlay } from './ui/BurstOverlay';
 import { Footer, Header } from './ui/Chrome';
@@ -96,7 +95,6 @@ function Shell(): ReactNode {
 
   return (
     <>
-      <Ambient />
       <SkipLink />
       <Header />
       <main id="main" tabIndex={-1}>

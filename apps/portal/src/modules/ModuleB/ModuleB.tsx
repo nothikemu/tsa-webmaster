@@ -61,7 +61,7 @@ function Sliders({ displayed }: { displayed: SpringGroup }): ReactNode {
                   ? `${temperatureValue({ ...params, temperature: shown }).toFixed(2)}`
                   : `${shown} percent`
               }
-              style={{ '--fill': `${shown}%` } as React.CSSProperties}
+              style={{ '--pct': `${shown}%` } as React.CSSProperties}
               onChange={(e) => {
                 const v = Number(e.target.value);
                 displayed.snap(i, v);
@@ -176,8 +176,9 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
           for (let y = 0; y < GRID_H; y++) {
             for (let x = 0; x < GRID_W; x++) {
               const v = Math.pow(field[y * GRID_W + x]!, 1 + (1 - s.field.contrast) * 2.2);
-              const hue = 208 + v * 20;
-              ctx.fillStyle = `hsl(${hue.toFixed(0)} 28% ${(8 + v * 54).toFixed(1)}%)`;
+              // Ink to the Forge's yellow: a two-tone screen, like a halftone print.
+              const hue = 44 - v * 8;
+              ctx.fillStyle = `hsl(${hue.toFixed(0)} ${(60 + v * 36).toFixed(0)}% ${(7 + v * 55).toFixed(1)}%)`;
               ctx.fillRect(x * cw, y * ch, Math.ceil(cw), Math.ceil(ch));
             }
           }

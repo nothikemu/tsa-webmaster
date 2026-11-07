@@ -29,9 +29,6 @@ export default function Glossary(): ReactNode {
   return (
     <div className="wrap page gloss">
       <header className="page-head">
-        <p className="label section-n" data-reveal="fade">
-          <span className="spark" aria-hidden="true" /> 04
-        </p>
         <h1 className="display">{t('gl.title')}</h1>
       </header>
       <div className="gloss-tools">

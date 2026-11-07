@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { HOME } from '../content/site';
+import { HOME, REALM } from '../content/site';
 import { MODULES, glossary, type ModuleContent } from '../content';
 import { t } from '../core/assets';
 import {
@@ -15,25 +15,32 @@ import {
 } from '../core/gamification';
 import { Link } from '../router';
 import { CurriculumMap } from '../ui/CurriculumMap';
-import { ModuleArt, Track } from '../ui/ModuleArt';
+import { Track } from '../ui/ModuleArt';
+import { RealmArt } from '../ui/RealmArt';
 import { useData, useOverall, useRecommendation } from '../ui/hooks';
 
-/** The learner's record, read from saved state: the numbers the progress hub shows, with each module's own percentage. */
-function Record(): ReactNode {
+const NUM = ['01', '02', '03', '04', '05'];
+
+/**
+ * The learner card: a tall banner with a pointed foot, in the manner of an agent card in a lobby.
+ * Everything on it is read from saved state: level, XP, streak, overall percentage, one vertical gauge
+ * per module and the next recommended step. The gauges are drawn; the same numbers are written beside them.
+ */
+function LearnerCard(): ReactNode {
   const data = useData();
   const overall = useOverall();
   const rec = useRecommendation();
   const level = levelInfo(data.xp);
   return (
-    <aside className="record glass edge" aria-label={t('home.record')} data-reveal="up">
-      <dl className="record-stats">
-        <div>
-          <dt>{t('home.level')}</dt>
-          <dd className="num">
-            {level.level}
-            <span>{level.name}</span>
-          </dd>
-        </div>
+    <aside className="learner banner" aria-label={t('home.record')} data-reveal="up">
+      <p className="label learner-label">{t('home.record')}</p>
+      <p className="learner-level" aria-hidden="true">
+        {String(level.level).padStart(2, '0')}
+      </p>
+      <p className="learner-rank">
+        <span className="label">{t('home.level')}</span> {level.name}
+      </p>
+      <dl className="learner-stats">
         <div>
           <dt>XP</dt>
           <dd className="num">{data.xp.toLocaleString('en-US')}</dd>
@@ -47,16 +54,22 @@ function Record(): ReactNode {
           <dd className="num">{overall}%</dd>
         </div>
       </dl>
-      <ul className="record-mods">
+      <ul className="learner-gauges">
         {MODULES.map((m) => (
-          <li key={m.id} data-module={m.id}>
-            <span className="record-dot" aria-hidden="true" />
-            <span>{m.title}</span>
-            <span className="num">{data.modules[m.id].progress}%</span>
+          <li
+            key={m.id}
+            data-module={m.id}
+            style={{ '--p': data.modules[m.id].progress / 100 } as CSSProperties}
+          >
+            <span className="gauge" aria-hidden="true">
+              <i />
+            </span>
+            <span className="num gauge-n">{data.modules[m.id].progress}%</span>
+            <span className="gauge-name">{m.title}</span>
           </li>
         ))}
       </ul>
-      <p className="record-next">
+      <p className="learner-next">
         <span className="label">{t('hub.next')}</span>
         <Link to={rec.href}>{rec.label}</Link>
       </p>
@@ -64,96 +77,23 @@ function Record(): ReactNode {
   );
 }
 
-/**
- * The vessel: the learner's progress drawn as an object. Three rings, one per module, each filled to
- * that module's percentage and capped with a bead; inside them a glass sphere whose liquid stands at
- * the overall percentage. Every figure is read from saved state, and the same numbers are written out
- * in the record beside it, so the drawing is never the only place they appear.
- */
-const RING_R = [236, 208, 180];
-const CENTER = 260;
-
-function Vessel(): ReactNode {
-  const data = useData();
-  const overall = useOverall();
-  return (
-    <div
-      className="vessel"
-      aria-hidden="true"
-      data-empty={overall === 0}
-      style={{ '--lvl': overall } as CSSProperties}
-    >
-      <svg className="vessel-rings" viewBox="0 0 520 520" focusable="false">
-        {MODULES.map((m, i) => {
-          const r = RING_R[i]!;
-          const p = data.modules[m.id].progress;
-          const a = (-90 + (360 * p) / 100) * (Math.PI / 180);
-          return (
-            <g key={m.id} data-module={m.id}>
-              <circle className="ring-track" cx={CENTER} cy={CENTER} r={r} pathLength={100} />
-              {p > 0 && (
-                <circle
-                  className="ring-arc"
-                  cx={CENTER}
-                  cy={CENTER}
-                  r={r}
-                  pathLength={100}
-                  style={{ '--p': p } as CSSProperties}
-                />
-              )}
-              <g
-                transform={`translate(${CENTER + r * Math.cos(a)} ${CENTER + r * Math.sin(a)})`}
-                data-zero={p === 0}
-              >
-                <circle className="ring-bead" r="9" />
-                <circle className="ring-bead-shine" cx="-2.5" cy="-3" r="3" />
-              </g>
-            </g>
-          );
-        })}
-      </svg>
-      <div className="orb-bezel" />
-      <div className="orb">
-        <div className="orb-liquid">
-          <svg
-            className="orb-wave orb-wave-b"
-            viewBox="0 0 400 28"
-            preserveAspectRatio="none"
-            focusable="false"
-          >
-            <path d="M0 14 C 33 2, 67 2, 100 14 S 167 26, 200 14 S 267 2, 300 14 S 367 26, 400 14 V28 H0 Z" />
-          </svg>
-          <svg
-            className="orb-wave orb-wave-a"
-            viewBox="0 0 400 28"
-            preserveAspectRatio="none"
-            focusable="false"
-          >
-            <path d="M0 14 C 33 26, 67 26, 100 14 S 167 2, 200 14 S 267 26, 300 14 S 367 2, 400 14 V28 H0 Z" />
-          </svg>
-        </div>
-      </div>
-      <span className="spark vessel-spark vessel-spark-a" />
-      <span className="spark vessel-spark vessel-spark-b" />
-      <span className="spark vessel-spark vessel-spark-c" />
-    </div>
-  );
-}
-
 function Hero(): ReactNode {
   const rec = useRecommendation();
   const started = rec.kind !== 'start';
-  // The headline is set in lines; the last word of the last line is the one set in the italic serif.
+  // The headline is set in lines; the last word of the last line is printed a second time in cyan, out of register.
   const [first, ...rest] = HOME.headline;
   const tail = (rest.join(' ') || '').split(' ');
   const accent = tail.pop() ?? '';
   const lines = [first, tail.join(' ')].filter((l): l is string => !!l);
   return (
-    <section className="home-hero" aria-labelledby="hero-h">
+    <section className="home-hero slab" aria-labelledby="hero-h">
+      <span className="hero-giant giant" aria-hidden="true">
+        Parameter
+      </span>
       <div className="wrap home-hero-grid">
         <div className="home-hero-copy">
           <p className="label hero-kicker" data-reveal="fade">
-            <span className="spark" aria-hidden="true" /> {HOME.kicker}
+            <span className="stamp">{HOME.kicker}</span>
           </p>
           <h1 id="hero-h" className="hero-title">
             {lines.map((line, i) => (
@@ -183,16 +123,13 @@ function Hero(): ReactNode {
             </Link>
           </div>
         </div>
-        <div className="home-hero-art">
-          <Vessel />
-          <Record />
-        </div>
+        <LearnerCard />
       </div>
     </section>
   );
 }
 
-/** The terms the course teaches, drifting past. Decorative: the full list is on the Glossary page. */
+/** The terms the course teaches, running past like a ticker. Decorative: the full list is on the Glossary page. */
 function Marquee(): ReactNode {
   const terms = glossary.map((g) => g.term.replace(/\s*\(.*\)$/, '')).slice(0, 18);
   const run = (key: string): ReactNode => (
@@ -215,18 +152,36 @@ function Marquee(): ReactNode {
   );
 }
 
+function SectionHead({
+  n,
+  id,
+  title,
+  children,
+}: {
+  n: string;
+  id: string;
+  title: string;
+  children?: ReactNode;
+}): ReactNode {
+  return (
+    <div className="section-head" data-reveal="up">
+      <span className="section-n" aria-hidden="true">
+        {n}
+      </span>
+      <h2 id={id} className="h2">
+        {title}
+      </h2>
+      {children}
+    </div>
+  );
+}
+
 function MapSection(): ReactNode {
   return (
     <section className="wrap home-map" aria-labelledby="map-h">
-      <div className="section-head" data-reveal="up">
-        <p className="label section-n">
-          <span className="spark" aria-hidden="true" /> 01
-        </p>
-        <h2 id="map-h" className="h2">
-          {HOME.map.heading}
-        </h2>
+      <SectionHead n="02" id="map-h" title={HOME.map.heading}>
         <p className="prose">{HOME.map.body}</p>
-      </div>
+      </SectionHead>
       <div data-reveal="scale">
         <CurriculumMap />
       </div>
@@ -237,19 +192,12 @@ function MapSection(): ReactNode {
 function Method(): ReactNode {
   return (
     <section className="wrap home-method" aria-labelledby="method-h">
-      <div className="home-method-head" data-reveal="up">
-        <p className="label section-n">
-          <span className="spark" aria-hidden="true" /> 02 · {t('home.sectionMethod')}
-        </p>
-        <h2 id="method-h" className="h2">
-          {HOME.method.heading}
-        </h2>
-      </div>
+      <SectionHead n="03" id="method-h" title={HOME.method.heading} />
       <ol className="steps">
         {HOME.method.steps.map((s, i) => (
-          <li key={s.name} className="glass" data-reveal="up">
+          <li key={s.name} className="step" data-reveal="up">
             <span className="step-n" aria-hidden="true">
-              {String(i + 1).padStart(2, '0')}
+              {NUM[i]}
             </span>
             <h3>{s.name}</h3>
             <p>{s.body}</p>
@@ -262,27 +210,24 @@ function Method(): ReactNode {
 
 const minutes = (m: ModuleContent): number => m.lessons.reduce((a, l) => a + l.minutes, 0);
 
-function ModulePanel({ m, slot }: { m: ModuleContent; slot: 'a' | 'b' | 'c' }): ReactNode {
+function Realm({ m, slot }: { m: ModuleContent; slot: 'a' | 'b' | 'c' }): ReactNode {
   const d = useData().modules[m.id];
   return (
-    <article className={`home-mod home-mod-${slot} glass edge`} data-module={m.id} data-reveal="up">
-      <header className="mod-head">
-        <span className="mod-numeral" aria-hidden="true">
-          {String(m.index).padStart(2, '0')}
+    <article className={`realm realm-${slot} banner`} data-module={m.id} data-reveal="up">
+      <div className="realm-window">
+        <RealmArt id={m.id} />
+        <span className="realm-numeral" aria-hidden="true">
+          {NUM[m.index - 1]}
         </span>
-        <div>
-          <h3 className="mod-title">
-            <Link to={`/modules/${m.id}`} className="stretched">
-              {m.title}
-            </Link>
-          </h3>
-          <p className="mod-tagline">{m.tagline}</p>
-        </div>
-      </header>
-      <div className="mod-art">
-        <ModuleArt id={m.id} />
       </div>
-      <div className="mod-body">
+      <div className="realm-body">
+        <p className="label realm-name">{REALM[m.id]}</p>
+        <h3 className="mod-title">
+          <Link to={`/modules/${m.id}`} className="stretched">
+            {m.title}
+          </Link>
+        </h3>
+        <p className="mod-tagline">{m.tagline}</p>
         <p className="mod-objective">{m.objective}</p>
         <dl className="mod-facts">
           <div>
@@ -314,21 +259,14 @@ function ModulePanel({ m, slot }: { m: ModuleContent; slot: 'a' | 'b' | 'c' }): 
   );
 }
 
-function Modules(): ReactNode {
+function Realms(): ReactNode {
   return (
     <section className="wrap home-mods" aria-labelledby="mods-h">
-      <div className="section-head" data-reveal="up">
-        <p className="label section-n">
-          <span className="spark" aria-hidden="true" /> 03
-        </p>
-        <h2 id="mods-h" className="h2">
-          {HOME.bento.heading}
-        </h2>
-      </div>
+      <SectionHead n="01" id="mods-h" title={HOME.bento.heading} />
       <div className="home-mods-grid">
-        <ModulePanel m={MODULES[0]!} slot="a" />
-        <ModulePanel m={MODULES[1]!} slot="b" />
-        <ModulePanel m={MODULES[2]!} slot="c" />
+        <Realm m={MODULES[0]!} slot="a" />
+        <Realm m={MODULES[1]!} slot="b" />
+        <Realm m={MODULES[2]!} slot="c" />
       </div>
     </section>
   );
@@ -350,9 +288,9 @@ function Ledger(): ReactNode {
   return (
     <section className="wrap home-ledger" aria-labelledby="ledger-h">
       <div className="ledger-copy" data-reveal="up">
-        <p className="label section-n">
-          <span className="spark" aria-hidden="true" /> 04
-        </p>
+        <span className="section-n" aria-hidden="true">
+          04
+        </span>
         <h2 id="ledger-h" className="h2">
           {HOME.gamification.heading}
         </h2>
@@ -382,9 +320,9 @@ export default function Home(): ReactNode {
     <div className="home">
       <Hero />
       <Marquee />
+      <Realms />
       <MapSection />
       <Method />
-      <Modules />
       <Ledger />
     </div>
   );

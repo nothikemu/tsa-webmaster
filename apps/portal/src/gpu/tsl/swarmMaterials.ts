@@ -27,9 +27,9 @@ export function createSwarmTsl(seed: Float32Array, rest: Float32Array, initial: 
   const uMaxLen = uniform(maxLen);
   const uOpacity = uniform(0.55);
 
-  const blue = vec3(0.7, 0.65, 1.0);
-  const violet = vec3(1.0, 0.45, 0.86);
-  const cyan = vec3(0.36, 0.95, 1.0);
+  const blue = vec3(0.17, 0.84, 0.96);
+  const violet = vec3(0.96, 0.94, 0.9);
+  const cyan = vec3(1.0, 0.42, 0.12);
 
   // Points ------------------------------------------------------------------------------------
   const pos: any = instancedBufferAttribute(positions as unknown as BufferAttribute);

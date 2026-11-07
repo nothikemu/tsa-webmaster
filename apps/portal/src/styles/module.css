@@ -1,11 +1,21 @@
 /* ---- module pages ------------------------------------------------------------------------------------ */
 .module-page {
-  padding-block: var(--s-4) var(--section);
+  padding-bottom: var(--section);
 }
+
+/* The header is a slab in the realm's color, cut on the slant at its foot. Everything on it is ink. */
 .mp-head {
+  --slab: var(--m);
+  position: relative;
+  overflow: clip;
+  padding-block: var(--s-3) clamp(var(--s-7), 7vw, var(--s-9));
+  margin-bottom: var(--s-7);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - clamp(1.5rem, 3.4vw, 3rem)), 0 100%);
+}
+.mp-head-inner {
+  position: relative;
   display: grid;
   gap: var(--s-4);
-  margin-bottom: var(--s-7);
 }
 .crumbs ol {
   display: flex;
@@ -15,7 +25,10 @@
   padding: 0;
   margin: 0;
   gap: 0 var(--s-2);
-  font-size: var(--fs-small);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
 }
 .crumbs li {
   display: inline-flex;
@@ -24,20 +37,24 @@
   color: var(--text);
 }
 .crumbs li + li::before {
-  content: '\203A';
+  content: '';
+  width: 7px;
+  height: 7px;
   margin-right: var(--s-2);
-  color: var(--text-3);
+  background: currentColor;
+  transform: rotate(45deg);
 }
 .crumbs a {
   display: inline-flex;
   align-items: center;
   min-height: var(--tap);
-  color: var(--text-2);
-  text-decoration: none;
-}
-.crumbs a:hover {
   color: var(--text);
   text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+}
+.crumbs a:hover {
+  text-decoration-color: currentColor;
 }
 .mp-title {
   display: flex;
@@ -51,16 +68,58 @@
   gap: var(--s-2);
   min-width: 0;
 }
-.mp-title .mod-numeral {
-  font-size: var(--t-numeral);
-  line-height: 0.8;
+.mp-head .display {
+  font-size: clamp(2.75rem, 7.4vw, 6.5rem);
+  line-height: 0.86;
+  max-width: 16ch;
 }
+[data-view='overview'] .mp-head .display {
+  font-size: clamp(3rem, 9.4vw, 8rem);
+  line-height: 0.8;
+  max-width: none;
+  overflow-wrap: anywhere;
+}
+.mp-head .mod-tagline {
+  color: var(--ink-on);
+  font-size: clamp(1.1875rem, 1.6vw, 1.5rem);
+  font-weight: 600;
+  max-width: 34ch;
+}
+.slab .mod-numeral {
+  -webkit-text-stroke-color: var(--ink-on);
+  font-size: clamp(5rem, 15vw, 11rem);
+  line-height: 0.74;
+  margin-bottom: 0.04em;
+}
+/* The realm's print, framed in ink with an offset copy behind it. */
 .mp-head-art {
-  flex: 0 1 26rem;
-  min-width: min(100%, 14rem);
+  flex: 0 0 min(100%, 230px);
+  box-shadow:
+    0 0 0 4px var(--ink-on),
+    10px 10px 0 4px var(--ink-on);
+}
+.mp-head-art .realm-art {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-/* The stepper: every step of the module, its state drawn as a shape, the current one ringed in lime. */
+/* On the slab, the map's shapes are drawn in ink, and the current step is a block of ink. */
+.slab .mn-shape {
+  fill: transparent;
+  stroke: var(--ink-on);
+}
+.slab .mn-node[data-state='none'] .mn-shape {
+  stroke: var(--ink-on);
+}
+.slab .mn-fill {
+  fill: var(--ink-on);
+}
+.slab .mn-tick {
+  stroke: var(--m);
+}
+
+/* The stepper: every step of the module, its state drawn as a shape, the current one a block of ink. */
 .stepper ul {
   display: flex;
   flex-wrap: wrap;
@@ -75,37 +134,37 @@
   gap: 0.5em;
   min-height: var(--tap);
   min-width: var(--tap);
-  padding: 0 var(--s-4);
+  padding: 0.15rem var(--s-4) 0;
   border: 0;
-  border-radius: var(--r-pill);
-  background: rgb(255 244 214 / 0.055);
-  box-shadow:
-    inset 0 1px 0 rgb(255 244 214 / 0.14),
-    inset 0 0 0 1px rgb(233 196 106 / 0.2);
-  color: var(--text-2);
-  font-size: var(--fs-small);
-  font-weight: 500;
+  box-shadow: inset 0 0 0 3px var(--ink-on);
+  color: var(--ink-on);
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   text-decoration: none;
   transition:
-    background-color var(--dur) var(--ease),
-    box-shadow var(--dur) var(--ease),
-    color var(--dur) var(--ease);
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
 }
 .stepper a:not(.link-arrow):hover {
-  background: rgb(255 244 214 / 0.11);
-  color: var(--text);
-  box-shadow:
-    inset 0 1px 0 rgb(255 244 214 / 0.2),
-    inset 0 0 0 1px rgb(95 212 255 / 0.55);
+  background: rgb(10 11 16 / 0.16);
 }
 .stepper a[aria-current='page'] {
-  background: var(--acid-soft);
-  color: var(--text);
-  font-weight: 650;
-  box-shadow:
-    inset 0 1px 0 rgb(255 244 214 / 0.2),
-    inset 0 0 0 1.5px var(--acid),
-    0 8px 24px -10px rgb(233 196 106 / 0.5);
+  background: var(--ink-on);
+  color: var(--paper);
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  box-shadow: none;
+}
+.slab .stepper a[aria-current='page'] .mn-node .mn-shape {
+  stroke: var(--paper);
+}
+.slab .stepper a[aria-current='page'] .mn-node .mn-fill {
+  fill: var(--paper);
+}
+.slab .stepper a[aria-current='page'] .mn-node .mn-tick {
+  stroke: var(--ink-on);
 }
 .stepper-jump {
   display: none;
@@ -124,45 +183,71 @@
   display: grid;
   gap: var(--s-5);
 }
+/* The reading sheet: paper, cut at one corner, with a bar of the realm's color along its top. */
+.mp-panel[data-surface='paper'] {
+  position: relative;
+  isolation: isolate;
+  background: none;
+  padding: clamp(var(--s-5), 3vw, var(--s-7));
+  padding-top: calc(clamp(var(--s-5), 3vw, var(--s-7)) + 10px);
+}
+.mp-panel[data-surface='paper']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(var(--m), var(--m)) 0 0 / 100% 10px no-repeat,
+    var(--paper);
+  clip-path: var(--cut-tr);
+  --n: var(--n-lg);
+}
 
 /* ---- the instrument frame ---------------------------------------------------------------------------- */
 .instrument {
+  --frame: var(--m);
   min-width: 0;
   display: grid;
   gap: var(--s-3);
-  padding: var(--s-3);
-  border-radius: var(--r-xl);
-  background: var(--glass-strong);
+  padding: var(--s-4);
+  --n: var(--n-lg);
+}
+.instrument::before {
+  background: var(--fill);
+}
+.instrument:hover::before {
+  background: var(--fill);
 }
 .instrument:focus-visible {
   outline: none;
 }
 .instrument-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--s-3);
   padding: var(--s-1) var(--s-2) 0;
 }
 .instrument-name {
-  font-size: 1.25rem;
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 0.9;
+  color: var(--m);
 }
 .instrument-kind {
   flex: none;
-  padding: 3px var(--s-3);
-  border-radius: var(--r-pill);
-  background: color-mix(in srgb, var(--m) 12%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--m) 70%, transparent);
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  padding: 0.25rem var(--s-3) 0.15rem;
+  background: var(--m);
+  font-weight: 700;
+  font-size: 0.8125rem;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
-  color: var(--m);
+  color: var(--ink-on);
 }
 .instrument-kind[data-kind='simulation'] {
-  background: var(--amber-soft);
-  box-shadow: inset 0 0 0 1px var(--amber);
-  color: var(--amber);
+  background: var(--sim);
+  color: var(--ink-on);
 }
 @media (min-width: 1041px) and (min-height: 760px) {
   .mp-grid > .instrument,
@@ -186,7 +271,7 @@
   gap: var(--s-2) var(--s-5);
 }
 .lesson-meta .label b {
-  color: var(--m);
+  color: var(--accent);
 }
 .meter {
   display: flex;
@@ -196,6 +281,7 @@
   padding: 0;
   margin: 0 0 0 auto;
   font-size: var(--fs-small);
+  font-weight: 600;
   color: var(--text-3);
 }
 .meter li {
@@ -204,17 +290,16 @@
   gap: 6px;
 }
 .meter i {
-  width: 10px;
-  height: 10px;
-  border-radius: var(--r-round);
-  border: 1.5px solid var(--text-3);
+  width: 11px;
+  height: 11px;
+  box-shadow: inset 0 0 0 2px var(--text-3);
 }
 .meter li[data-reached='true'] {
   color: var(--text);
 }
 .meter li[data-reached='true'] i {
   background: var(--m);
-  border-color: var(--m);
+  box-shadow: inset 0 0 0 2px var(--text);
 }
 .lesson-body {
   display: grid;
@@ -229,21 +314,25 @@
 .lesson-body p:first-child {
   font-size: 1.3125rem;
   font-weight: 500;
-  letter-spacing: -0.012em;
   line-height: 1.55;
   color: var(--text);
+}
+/* The first letter of a lesson is cut large in the display face. */
+.lesson-body p:first-child::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 5.4rem;
+  line-height: 0.76;
+  padding: 0.04em 0.1em 0 0;
+  color: var(--accent);
 }
 .keypoints-box {
   display: grid;
   gap: var(--s-3);
-  padding: var(--s-5);
-  border-radius: var(--r-lg);
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--m) 13%, transparent), transparent 62%),
-    var(--glass);
-  box-shadow:
-    inset 3px 0 0 var(--m),
-    var(--shadow-glass);
+  padding: var(--s-5) var(--s-5) var(--s-5) var(--s-6);
+  background: var(--fill);
+  box-shadow: inset 8px 0 0 var(--m);
 }
 .keypoints {
   list-style: none;
@@ -256,29 +345,51 @@
 .keypoints li {
   counter-increment: kp;
   display: grid;
-  grid-template-columns: 2.25rem minmax(0, 1fr);
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  padding-left: 0;
+  font-weight: 500;
 }
 .keypoints li::before {
   content: counter(kp, decimal-leading-zero);
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  color: var(--m);
-  padding-top: 0.3em;
+  position: static;
+  width: auto;
+  height: auto;
+  background: none;
+  transform: none;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--accent);
+  padding-top: 0.05em;
+}
+[data-surface='paper'] .keypoints li::before {
+  background: none;
 }
 .next-step {
+  --slab: var(--m);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--s-4) var(--s-6);
   align-items: end;
   padding: var(--s-5) var(--s-6);
-  border-radius: var(--r-xl);
-  background:
-    radial-gradient(
-      90% 120% at 0% 0%,
-      color-mix(in srgb, var(--m) 16%, transparent),
-      transparent 70%
-    ),
-    var(--glass-strong);
+  clip-path: var(--cut-tr);
+  --n: var(--n-lg);
+}
+.next-step .btn-primary {
+  --face: var(--ink-on);
+  --ink: var(--paper);
+  --shadow-c: var(--paper);
+}
+.next-step .btn-ghost {
+  --ink: var(--ink-on);
+  --shadow-c: var(--ink-on);
+}
+.next-step .btn-ghost::before {
+  background: var(--ink-on);
+}
+.next-step .btn-ghost::after {
+  background: var(--m);
 }
 .next-copy {
   display: grid;
@@ -286,26 +397,28 @@
 }
 .next-title {
   font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: -0.04em;
-  font-size: var(--t-h3);
-  line-height: 1.15;
+  font-weight: 900;
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  line-height: 0.88;
+  text-transform: uppercase;
+  color: var(--ink-on);
 }
 .next-meta {
-  color: var(--text-3);
+  color: var(--ink-on);
   font-size: var(--fs-small);
+  font-weight: 500;
 }
 .next-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--s-3);
+  gap: var(--s-4);
 }
 
 /* ---- overview: the same four parts, composed differently for each module ---------------------------- */
 .mp-overview {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--s-6) var(--s-5);
+  gap: var(--s-7) var(--s-5);
   align-items: start;
 }
 .mp-objective {
@@ -313,13 +426,13 @@
   gap: var(--s-3);
 }
 .mp-objective > p:not(.label) {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(1.6rem, 2.6vw, 2.35rem);
-  line-height: 1.16;
-  letter-spacing: -0.005em;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.3vw, 2.125rem);
+  line-height: 1.18;
   color: var(--text);
-  max-width: 26ch;
+  max-width: 28ch;
+  padding-left: var(--s-4);
+  box-shadow: inset 6px 0 0 var(--m);
 }
 .mp-sequence {
   display: grid;
@@ -333,19 +446,18 @@
   gap: var(--s-4);
 }
 .mp-badge {
+  --frame: var(--m);
   display: grid;
   gap: var(--s-3);
   padding: var(--s-5);
-  border-radius: var(--r-xl);
-  background:
-    radial-gradient(100% 100% at 100% 0%, rgb(233 196 106 / 0.1), transparent 60%),
-    var(--glass-strong);
 }
 .mp-badge-name {
   font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: -0.04em;
-  font-size: var(--t-h3);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(2.25rem, 3.4vw, 3rem);
+  line-height: 0.9;
+  color: var(--m);
 }
 .requirements {
   list-style: none;
@@ -370,11 +482,10 @@
   color: var(--text-3);
 }
 .requirements li[data-done='true'] .req-mark {
-  color: var(--acid);
-  filter: drop-shadow(0 0 6px rgb(233 196 106 / 0.55));
+  color: var(--m);
 }
 
-/* Foundations: the drawing in the header, a narrow reading column, the instrument large on the right. */
+/* Foundations: a narrow reading column, the instrument large on the right. */
 .mp-overview[data-module='foundations'] > :not(.instrument) {
   grid-column: 1 / span 5;
 }

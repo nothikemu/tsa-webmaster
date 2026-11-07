@@ -175,6 +175,11 @@ export function Link({ to, onClick, children, ...rest }: LinkProps): ReactNode {
     if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     if (rest.target && rest.target !== '_self') return;
     e.preventDefault();
+    // The next page opens as a widening circle from the link that was chosen (see fx.css).
+    const r = e.currentTarget.getBoundingClientRect();
+    const root = document.documentElement.style;
+    root.setProperty('--vt-x', `${Math.round(e.clientX || r.left + r.width / 2)}px`);
+    root.setProperty('--vt-y', `${Math.round(e.clientY || r.top + r.height / 2)}px`);
     navigate(to);
   };
   const current = !external && normalizePath(withBase(to)) === path ? 'page' : undefined;

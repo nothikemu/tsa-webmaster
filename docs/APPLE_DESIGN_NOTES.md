@@ -1,3 +1,5 @@
+> Historical. This note records the earlier Apple-inspired pass. The current visual identity is described in [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) and [DESIGN_RESEARCH.md](DESIGN_RESEARCH.md); the accessibility and clarity rules below still apply.
+
 # Apple design research and how it was applied
 
 > **Superseded for visual direction.** The later redesign moved from a black, Apple-like surface to a midnight-ink scientific learning lab (see `DESIGN_SYSTEM.md`). The accessibility, target-size, focus and reduced-motion judgments recorded here still apply and are kept in the current design; the color, type and radius values below are historical.

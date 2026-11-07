@@ -30,9 +30,9 @@ void main() {
   gl_Position = projectionMatrix * mv;
 
   float t = clamp((aRest.x + 2.4) / 4.8, 0.0, 1.0);
-  vec3 blue = vec3(0.70, 0.65, 1.00);
-  vec3 violet = vec3(1.00, 0.45, 0.86);
-  vec3 cyan = vec3(0.36, 0.95, 1.00);
+  vec3 blue = vec3(0.17, 0.84, 0.96);
+  vec3 violet = vec3(0.96, 0.94, 0.90);
+  vec3 cyan = vec3(1.00, 0.42, 0.12);
   vColor = mix(mix(blue, violet, t), cyan, clamp(infl + disp * 1.4, 0.0, 1.0));
   vAlpha = 0.30 + 0.35 * aSeed + infl * 0.45 + clamp(disp, 0.0, 0.5) * 0.4;
 }

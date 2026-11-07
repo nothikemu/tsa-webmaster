@@ -174,7 +174,6 @@ function Shape({ node, r }: { node: MapNode; r: number }): ReactNode {
           y={y - r + 1}
           width={2 * r - 2}
           height={2 * r - 2}
-          rx={2}
         />
         {state === 'started' && (
           <rect className="mn-fill" x={x - 3} y={y - 3} width={6} height={6} />
@@ -187,7 +186,6 @@ function Shape({ node, r }: { node: MapNode; r: number }): ReactNode {
               y={y - r + 1}
               width={2 * r - 2}
               height={2 * r - 2}
-              rx={2}
             />
             {tick}
           </>
@@ -240,15 +238,10 @@ function ChainView({
   const style = { '--m': `var(--m-${chain.module.id})` } as CSSProperties;
   const links = chain.nodes.slice(0, -1).map((a, i) => {
     const b = chain.nodes[i + 1]!;
-    const bend = (i % 2 === 0 ? 1 : -1) * 6;
-    const mid =
-      orientation === 'wide'
-        ? `${(a.x + b.x) / 2} ${(a.y + b.y) / 2 + bend}`
-        : `${(a.x + b.x) / 2 + bend} ${(a.y + b.y) / 2}`;
     return {
       key: `${a.key}-${b.key}`,
       lit: a.state !== 'none',
-      d: `M${a.x} ${a.y}Q${mid} ${b.x} ${b.y}`,
+      d: `M${a.x} ${a.y}L${b.x} ${b.y}`,
     };
   });
   return (

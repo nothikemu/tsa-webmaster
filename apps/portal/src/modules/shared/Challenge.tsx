@@ -5,6 +5,7 @@ import { t } from '../../core/assets';
 import { Link } from '../../router';
 import { useClock, useData, useGame } from '../../ui/hooks';
 import { Segmented } from '../../ui/Segmented';
+import { Verdict } from '../../ui/Verdict';
 import {
   PARAM_KEYS,
   PARAM_META,
@@ -121,25 +122,24 @@ function Summary({
   useEffect(() => ref.current?.focus(), []);
   const passed = score >= c.passMark;
   return (
-    <div className="quiz-result glass" ref={ref} tabIndex={-1} role="status">
-      <p className="num quiz-score">
-        {score}
-        <span className="muted">
-          {' '}
-          / {c.kind === 'choice' ? c.items.length : c.scenarios.length}
-        </span>
-      </p>
-      <p>{passed ? t('challenge.cleared') : t('challenge.notYet', { n: c.passMark })}</p>
-      {timed && <p className="muted">{t('challenge.time', { t: fmt(ms) })}</p>}
-      <div className="check-actions">
-        <button type="button" className="btn btn-ghost" onClick={reset}>
-          {t('challenge.again')}
-        </button>
-        <Link to={moduleHref(module.id)} className="btn">
-          {t('challenge.back')}
-        </Link>
-      </div>
-    </div>
+    <Verdict
+      innerRef={ref}
+      passed={passed}
+      score={score}
+      total={c.kind === 'choice' ? c.items.length : c.scenarios.length}
+      note={passed ? t('challenge.cleared') : t('challenge.notYet', { n: c.passMark })}
+      detail={timed ? t('challenge.time', { t: fmt(ms) }) : undefined}
+      actions={
+        <>
+          <button type="button" className="btn btn-ghost" onClick={reset}>
+            {t('challenge.again')}
+          </button>
+          <Link to={moduleHref(module.id)} className="btn">
+            {t('challenge.back')}
+          </Link>
+        </>
+      }
+    />
   );
 }
 

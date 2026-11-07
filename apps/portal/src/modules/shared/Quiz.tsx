@@ -5,6 +5,7 @@ import { t } from '../../core/assets';
 import { BADGE_QUIZ_MIN } from '../../core/gamification';
 import { Link } from '../../router';
 import { useGame } from '../../ui/hooks';
+import { Verdict } from '../../ui/Verdict';
 
 /** Five questions, scored together. Only an improvement over the best score earns XP. */
 export function Quiz({ module }: { module: ModuleContent }): ReactNode {
@@ -34,28 +35,30 @@ export function Quiz({ module }: { module: ModuleContent }): ReactNode {
       </h2>
 
       {score !== null && (
-        <div className="quiz-result glass" ref={resultRef} tabIndex={-1} role="status">
-          <p className="num quiz-score">
-            {score}
-            <span className="muted"> / {total}</span>
-          </p>
-          <p>{score >= BADGE_QUIZ_MIN ? t('quiz.passed') : t('quiz.retry')}</p>
-          <div className="check-actions">
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => {
-                setAnswers({});
-                setScore(null);
-              }}
-            >
-              {t('quiz.retake')}
-            </button>
-            <Link to={challengeHref(module.id)} className="btn">
-              {t('quiz.toChallenge')}
-            </Link>
-          </div>
-        </div>
+        <Verdict
+          innerRef={resultRef}
+          passed={score >= BADGE_QUIZ_MIN}
+          score={score}
+          total={total}
+          note={score >= BADGE_QUIZ_MIN ? t('quiz.passed') : t('quiz.retry')}
+          actions={
+            <>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => {
+                  setAnswers({});
+                  setScore(null);
+                }}
+              >
+                {t('quiz.retake')}
+              </button>
+              <Link to={challengeHref(module.id)} className="btn">
+                {t('quiz.toChallenge')}
+              </Link>
+            </>
+          }
+        />
       )}
 
       <ol className="quiz-list">

@@ -1,25 +1,29 @@
 /*
- * Materials: the small set of surfaces and controls everything else is built from.
+ * Materials: the small set of shapes and controls everything else is built from.
  *
- *   plate    an opaque slab of blue-black stone with a lit top edge and a faint engraved hatch
- *   frame    gold corner brackets with a diamond at each cut, drawn inside a plate's edge
- *   brass    the lozenge button: a bronze rim, a brass face, a highlight, a sheen on hover
- *   metal    the engraved-gold fill for titles and numerals
- *   spark    the four-point star, the portal's one ornament
- *   rule     a gold line with a diamond at its heart
+ *   plate    a flat slab with one cut corner; its fill is a clipped pseudo-element so focus rings and
+ *            hard shadows are never clipped away
+ *   edge     blueprint brackets drawn inside a plate, in the realm color
+ *   banner   the tall card with a pointed foot (the learner card, the realm cards)
+ *   btn      the print-shop button: a flat cut-corner block with a hard offset shadow that closes on press
+ *   slab     a full-bleed field of one saturated color, set with ink-colored type
+ *   giant    an oversized condensed word cropped by the edge of its container
+ *   stamp    a small rotated label in a rule box
+ *   tape     a ticker band
  *
- * Hover light (the lamp) and the magnetic pull are driven by ui/fx.ts through custom properties.
+ * No blur, no glow, no gradient fills. Depth is a flat offset, motion is a snap.
  */
 :root {
-  --corner-tl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23fff3c8'/%3E%3Cstop offset='.5' stop-color='%23e9c46a'/%3E%3Cstop offset='1' stop-color='%238a6420'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M2 33V11L11 2H33' fill='none' stroke='url(%23g)' stroke-width='2'/%3E%3Cpath d='M7 33V14.5L14.5 7H33' fill='none' stroke='%23e9c46a' stroke-opacity='.32' stroke-width='1'/%3E%3Cpath d='M11 1l3.2 3.2L11 7.4 7.8 4.2z' fill='%23fff3c8'/%3E%3Ccircle cx='33' cy='2' r='1.2' fill='%23e9c46a'/%3E%3Ccircle cx='2' cy='33' r='1.2' fill='%23e9c46a'/%3E%3C/svg%3E");
-  --corner-tr: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23fff3c8'/%3E%3Cstop offset='.5' stop-color='%23e9c46a'/%3E%3Cstop offset='1' stop-color='%238a6420'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform='translate(34 0) scale(-1 1)'%3E%3Cpath d='M2 33V11L11 2H33' fill='none' stroke='url(%23g)' stroke-width='2'/%3E%3Cpath d='M7 33V14.5L14.5 7H33' fill='none' stroke='%23e9c46a' stroke-opacity='.32' stroke-width='1'/%3E%3Cpath d='M11 1l3.2 3.2L11 7.4 7.8 4.2z' fill='%23fff3c8'/%3E%3Ccircle cx='33' cy='2' r='1.2' fill='%23e9c46a'/%3E%3Ccircle cx='2' cy='33' r='1.2' fill='%23e9c46a'/%3E%3C/g%3E%3C/svg%3E");
-  --corner-bl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23fff3c8'/%3E%3Cstop offset='.5' stop-color='%23e9c46a'/%3E%3Cstop offset='1' stop-color='%238a6420'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform='translate(0 34) scale(1 -1)'%3E%3Cpath d='M2 33V11L11 2H33' fill='none' stroke='url(%23g)' stroke-width='2'/%3E%3Cpath d='M7 33V14.5L14.5 7H33' fill='none' stroke='%23e9c46a' stroke-opacity='.32' stroke-width='1'/%3E%3Cpath d='M11 1l3.2 3.2L11 7.4 7.8 4.2z' fill='%23fff3c8'/%3E%3Ccircle cx='33' cy='2' r='1.2' fill='%23e9c46a'/%3E%3Ccircle cx='2' cy='33' r='1.2' fill='%23e9c46a'/%3E%3C/g%3E%3C/svg%3E");
-  --corner-br: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23fff3c8'/%3E%3Cstop offset='.5' stop-color='%23e9c46a'/%3E%3Cstop offset='1' stop-color='%238a6420'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform='translate(34 34) scale(-1 -1)'%3E%3Cpath d='M2 33V11L11 2H33' fill='none' stroke='url(%23g)' stroke-width='2'/%3E%3Cpath d='M7 33V14.5L14.5 7H33' fill='none' stroke='%23e9c46a' stroke-opacity='.32' stroke-width='1'/%3E%3Cpath d='M11 1l3.2 3.2L11 7.4 7.8 4.2z' fill='%23fff3c8'/%3E%3Ccircle cx='33' cy='2' r='1.2' fill='%23e9c46a'/%3E%3Ccircle cx='2' cy='33' r='1.2' fill='%23e9c46a'/%3E%3C/g%3E%3C/svg%3E");
-  --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12h15M12.5 5.5L19 12l-6.5 6.5' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='square'/%3E%3C/svg%3E");
-  --spark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12C7.4 11.1 11.1 7.4 12 0z' fill='%23000'/%3E%3C/svg%3E");
-  --diamond: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1l11 11-11 11L1 12z' fill='%23000'/%3E%3C/svg%3E");
-  --lozenge: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% 50%, calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 50%);
-  --lozenge-in: polygon(calc(var(--cut) - 1px) 2px, calc(100% - var(--cut) + 1px) 2px, calc(100% - 3px) 50%, calc(100% - var(--cut) + 1px) calc(100% - 2px), calc(var(--cut) - 1px) calc(100% - 2px), 3px 50%);
+  --cut-tr: polygon(0 0, calc(100% - var(--n)) 0, 100% var(--n), 100% 100%, 0 100%);
+  --cut-tr-bl: polygon(0 0, calc(100% - var(--n)) 0, 100% var(--n), 100% 100%, var(--n) 100%, 0 calc(100% - var(--n)));
+  --cut-all: polygon(var(--n) 0, calc(100% - var(--n)) 0, 100% var(--n), 100% calc(100% - var(--n)), calc(100% - var(--n)) 100%, var(--n) 100%, 0 calc(100% - var(--n)), 0 var(--n));
+  --banner-shape: polygon(0 0, 100% 0, 100% calc(100% - var(--banner-tip)), 50% 100%, 0 calc(100% - var(--banner-tip)));
+  --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2 12h17M12 4l8 8-8 8' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='square'/%3E%3C/svg%3E");
+  --shadow-c: var(--m);
+  --halftone: radial-gradient(circle at 50% 50%, currentColor 0 1.3px, transparent 1.7px) 0 0 / 9px 9px;
+}
+[data-surface='paper'] {
+  --shadow-c: var(--paper-ink);
 }
 
 /* ---- plate -------------------------------------------------------------------------------------------- */
@@ -27,61 +31,67 @@
 .panel {
   position: relative;
   isolation: isolate;
-  background: var(--glass);
-  border-radius: var(--r-lg);
-  box-shadow:
-    inset 0 1px 0 rgb(255 240 200 / 0.12),
-    inset 0 0 0 1px rgb(233 196 106 / 0.2),
-    0 0 0 1px #05060d,
-    0 24px 48px -22px rgb(0 0 0 / 0.9);
+  color: var(--text);
 }
-/* The engraved hatch and the lamp: a warm light that follows the pointer across the plate. */
 .glass::before,
 .panel::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
-  border-radius: inherit;
+  background: var(--fill);
+  clip-path: var(--cut-tr);
   pointer-events: none;
-  background:
-    radial-gradient(
-      340px circle at var(--mx, 50%) var(--my, 0%),
-      rgb(255 214 130 / 0.11),
-      transparent 62%
-    ),
-    repeating-linear-gradient(135deg, rgb(255 240 200 / 0.022) 0 1px, transparent 1px 5px);
-  opacity: 0.55;
-  transition: opacity var(--dur) var(--ease);
+  transition: background-color var(--dur-fast) var(--ease);
 }
 .glass:hover::before,
 .panel:hover::before,
 .glass:focus-within::before,
 .panel:focus-within::before {
-  opacity: 1;
+  background: var(--fill-2);
 }
-/* The frame: gold brackets in the four corners, set in from the plate's edge. */
-.edge {
-  position: relative;
-}
+/* The frame: four blueprint brackets, set in from the plate's edge, in the realm color. */
 .edge::after {
   content: '';
   position: absolute;
-  inset: 5px;
+  inset: 6px;
   z-index: 1;
   pointer-events: none;
+  --b: var(--frame, var(--line-2));
   background:
-    var(--corner-tl) 0 0 / 34px 34px no-repeat,
-    var(--corner-tr) 100% 0 / 34px 34px no-repeat,
-    var(--corner-bl) 0 100% / 34px 34px no-repeat,
-    var(--corner-br) 100% 100% / 34px 34px no-repeat;
+    linear-gradient(var(--b), var(--b)) 0 0 / 14px 2px no-repeat,
+    linear-gradient(var(--b), var(--b)) 0 0 / 2px 14px no-repeat,
+    linear-gradient(var(--b), var(--b)) 0 100% / 14px 2px no-repeat,
+    linear-gradient(var(--b), var(--b)) 0 100% / 2px 14px no-repeat,
+    linear-gradient(var(--b), var(--b)) 100% 100% / 14px 2px no-repeat,
+    linear-gradient(var(--b), var(--b)) 100% 100% / 2px 14px no-repeat;
 }
 
-/* ---- brass: lozenge buttons ------------------------------------------------------------------------- */
+/* The banner: a tall card whose foot comes to a point. The caller leaves room under the content. */
+.banner {
+  position: relative;
+  isolation: isolate;
+  padding-bottom: calc(var(--banner-tip) + var(--s-5));
+}
+.banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--banner-fill, var(--fill));
+  clip-path: var(--banner-shape);
+  pointer-events: none;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+/* ---- buttons ------------------------------------------------------------------------------------------ */
 .btn {
   --tx: 0px;
   --ty: 0px;
   --sc: 1;
+  --so: 5px; /* the shadow's offset */
+  --face: var(--signal);
+  --ink: var(--ink-on);
   position: relative;
   isolation: isolate;
   display: inline-flex;
@@ -89,218 +99,191 @@
   justify-content: center;
   gap: var(--s-2);
   min-height: var(--tap);
-  padding: 0.55rem calc(var(--cut) + 1.35rem);
+  padding: 0.45rem 1.5rem 0.4rem;
   border: 0;
   background: none;
-  color: var(--gold-ink);
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 1.0625rem;
-  letter-spacing: 0.11em;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.375rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  line-height: 1.15;
+  line-height: 1;
   text-align: center;
   text-decoration: none;
-  text-shadow: 0 1px 0 rgb(255 243 200 / 0.55);
   transform: translate3d(var(--tx), var(--ty), 0) scale(var(--sc));
+  filter: drop-shadow(var(--so) var(--so) 0 var(--shadow-c));
   transition:
-    transform var(--dur) var(--ease),
-    filter var(--dur) var(--ease);
-}
-/* Rim: dark bronze. Face: lit brass with a highlight across the top. Both are the lozenge. */
-.btn::before,
-.btn::after {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
+    translate var(--dur-fast) var(--ease),
+    filter var(--dur-fast) var(--ease),
+    transform var(--dur) var(--ease);
 }
 .btn::before {
+  content: '';
+  position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, #fff3c8, #8a6420 55%, #4a3410);
-  clip-path: var(--lozenge);
-}
-.btn::after {
-  inset: 0;
-  clip-path: var(--lozenge-in);
-  background:
-    linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.65) 50%, transparent 62%) -160% 0 / 260% 100% no-repeat,
-    linear-gradient(180deg, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0) 52%),
-    var(--gel);
-  transition: background-position 900ms var(--ease);
+  z-index: -1;
+  background: var(--face);
+  clip-path: var(--cut-tr-bl);
+  --n: 10px;
+  pointer-events: none;
 }
 .btn:hover:not(:disabled) {
-  --ty: -1px;
-  filter: drop-shadow(0 0 14px rgb(233 196 106 / 0.5));
-}
-.btn:hover:not(:disabled)::after {
-  background-position:
-    260% 0,
-    0 0,
-    0 0;
+  translate: -2px -2px;
+  --so: 7px;
 }
 .btn:active:not(:disabled) {
-  --ty: 1px;
-  --sc: 0.985;
-  filter: brightness(0.92);
+  translate: var(--so) var(--so);
+  filter: drop-shadow(0 0 0 var(--shadow-c));
+  transition-duration: 0ms;
 }
 .btn-primary {
-  color: var(--gold-ink);
+  --face: var(--signal);
+  --ink: var(--ink-on);
 }
 
-/* Ghost: dark steel with a thin gold rim and gold lettering. */
+/* Ghost: the same block, empty, outlined in the text color. */
 .btn-ghost {
-  color: var(--gold);
-  text-shadow: none;
+  --ink: var(--text);
 }
 .btn-ghost::before {
-  background: linear-gradient(180deg, #e9c46a, #7a5a1f);
+  background: var(--text);
 }
 .btn-ghost::after {
-  background:
-    linear-gradient(105deg, transparent 38%, rgb(255 214 130 / 0.3) 50%, transparent 62%) -160% 0 / 260% 100% no-repeat,
-    linear-gradient(180deg, rgb(255 244 214 / 0.1), rgb(255 244 214 / 0) 60%),
-    linear-gradient(180deg, #151a33, #0c1020);
-  clip-path: polygon(calc(var(--cut) - 0.5px) 1.5px, calc(100% - var(--cut) + 0.5px) 1.5px, calc(100% - 2px) 50%, calc(100% - var(--cut) + 0.5px) calc(100% - 1.5px), calc(var(--cut) - 0.5px) calc(100% - 1.5px), 2px 50%);
+  content: '';
+  position: absolute;
+  inset: 2px;
+  z-index: -1;
+  background: var(--bg);
+  clip-path: var(--cut-tr-bl);
+  --n: 8px;
+  pointer-events: none;
+  transition: background-color var(--dur-fast) var(--ease);
 }
-.btn-ghost:hover:not(:disabled) {
-  color: var(--gold-hi);
+.btn-ghost:hover:not(:disabled)::after {
+  background: var(--fill-2);
 }
 .btn-danger {
-  color: #ffb3ba;
-  text-shadow: none;
+  --ink: var(--ink-on);
 }
 .btn-danger::before {
-  background: linear-gradient(180deg, #ff8d96, #7a2230);
+  background: var(--crimson);
 }
-.btn-danger::after {
-  background: linear-gradient(180deg, #2a1220, #190b16);
-  clip-path: polygon(calc(var(--cut) - 0.5px) 1.5px, calc(100% - var(--cut) + 0.5px) 1.5px, calc(100% - 2px) 50%, calc(100% - var(--cut) + 0.5px) calc(100% - 1.5px), calc(var(--cut) - 0.5px) calc(100% - 1.5px), 2px 50%);
-}
-/* Unavailable: cold stone. The label stays readable. */
+/* Unavailable: flat grey. The label stays readable. */
 .btn:disabled {
   cursor: not-allowed;
-  color: var(--text-3);
-  text-shadow: none;
+  --ink: var(--text-3);
+  filter: none;
   transform: none;
 }
 .btn:disabled::before {
-  background: linear-gradient(180deg, #3a4160, #1c2038);
+  background: var(--fill-3);
 }
 .btn:disabled::after {
-  background: linear-gradient(180deg, #1b2038, #12162a);
+  background: var(--fill);
 }
 
 /* A text link with an arrow, drawn in CSS so it needs no glyph from the font. */
 .link-arrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.6em;
+  gap: 0.5em;
   min-height: var(--tap);
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 1.0625rem;
-  letter-spacing: 0.1em;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.375rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--gold);
-  text-decoration: none;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--signal);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 0.2em;
 }
 .link-arrow::after {
   content: '';
-  width: 1.2em;
-  height: 1.2em;
-  background: currentColor;
+  width: 1em;
+  height: 1em;
+  background: var(--signal);
   -webkit-mask: var(--arrow) center / contain no-repeat;
   mask: var(--arrow) center / contain no-repeat;
-  transition: transform var(--dur) var(--ease);
+  transition: translate var(--dur-fast) var(--ease);
 }
 .link-arrow:hover::after {
-  transform: translateX(6px);
+  translate: 6px 0;
 }
 .link-arrow:hover {
-  color: var(--gold-hi);
+  text-decoration-color: currentColor;
 }
 
 /* Status pill: always carries a text label, so state never depends on color alone. */
 .pill {
   display: inline-flex;
   align-items: center;
-  padding: 0.12rem 0.8rem;
-  background: rgb(233 196 106 / 0.08);
-  box-shadow: inset 0 0 0 1px rgb(233 196 106 / 0.32);
-  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%);
+  padding: 0.12rem 0.7rem;
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--line-control);
   color: var(--text-2);
-  font-family: var(--font-ui);
-  font-weight: 600;
-  font-size: var(--fs-small);
-  letter-spacing: 0.08em;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 .pill[data-state='mastered'] {
-  background: var(--gel);
-  color: var(--gold-ink);
-  font-weight: 700;
+  background: var(--m, var(--signal));
+  box-shadow: none;
+  color: var(--ink-on);
 }
 .pill[data-state='practiced'] {
-  background: var(--accent-soft);
-  color: var(--accent-bright);
+  background: var(--fill-3);
+  box-shadow: inset 0 0 0 2px var(--m, var(--cyan));
+  color: var(--text);
 }
 
-/* The portal's one ornament: a four-point star, drawn as a mask so it takes the text color. */
-.spark {
-  display: inline-block;
-  width: 0.9em;
-  height: 0.9em;
-  background: currentColor;
-  -webkit-mask: var(--spark) center / contain no-repeat;
-  mask: var(--spark) center / contain no-repeat;
-  vertical-align: -0.08em;
-}
+/* Markers: a tilted square for bullets, a diamond for stations. Both take the text color. */
+.spark,
 .diamond {
   display: inline-block;
-  width: 0.7em;
-  height: 0.7em;
-  background: currentColor;
-  -webkit-mask: var(--diamond) center / contain no-repeat;
-  mask: var(--diamond) center / contain no-repeat;
-  vertical-align: -0.04em;
-}
-
-/* Engraved gold type: a metal fill for titles and numerals. Decorative or paired with text. */
-.chrome-text,
-.metal-text {
-  background: var(--metal);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* A rule: a gold line fading out at both ends, a diamond at its heart. */
-.rule {
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
-  color: var(--gold);
-  height: 1.2rem;
-}
-.rule::before,
-.rule::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, currentColor);
-  opacity: 0.55;
-}
-.rule::after {
-  background: linear-gradient(90deg, currentColor, transparent);
-}
-.rule > i {
-  width: 9px;
-  height: 9px;
+  width: 0.55em;
+  height: 0.55em;
   background: currentColor;
   transform: rotate(45deg);
-  box-shadow: 0 0 10px rgb(233 196 106 / 0.6);
+  vertical-align: 0.08em;
+}
+.diamond {
+  width: 0.7em;
+  height: 0.7em;
+}
+
+/* Colour words: plain text in the signal color. */
+.chrome-text,
+.metal-text {
+  color: var(--signal);
+}
+
+/* A rule: a baseline with a tick ruler above it and a small orange square at the left. */
+.rule {
+  position: relative;
+  height: 14px;
+  color: var(--text-3);
+  background:
+    repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 12px) 0 0 / 100% 7px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+  opacity: 0.7;
+}
+.rule::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 42px;
+  height: 5px;
+  background: var(--signal);
+}
+.rule > i {
+  display: none;
 }
 
 .stretched::after {
@@ -312,7 +295,85 @@
   text-decoration: none;
 }
 
-/* Controls speak in the engraved face. */
+/* ---- slab, giant, stamp, tape ----------------------------------------------------------------------- */
+/* A slab: a field of one flat color. Type on it is ink. */
+.slab {
+  --text: var(--ink-on);
+  --text-2: #1d1812;
+  --text-3: #2c241a;
+  --line: rgb(10 11 16 / 0.28);
+  --line-2: rgb(10 11 16 / 0.55);
+  --focus-ring: 3px solid #0a0b10;
+  --shadow-c: #0a0b10;
+  background: var(--slab, var(--signal));
+  color: var(--ink-on);
+}
+.slab .label {
+  color: var(--ink-on);
+}
+/* Buttons on a slab: the ghost is an ink outline around a hole in the slab's color. */
+.slab .btn-ghost {
+  --ink: var(--ink-on);
+}
+.slab .btn-ghost::before {
+  background: var(--ink-on);
+}
+.slab .btn-ghost::after {
+  background: var(--slab, var(--signal));
+}
+.slab .btn-ghost:hover:not(:disabled)::after {
+  background: color-mix(in srgb, var(--slab, var(--signal)) 82%, #000);
+}
+
+/* The giant word: decorative type at the scale of the layout. Always aria-hidden. */
+.giant {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--t-giant);
+  line-height: 0.78;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 2px currentColor;
+  user-select: none;
+  pointer-events: none;
+}
+.giant-solid {
+  color: currentColor;
+  -webkit-text-stroke: 0;
+}
+
+/* A stamp: a boxed label, turned a few degrees. */
+.stamp {
+  display: inline-block;
+  padding: 0.18rem 0.7rem 0.12rem;
+  border: 2px solid currentColor;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.125rem;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+}
+
+/* Halftone: a field of dots in the current color. Decorative. */
+.halftone {
+  background: var(--halftone);
+}
+
+/* The numeral of a realm: outlined, not filled. Decorative; the title carries the meaning. */
+.mod-numeral {
+  font-family: var(--font-display);
+  font-weight: 900;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 3px var(--m);
+}
+
+/* Controls speak in the body face, in capitals. */
 .chip,
 .segmented-item,
 .stepper a,
@@ -324,5 +385,5 @@ summary,
 .crumbs,
 .hub-toggle-text,
 .hub-link {
-  font-family: var(--font-ui);
+  font-family: var(--font-sans);
 }

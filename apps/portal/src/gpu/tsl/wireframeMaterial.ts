@@ -65,8 +65,8 @@ export function createWireTsl(): WireTsl {
 
   const material = new LineBasicNodeMaterial();
   material.positionNode = base.add(offset).mul(1.35);
-  const cool: any = mix(vec3(0.7, 0.65, 1.0), vec3(0.36, 0.95, 1.0), p.y.mul(0.5).add(0.5));
-  const warn = vec3(1.0, 0.55, 0.42);
+  const cool: any = mix(vec3(1.0, 0.31, 0.5), vec3(0.96, 0.94, 0.9), p.y.mul(0.5).add(0.5));
+  const warn = vec3(1.0, 0.82, 0.18);
   const wmix: any = clamp(uWarn.mul(float(0.3).add(stress.mul(1.6))), 0, 1);
   material.colorNode = mix(cool, warn, wmix);
   material.opacityNode = float(0.11).add(clamp(stress.mul(1.5), 0, 1).mul(0.2)).add(uWarn.mul(0.05));

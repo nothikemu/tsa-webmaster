@@ -28,6 +28,13 @@ export const FOOTER_LINKS: readonly NavItem[] = [
   { label: 'Credits', href: '/credits' },
 ];
 
+/** The realm each module is drawn as: a name for the picture, never a replacement for the module's own title. */
+export const REALM = {
+  foundations: 'The Lattice',
+  synthesis: 'The Forge',
+  ethics: 'The Gate',
+} as const;
+
 export const HOME = {
   kicker: 'Interactive AI learning portal',
   headline: ['Learn how', 'machines learn.'],
@@ -98,7 +105,7 @@ export const ABOUT: DocPageContent = {
     {
       heading: 'Design brief',
       paragraphs: [
-        'The interface is an ultraviolet-ink ground lit by aqua, orchid and acid lime. Surfaces are tinted glass with a pearlescent edge, buttons are glossy gel capsules, and headlines are set in a wide, round display face with one italic serif word for emphasis. A slow liquid field moves behind the page and freezes on pages with a 3D scene, under reduced motion and on slower devices. Every diagram is drawn from the lesson content or from your saved progress, and state is always shown by a shape or a word as well as by color.',
+        'The interface mixes a print shop with a broadcast screen. Color is flat and saturated, one for each module, set against near-black ink and warm paper. Shapes have hard edges and one cut corner, buttons cast a hard offset shadow, and headlines are set very large in a condensed face, sometimes cropped by the edge of the page. Every diagram and illustration is drawn from the lesson content or from your saved progress, and state is always shown by a shape or a word as well as by color. The direction came from studying principles in game interfaces and animation key art; no artwork, logo or typeface from those works is used.',
         'Every interactive scene has a text alternative and a keyboard path. Motion respects the reduced-motion setting. The site is a set of static files and runs from any web host.',
       ],
     },
@@ -179,10 +186,10 @@ export const CREDIT_LIBRARIES: readonly CreditEntry[] = [
   { name: 'Zustand', version: '5.0.16', license: 'MIT', use: 'Application store' },
   { name: 'Comlink', version: '4.4.2', license: 'Apache-2.0', use: 'Web Worker messaging' },
   {
-    name: 'Unbounded, Hanken Grotesk, Instrument Serif, Geist Mono',
+    name: 'Big Shoulders Display, Barlow, Barlow Condensed',
     version: '5.3.0 (each, as @fontsource packages)',
     license: 'SIL Open Font License 1.1',
-    use: 'Typefaces: display, reading, accent and label. Served from this site, Latin subset only',
+    use: 'Typefaces: display, text and numerals. Served from this site, Latin subset only',
   },
   {
     name: 'wasm-bindgen',

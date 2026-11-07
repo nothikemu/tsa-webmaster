@@ -12,7 +12,7 @@ export interface BurstOptions {
   count?: number;
 }
 
-export const BURST_PALETTE: readonly string[] = ['#ffffff', '#b4c0d3', '#8bdaff', '#5cc8ff', '#f2b35e'];
+export const BURST_PALETTE: readonly string[] = ['#ffffff', '#f4f0e6', '#ff6a1f', '#2cd5f4', '#ffd02e', '#ff4f80'];
 
 export const BURST_GRAVITY = 900;
 export const BURST_DRAG = 2.2;
@@ -94,18 +94,16 @@ export class BurstSim {
   draw(ctx: Ctx2D, width: number, height: number): void {
     ctx.clearRect(0, 0, width, height);
     if (this.#alive === 0) return;
-    ctx.globalCompositeOperation = 'lighter';
     for (let i = 0; i < this.#life.length; i++) {
       const life = this.#life[i]!;
       if (life <= 0) continue;
       const t = life / this.#maxLife[i]!;
       ctx.globalAlpha = Math.min(1, t * t * 1.4);
       ctx.fillStyle = BURST_PALETTE[this.#color[i]!]!;
-      ctx.beginPath();
-      ctx.arc(this.#x[i]!, this.#y[i]!, this.#size[i]! * (0.5 + t * 0.6), 0, Math.PI * 2);
-      ctx.fill();
+      // Flat squares, like cut paper, not glowing points.
+      const side = this.#size[i]! * (1.1 + t * 1.2);
+      ctx.fillRect(this.#x[i]! - side / 2, this.#y[i]! - side / 2, side, side);
     }
     ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'source-over';
   }
 }

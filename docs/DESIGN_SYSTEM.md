@@ -15,7 +15,7 @@ Parameter looks like the front end of a competitive game, built for reading and 
 | Text link with an arrow (`.link-arrow`) | Underlined in red, with an arrow that moves when reached |
 | Slider | A ruled track filled in the hue, and a light block for a knob; the cursor is a grab hand |
 
-No control is bare text or an outline alone. Targets are at least 44px. The focus ring is 3px white on the dark screen and 3px ink on light plates, offset past the edge so it is never clipped.
+No control is bare text or an outline alone. Targets are at least 44px. The focus ring is 3px white on the dark screen and 3px ink on light plates, offset past the edge so it is never clipped. The skip link appears under the sticky header when focused, so it overlaps nothing.
 
 ## Tokens
 

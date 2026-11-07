@@ -332,8 +332,8 @@
   background: var(--m);
   --fill: var(--m);
   --text: var(--ink);
-  --text-2: #1d2a38;
-  --text-3: #2a3948;
+  --text-2: var(--ink);
+  --text-3: var(--ink);
   --line: var(--ink);
   --line-soft: rgb(15 25 35 / 0.3);
   --focus-ring: 3px solid #0f1923;
@@ -356,6 +356,14 @@
 .ach[data-status='earned'] .ach-art {
   background: var(--navy);
   border-color: var(--ink);
+}
+/* The medal's frame is dark even on an earned plate, so its own text goes back to the screen colours. */
+.ach[data-status='earned'] .ach-art {
+  --text: var(--paper);
+  --text-2: #c9c5bd;
+  --text-3: #a0a7b0;
+  --line: #5a6773;
+  color: var(--paper);
 }
 .ach-main {
   display: grid;

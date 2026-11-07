@@ -40,7 +40,7 @@ The request asked for an hour of research before building. It did not take an ho
 
 ### Limits of this round
 
-The look has not been compared with the real game's client side by side beyond the 14 images. The research did not include the pages named above, the user has not reviewed the result, and no real screen reader or physical device has been used. Text inside the key art (tick numbers, readouts, layer labels) is decorative and sits inside a labelled picture, so it is exempt from the text-contrast rule and is excluded from the pixel-contrast probe; the information it points at (layer sizes, progress, vulnerabilities inspected) is in the picture's text label and elsewhere on the page.
+The look has not been compared with the real game's client side by side beyond the 14 images. The research did not include the pages named above, the user has not reviewed the result, and no real screen reader or physical device has been used. The pixel-contrast probe still flags the two display lines of the home headline ("machines" and "learn."): it samples each text box, and at the tight leading of a display headline the box of one line overlaps the red slab of the next. The glyphs themselves are paper on the dark screen (14.5:1) and ink on red (5.3:1). Text inside the key art (tick numbers, readouts, layer labels) is decorative and sits inside a labelled picture, so it is exempt from the text-contrast rule and is excluded from the pixel-contrast probe; the information it points at (layer sizes, progress, vulnerabilities inspected) is in the picture's text label and elsewhere on the page.
 
 ## Round 3 (replaced): Black Ledger
 

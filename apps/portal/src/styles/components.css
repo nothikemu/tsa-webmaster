@@ -305,8 +305,8 @@
   background: var(--m);
   color: var(--ink);
   --text: var(--ink);
-  --text-2: #1d2a38;
-  --text-3: #2a3948;
+  --text-2: var(--ink);
+  --text-3: var(--ink);
   --line: var(--ink);
   --focus-ring: 3px solid #0f1923;
   border-color: var(--m);
@@ -1203,7 +1203,7 @@ input[type='range']:focus-visible {
   gap: var(--s-3);
   background: var(--red-hi);
   --text: var(--ink);
-  --text-2: #1d2a38;
+  --text-2: var(--ink);
 }
 
 /* ---- text pages ----------------------------------------------------------------------------- */

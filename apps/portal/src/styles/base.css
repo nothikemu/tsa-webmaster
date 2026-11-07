@@ -255,7 +255,8 @@ button {
   text-transform: uppercase;
 }
 .skip-link:focus {
-  top: 12px;
+  /* below the sticky header, so nothing is drawn over it and it covers nothing it needs */
+  top: calc(var(--header-h) + 12px);
 }
 
 main {

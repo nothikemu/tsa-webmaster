@@ -1,16 +1,23 @@
 /* ---- module pages ------------------------------------------------------------------------------------ */
 .module-page {
-  padding-bottom: var(--section);
+  padding-block: var(--s-5) var(--section);
 }
 
-/* The header is a slab in the realm's color, cut on the slant at its foot. Everything on it is ink. */
+/* The title banner: the HUD, with a slanted stripe in the realm's color and the module's poster on the right. */
 .mp-head {
-  --slab: var(--m);
   position: relative;
-  overflow: clip;
-  padding-block: var(--s-3) clamp(var(--s-7), 7vw, var(--s-9));
+  padding: var(--s-4) clamp(var(--s-5), 4vw, var(--s-7)) clamp(var(--s-6), 4vw, var(--s-7));
   margin-bottom: var(--s-7);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - clamp(1.5rem, 3.4vw, 3rem)), 0 100%);
+  background: linear-gradient(106deg, var(--navy) 0 79%, var(--m) 79% 80.4%, var(--navy-2) 80.4%);
+  border-left: 8px solid var(--m);
+  clip-path: polygon(
+    0 0,
+    calc(100% - 28px) 0,
+    100% 28px,
+    100% 100%,
+    28px 100%,
+    0 calc(100% - 28px)
+  );
 }
 .mp-head-inner {
   position: relative;
@@ -25,10 +32,11 @@
   padding: 0;
   margin: 0;
   gap: 0 var(--s-2);
+  font-family: var(--font-hud);
   font-weight: 700;
+  font-size: 1.0625rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-size: 0.875rem;
 }
 .crumbs li {
   display: inline-flex;
@@ -41,20 +49,21 @@
   width: 7px;
   height: 7px;
   margin-right: var(--s-2);
-  background: currentColor;
+  background: var(--m);
   transform: rotate(45deg);
 }
 .crumbs a {
   display: inline-flex;
   align-items: center;
   min-height: var(--tap);
-  color: var(--text);
+  color: var(--text-2);
   text-decoration: underline;
   text-decoration-color: transparent;
-  text-decoration-thickness: 2px;
+  text-decoration-thickness: 3px;
 }
 .crumbs a:hover {
-  text-decoration-color: currentColor;
+  color: var(--text);
+  text-decoration-color: var(--m);
 }
 .mp-title {
   display: flex;
@@ -65,38 +74,36 @@
 .mp-title > div:not(.mp-head-art) {
   flex: 1 1 20rem;
   display: grid;
-  gap: var(--s-2);
+  gap: var(--s-3);
   min-width: 0;
 }
+.mp-head .label {
+  color: var(--m);
+}
 .mp-head .display {
-  font-size: clamp(2.75rem, 7.4vw, 6.5rem);
-  line-height: 0.86;
+  font-size: clamp(3rem, 6.4vw, 5.5rem);
+  line-height: 0.9;
   max-width: 16ch;
+  overflow-wrap: anywhere;
+  color: var(--hud-text);
 }
 [data-view='overview'] .mp-head .display {
-  font-size: clamp(3rem, 9.4vw, 8rem);
-  line-height: 0.8;
+  font-size: clamp(4rem, 9.4vw, 8rem);
   max-width: none;
-  overflow-wrap: anywhere;
 }
 .mp-head .mod-tagline {
-  color: var(--ink-on);
-  font-size: clamp(1.1875rem, 1.6vw, 1.5rem);
-  font-weight: 600;
-  max-width: 34ch;
+  color: var(--hud-text-2);
+  font-family: var(--font-type);
+  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  max-width: 36ch;
+  text-align: left;
 }
-.slab .mod-numeral {
-  -webkit-text-stroke-color: var(--ink-on);
-  font-size: clamp(5rem, 15vw, 11rem);
-  line-height: 0.74;
-  margin-bottom: 0.04em;
-}
-/* The realm's print, framed in ink with an offset copy behind it. */
+/* The module's poster, turned a little, torn at the edges. */
 .mp-head-art {
-  flex: 0 0 min(100%, 230px);
-  box-shadow:
-    0 0 0 4px var(--ink-on),
-    10px 10px 0 4px var(--ink-on);
+  flex: 0 0 min(100%, 250px);
+  rotate: 2.5deg;
+  clip-path: var(--torn);
+  background: var(--parch);
 }
 .mp-head-art .realm-art {
   display: block;
@@ -104,22 +111,7 @@
   height: auto;
 }
 
-/* On the slab, the map's shapes are drawn in ink, and the current step is a block of ink. */
-.slab .mn-shape {
-  fill: transparent;
-  stroke: var(--ink-on);
-}
-.slab .mn-node[data-state='none'] .mn-shape {
-  stroke: var(--ink-on);
-}
-.slab .mn-fill {
-  fill: var(--ink-on);
-}
-.slab .mn-tick {
-  stroke: var(--m);
-}
-
-/* The stepper: every step of the module, its state drawn as a shape, the current one a block of ink. */
+/* The stepper: every step of the module, its state drawn as a shape, the current one a red tab. */
 .stepper ul {
   display: flex;
   flex-wrap: wrap;
@@ -134,37 +126,49 @@
   gap: 0.5em;
   min-height: var(--tap);
   min-width: var(--tap);
-  padding: 0.15rem var(--s-4) 0;
-  border: 0;
-  box-shadow: inset 0 0 0 3px var(--ink-on);
-  color: var(--ink-on);
-  font-family: var(--font-display);
-  font-size: 1.375rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  padding: 0.05rem var(--s-4) 0;
+  border: 2px solid var(--hud-text);
+  color: var(--hud-text);
+  font-family: var(--font-hud);
+  font-weight: 700;
+  font-size: 1.1875rem;
+  letter-spacing: var(--track-hud);
   text-transform: uppercase;
   text-decoration: none;
-  transition:
-    background-color var(--dur-fast) var(--ease),
-    color var(--dur-fast) var(--ease);
+  transition: background-color var(--dur-fast) var(--ease);
 }
 .stepper a:not(.link-arrow):hover {
-  background: rgb(10 11 16 / 0.16);
+  background: var(--navy-3);
 }
 .stepper a[aria-current='page'] {
-  background: var(--ink-on);
-  color: var(--paper);
-  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
-  box-shadow: none;
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--ink);
 }
-.slab .stepper a[aria-current='page'] .mn-node .mn-shape {
-  stroke: var(--paper);
+.stepper .mn-shape {
+  fill: var(--navy-2);
+  stroke: var(--hud-text);
+  stroke-width: 2.4;
+  filter: none;
 }
-.slab .stepper a[aria-current='page'] .mn-node .mn-fill {
-  fill: var(--paper);
+.stepper .mn-node[data-state='none'] .mn-shape {
+  fill: transparent;
 }
-.slab .stepper a[aria-current='page'] .mn-node .mn-tick {
-  stroke: var(--ink-on);
+.stepper .mn-fill {
+  fill: var(--m);
+  stroke: var(--hud-text);
+  stroke-width: 2.4;
+  filter: none;
+}
+.stepper .mn-tick {
+  stroke: var(--ink);
+}
+.stepper a[aria-current='page'] .mn-node .mn-shape,
+.stepper a[aria-current='page'] .mn-node .mn-fill {
+  stroke: var(--ink);
+}
+.stepper a[aria-current='page'] .mn-node .mn-shape {
+  fill: transparent;
 }
 .stepper-jump {
   display: none;
@@ -183,40 +187,35 @@
   display: grid;
   gap: var(--s-5);
 }
-/* The reading sheet: paper, cut at one corner, with a bar of the realm's color along its top. */
+/* The reading sheet: a ledger page, with the margin ruled in red. */
 .mp-panel[data-surface='paper'] {
-  position: relative;
-  isolation: isolate;
-  background: none;
   padding: clamp(var(--s-5), 3vw, var(--s-7));
-  padding-top: calc(clamp(var(--s-5), 3vw, var(--s-7)) + 10px);
-}
-.mp-panel[data-surface='paper']::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
+  padding-left: clamp(var(--s-7), 6vw, 5rem);
   background:
-    linear-gradient(var(--m), var(--m)) 0 0 / 100% 10px no-repeat,
-    var(--paper);
-  clip-path: var(--cut-tr);
-  --n: var(--n-lg);
+    linear-gradient(
+      90deg,
+      transparent calc(clamp(var(--s-5), 4vw, 3.4rem) - 3px),
+      var(--red) calc(clamp(var(--s-5), 4vw, 3.4rem) - 3px)
+        calc(clamp(var(--s-5), 4vw, 3.4rem) - 1px),
+      transparent calc(clamp(var(--s-5), 4vw, 3.4rem) - 1px),
+      transparent calc(clamp(var(--s-5), 4vw, 3.4rem) + 2px),
+      var(--red) calc(clamp(var(--s-5), 4vw, 3.4rem) + 2px)
+        calc(clamp(var(--s-5), 4vw, 3.4rem) + 4px),
+      transparent calc(clamp(var(--s-5), 4vw, 3.4rem) + 4px)
+    ),
+    var(--white);
 }
 
 /* ---- the instrument frame ---------------------------------------------------------------------------- */
 .instrument {
-  --frame: var(--m);
   min-width: 0;
   display: grid;
   gap: var(--s-3);
   padding: var(--s-4);
-  --n: var(--n-lg);
+  border-color: var(--navy);
 }
 .instrument::before {
-  background: var(--fill);
-}
-.instrument:hover::before {
-  background: var(--fill);
+  background: repeating-linear-gradient(135deg, var(--ink) 0 1.5px, transparent 1.5px 5px);
 }
 .instrument:focus-visible {
   outline: none;
@@ -230,24 +229,27 @@
   padding: var(--s-1) var(--s-2) 0;
 }
 .instrument-name {
-  font-size: 2rem;
-  font-weight: 900;
-  line-height: 0.9;
-  color: var(--m);
+  font-family: var(--font-hud);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: var(--track-hud);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--hud-text);
 }
 .instrument-kind {
   flex: none;
-  padding: 0.25rem var(--s-3) 0.15rem;
+  padding: 0.1rem var(--s-3) 0;
   background: var(--m);
-  font-weight: 700;
-  font-size: 0.8125rem;
-  letter-spacing: var(--track-label);
+  font-family: var(--font-hud);
+  font-weight: 800;
+  font-size: 0.9375rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-on);
+  color: var(--ink);
 }
 .instrument-kind[data-kind='simulation'] {
-  background: var(--sim);
-  color: var(--ink-on);
+  background: var(--parch);
 }
 @media (min-width: 1041px) and (min-height: 760px) {
   .mp-grid > .instrument,
@@ -280,8 +282,11 @@
   list-style: none;
   padding: 0;
   margin: 0 0 0 auto;
-  font-size: var(--fs-small);
+  font-family: var(--font-hud);
   font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--text-3);
 }
 .meter li {
@@ -290,16 +295,16 @@
   gap: 6px;
 }
 .meter i {
-  width: 11px;
-  height: 11px;
-  box-shadow: inset 0 0 0 2px var(--text-3);
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--line);
 }
 .meter li[data-reached='true'] {
   color: var(--text);
 }
 .meter li[data-reached='true'] i {
-  background: var(--m);
-  box-shadow: inset 0 0 0 2px var(--text);
+  background: var(--red);
+  border-color: var(--red);
 }
 .lesson-body {
   display: grid;
@@ -313,26 +318,31 @@
 }
 .lesson-body p:first-child {
   font-size: 1.3125rem;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.55;
   color: var(--text);
 }
-/* The first letter of a lesson is cut large in the display face. */
+/* The first letter of a lesson is cut large in the blackletter. */
 .lesson-body p:first-child::first-letter {
   float: left;
   font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 5.4rem;
-  line-height: 0.76;
-  padding: 0.04em 0.1em 0 0;
-  color: var(--accent);
+  font-size: 5.6rem;
+  line-height: 0.74;
+  padding: 0.06em 0.1em 0 0;
+  color: var(--red-lo);
 }
 .keypoints-box {
   display: grid;
   gap: var(--s-3);
-  padding: var(--s-5) var(--s-5) var(--s-5) var(--s-6);
-  background: var(--fill);
-  box-shadow: inset 8px 0 0 var(--m);
+  padding: var(--s-5);
+  background: var(--parch);
+  border: 2.5px solid var(--ink);
+  clip-path: var(--torn);
+  --text: var(--ink);
+  --text-2: #1f2c3a;
+}
+.keypoints-box .label {
+  color: var(--ink);
 }
 .keypoints {
   list-style: none;
@@ -345,51 +355,37 @@
 .keypoints li {
   counter-increment: kp;
   display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr);
-  padding-left: 0;
-  font-weight: 500;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: var(--s-2);
+  align-items: start;
+  font-weight: 600;
 }
 .keypoints li::before {
   content: counter(kp, decimal-leading-zero);
-  position: static;
-  width: auto;
-  height: auto;
-  background: none;
-  transform: none;
-  font-family: var(--font-display);
+  font-family: var(--font-hud);
   font-size: 1.75rem;
-  font-weight: 900;
-  line-height: 1;
-  color: var(--accent);
-  padding-top: 0.05em;
-}
-[data-surface='paper'] .keypoints li::before {
-  background: none;
+  font-weight: 800;
+  line-height: 0.95;
+  color: var(--red-lo);
 }
 .next-step {
-  --slab: var(--m);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--s-4) var(--s-6);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-4);
   align-items: end;
   padding: var(--s-5) var(--s-6);
-  clip-path: var(--cut-tr);
-  --n: var(--n-lg);
+  border-left: 8px solid var(--m);
+  clip-path: polygon(
+    0 0,
+    calc(100% - 22px) 0,
+    100% 22px,
+    100% 100%,
+    22px 100%,
+    0 calc(100% - 22px)
+  );
 }
-.next-step .btn-primary {
-  --face: var(--ink-on);
-  --ink: var(--paper);
-  --shadow-c: var(--paper);
-}
-.next-step .btn-ghost {
-  --ink: var(--ink-on);
-  --shadow-c: var(--ink-on);
-}
-.next-step .btn-ghost::before {
-  background: var(--ink-on);
-}
-.next-step .btn-ghost::after {
-  background: var(--m);
+.next-step .label {
+  color: var(--hud-text-3);
 }
 .next-copy {
   display: grid;
@@ -397,21 +393,19 @@
 }
 .next-title {
   font-family: var(--font-display);
-  font-weight: 900;
-  font-size: clamp(2.25rem, 4vw, 3.5rem);
-  line-height: 0.88;
-  text-transform: uppercase;
-  color: var(--ink-on);
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  line-height: 0.95;
+  color: var(--hud-text);
 }
 .next-meta {
-  color: var(--ink-on);
+  color: var(--hud-text-2);
+  font-family: var(--font-type);
   font-size: var(--fs-small);
-  font-weight: 500;
 }
 .next-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--s-4);
+  gap: var(--s-3);
 }
 
 /* ---- overview: the same four parts, composed differently for each module ---------------------------- */
@@ -426,13 +420,14 @@
   gap: var(--s-3);
 }
 .mp-objective > p:not(.label) {
+  font-family: var(--font-body);
+  font-size: clamp(1.375rem, 1.5vw + 0.9rem, 1.875rem);
   font-weight: 700;
-  font-size: clamp(1.5rem, 2.3vw, 2.125rem);
-  line-height: 1.18;
+  line-height: 1.25;
   color: var(--text);
-  max-width: 28ch;
+  max-width: 30ch;
   padding-left: var(--s-4);
-  box-shadow: inset 6px 0 0 var(--m);
+  border-left: 6px solid var(--m);
 }
 .mp-sequence {
   display: grid;
@@ -446,43 +441,15 @@
   gap: var(--s-4);
 }
 .mp-badge {
-  --frame: var(--m);
   display: grid;
   gap: var(--s-3);
   padding: var(--s-5);
 }
 .mp-badge-name {
   font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: clamp(2.25rem, 3.4vw, 3rem);
-  line-height: 0.9;
-  color: var(--m);
-}
-.requirements {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  gap: var(--s-2);
-}
-.requirements li {
-  display: flex;
-  gap: var(--s-3);
-  align-items: flex-start;
-  color: var(--text-2);
-}
-.requirements li[data-done='true'] {
-  color: var(--text);
-}
-.req-mark {
-  flex: none;
-  width: 20px;
-  height: 20px;
-  margin-top: 0.2em;
-  color: var(--text-3);
-}
-.requirements li[data-done='true'] .req-mark {
-  color: var(--m);
+  font-size: clamp(2.25rem, 3vw, 3rem);
+  line-height: 0.95;
+  color: var(--ink);
 }
 
 /* Foundations: a narrow reading column, the instrument large on the right. */
@@ -512,7 +479,7 @@
 .mp-overview[data-module='synthesis'] > .mp-badge {
   grid-column: 8 / span 5;
 }
-/* Ethics: the sphere leads on the left and the reading stacks on the right, the reverse of Foundations. */
+/* Ethics: the instrument leads on the left and the reading stacks on the right, the reverse of Foundations. */
 .mp-overview[data-module='ethics'] > .instrument {
   grid-column: 1 / span 7;
   grid-row: 1 / span 3;
@@ -538,6 +505,9 @@
   }
   .mp-overview[data-module='synthesis'] > .mp-objective {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .mp-head {
+    background: linear-gradient(106deg, var(--navy) 0 100%);
   }
 }
 @media (max-width: 640px) {

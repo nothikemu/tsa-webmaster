@@ -12,7 +12,7 @@
 | Languages | TypeScript (strict), Rust, GLSL, WGSL, TSL, CSS | HTML, CSS, JavaScript |
 | UI | React 18, hand-written router | Hand-written DOM code |
 | State | Zustand + XState v5 | Hand-written modules |
-| 3D | three r187 (WebGL2 and WebGPU), postprocessing | three, or raw WebGL |
+| 3D | three r187 (WebGL2 and WebGPU) | three, or raw WebGL |
 | Compute | WebGPU, WebGL2 float textures, WASM worker, WASM, TypeScript | WebGL or JavaScript |
 | Rationale | Typed state machines and a 5-tier compute ladder keep the portal fast on weak devices; strong guarantees (types, tests) | Smallest surface to explain in an interview; zero toolchain |
 | Risks | Largest explanation burden; build tooling; third-party code a judge may count against "originality" | Slower to reach the same polish; less type safety |
@@ -23,11 +23,11 @@
 
 | Asked for | Built | Reason |
 | --- | --- | --- |
-| `@react-three/fiber`, `drei`, `@react-three/postprocessing` | Imperative three scenes in `SceneCanvas` plus the `postprocessing` library | R3F 8 cannot await `WebGPURenderer.init()`; R3F 9 needs React 19 (the brief fixes React 18); the single master loop and one-module renderer factory are simpler without it |
+| `@react-three/fiber`, `drei`, `@react-three/postprocessing` | Imperative three scenes in `SceneCanvas` | R3F 8 cannot await `WebGPURenderer.init()`; R3F 9 needs React 19 (the brief fixes React 18); the single master loop and one-module renderer factory are simpler without it |
 | Vite (latest) | Vite 7.3.7 (8.3.5 exists) | Plugin set (`vite-plugin-wasm`, `vite-plugin-top-level-await`) not tested on Vite 8's Rolldown |
 | TSL sources encrypted | TSL materials obfuscated, GLSL/WGSL/SVG/strings encrypted | TSL is executable JavaScript, not a string; it can only be obfuscated |
 | `vite-plugin-top-level-await` | Used, with `@swc/core` pinned to 1.12.14 | 1.6.0 of the plugin crashes against `@swc/core` 1.16 ("missing field `type`") |
-| Post-processing on both renderers | WebGL2 only | The `postprocessing` library is WebGL-only; WebGPU draws without bloom |
+| Post-processing | None | The look is flat ink and paper, so there is no bloom, aberration or grain on either renderer; the `postprocessing` library was removed |
 
 ## Renderer and compute strategy
 

@@ -430,7 +430,7 @@ export default function ProgressDashboard(): ReactNode {
       </header>
 
       <section className="pd-top" aria-label={t('pd.summary')}>
-        <div className="pd-level glass edge">
+        <div className="pd-level glass edge" data-surface="ink">
           <p className="label">{t('hub.level', { level: level.level })}</p>
           <p className="pd-level-n num">{level.level}</p>
           <div className="pd-level-copy">

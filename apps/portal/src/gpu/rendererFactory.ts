@@ -1,5 +1,3 @@
-import type * as PostProcessing from 'postprocessing';
-import type { BlendFunction as BlendFn, EffectComposer as Composer } from 'postprocessing';
 import type { Camera, Scene, WebGLRenderer } from 'three';
 import type { WebGPURenderer } from 'three/webgpu';
 import type { Caps, RendererPreference } from '../core/caps';
@@ -17,7 +15,7 @@ export interface RenderHandle {
   readonly webgl: WebGLRenderer | null;
   readonly webgpu: WebGPURenderer | null;
   setSize(width: number, height: number, dpr: number): void;
-  /** Post-processing is available on the WebGL2 renderer only. */
+  /** Kept for the quality governor. The look is cel-shaded, so there is no post-processing and this does nothing. */
   setPost(level: PostLevel): void;
   render(scene: Scene, camera: Camera, dt: number): void;
   onLost(callback: (reason: string) => void): void;
@@ -35,7 +33,7 @@ export async function createRenderHandle(
   canvas: HTMLCanvasElement,
   caps: Caps,
   preference: RendererPreference,
-  post: PostLevel,
+  _post?: PostLevel,
 ): Promise<RenderHandle> {
   if (preference === 'none') throw new NoRendererError();
   const wantGpu = preference === 'webgpu' || (preference === 'auto' && caps.webgpu);
@@ -50,7 +48,7 @@ export async function createRenderHandle(
     }
   }
   if (!caps.webgl2) throw new NoRendererError();
-  return createWebGl2Handle(canvas, post);
+  return createWebGl2Handle(canvas);
 }
 
 /** Thrown when auto-selection tried WebGPU and failed; the caller retries on a new canvas. */
@@ -70,7 +68,7 @@ async function createWebGpuHandle(canvas: HTMLCanvasElement): Promise<RenderHand
     renderer.dispose();
     throw new Error('WebGPURenderer fell back to a non-WebGPU backend');
   }
-  renderer.setClearColor(0x07080d, 1);
+  renderer.setClearColor(0x0b131b, 1);
   let lostCb: ((reason: string) => void) | null = null;
   void backend.device?.lost.then((info) => lostCb?.(info.message || info.reason));
   return {
@@ -97,29 +95,17 @@ async function createWebGpuHandle(canvas: HTMLCanvasElement): Promise<RenderHand
   };
 }
 
-interface PostState {
-  composer: Composer;
-  level: PostLevel;
-  camera: Camera;
-  scene: Scene;
-  renderPass: { mainScene: Scene; mainCamera: Camera };
-}
-
-async function createWebGl2Handle(canvas: HTMLCanvasElement, initialPost: PostLevel): Promise<RenderHandle> {
+async function createWebGl2Handle(canvas: HTMLCanvasElement): Promise<RenderHandle> {
   const three = await import('three');
+  // MSAA is on so the edges of the flat discs (alpha to coverage) and the paper rim of the globe are smooth.
   const renderer = new three.WebGLRenderer({
     canvas,
-    antialias: false,
+    antialias: true,
     alpha: false,
     powerPreference: 'high-performance',
     stencil: false,
   });
-  renderer.setClearColor(0x07080d, 1);
-  let post: PostLevel = initialPost;
-  let size = { w: 1, h: 1 };
-  let state: PostState | null = null;
-  let building: Promise<void> | null = null;
-  let pp: typeof PostProcessing | null = null;
+  renderer.setClearColor(0x0b131b, 1);
   let lostCb: ((reason: string) => void) | null = null;
 
   canvas.addEventListener('webglcontextlost', (e) => {
@@ -127,69 +113,25 @@ async function createWebGl2Handle(canvas: HTMLCanvasElement, initialPost: PostLe
     lostCb?.('WebGL context lost');
   });
 
-  async function buildPost(scene: Scene, camera: Camera): Promise<void> {
-    pp ??= await import('postprocessing');
-    state?.composer.dispose();
-    const composer = new pp.EffectComposer(renderer, { frameBufferType: three.HalfFloatType });
-    const renderPass = new pp.RenderPass(scene, camera);
-    composer.addPass(renderPass);
-    const bloom = new pp.BloomEffect({ intensity: 0.5, luminanceThreshold: 0.22, luminanceSmoothing: 0.35, mipmapBlur: true });
-    if (post === 'full') {
-      const aberration = new pp.ChromaticAberrationEffect({
-        offset: new three.Vector2(0.0007, 0.0009),
-        radialModulation: true,
-        modulationOffset: 0.35,
-      });
-      const grain = new pp.NoiseEffect({ premultiply: true, blendFunction: pp.BlendFunction.SCREEN as BlendFn });
-      grain.blendMode.opacity.value = 0.03;
-      composer.addPass(new pp.EffectPass(camera, bloom, aberration, grain));
-    } else {
-      composer.addPass(new pp.EffectPass(camera, bloom));
-    }
-    composer.setSize(size.w, size.h, false);
-    state = { composer, level: post, camera, scene, renderPass: renderPass as unknown as PostState['renderPass'] };
-  }
-
   return {
     kind: 'webgl2',
     canvas,
     webgl: renderer,
     webgpu: null,
     setSize(width, height, dpr) {
-      size = { w: width, h: height };
       renderer.setPixelRatio(dpr);
       renderer.setSize(width, height, false);
-      state?.composer.setSize(width, height, false);
     },
-    setPost(level) {
-      post = level;
+    setPost() {
+      // The look is cel-shaded: no bloom, no aberration, no grain.
     },
-    render(scene, camera, dt) {
-      if (post === 'none') {
-        renderer.render(scene, camera);
-        return;
-      }
-      if (!state || state.level !== post || state.camera !== camera) {
-        // Build the composer in the background; keep drawing directly until it is ready.
-        building ??= buildPost(scene, camera)
-          .catch(() => {
-            post = 'none';
-          })
-          .finally(() => {
-            building = null;
-          });
-        renderer.render(scene, camera);
-        return;
-      }
-      state.renderPass.mainScene = scene;
-      state.renderPass.mainCamera = camera;
-      state.composer.render(dt);
+    render(scene, camera) {
+      renderer.render(scene, camera);
     },
     onLost(cb) {
       lostCb = cb;
     },
     dispose() {
-      state?.composer.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
     },

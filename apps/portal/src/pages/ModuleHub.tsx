@@ -12,16 +12,13 @@ function Path({ m, slot }: { m: ModuleContent; slot: 'a' | 'b' | 'c' }): ReactNo
   const d = useData().modules[m.id];
   return (
     <article
-      className={`cat-path cat-path-${slot} banner`}
+      className={`cat-path cat-path-${slot} glass`}
       data-module={m.id}
       data-reveal="up"
       aria-labelledby={`cat-${m.id}`}
     >
       <div className="realm-window">
         <RealmArt id={m.id} />
-        <span className="realm-numeral" aria-hidden="true">
-          {String(m.index).padStart(2, '0')}
-        </span>
       </div>
       <header className="cat-head">
         <p className="label realm-name">{m.themeSection}</p>

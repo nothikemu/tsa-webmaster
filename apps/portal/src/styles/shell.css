@@ -1,30 +1,30 @@
-/* ---- shell: the top bar, the compact menu, the colophon ---------------------------------------------- */
+/* ---- shell: the top bar, the compact menu, the footer ---------------------------------------------- */
 
-/* The bar is a flat ink band under a four-pixel strip of signal orange. An orange tab slides under the
-   section you are in. A thin cyan line along the bottom edge fills as you read down the page. */
+/* The bar is the HUD: dark, with a red rule under it. A red slanted tab slides under the section you are in,
+   and a paper-colored line along the bottom edge fills as you read down the page. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 60;
-  background: var(--bg);
-  box-shadow: inset 0 4px 0 var(--signal), 0 1px 0 var(--line-2);
+  background: var(--navy);
+  color: var(--hud-text);
+  border-bottom: 4px solid var(--red);
 }
 .site-header-inner {
   position: relative;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: space-between;
   gap: var(--s-5);
   min-height: var(--header-h);
-  padding-top: 4px;
 }
 .read-line {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
-  height: 3px;
-  background: var(--cyan);
+  bottom: -4px;
+  height: 4px;
+  background: var(--paper);
   transform-origin: left center;
   transform: scaleX(var(--sp, 0));
   opacity: 0;
@@ -38,24 +38,21 @@ html[data-scrolled='true'] .read-line {
 .wordmark {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-height: var(--tap);
   font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 900;
-  letter-spacing: 0.02em;
+  font-size: 2.1rem;
+  letter-spacing: 0.01em;
   line-height: 1;
-  text-transform: uppercase;
   color: var(--text);
   text-decoration: none;
-  align-self: center;
 }
 .glyph {
   flex: none;
-  transition: transform var(--dur) var(--ease);
+  transition: transform var(--dur) var(--ease-snap);
 }
 .wordmark:hover .glyph {
-  transform: translate(-2px, -2px) rotate(-6deg);
+  transform: rotate(-10deg) translateY(-2px);
 }
 
 .site-nav {
@@ -65,29 +62,28 @@ html[data-scrolled='true'] .read-line {
   position: relative;
   display: flex;
   align-items: stretch;
-  height: 100%;
   gap: 2px;
   list-style: none;
   padding: 0;
   margin: 0;
 }
-/* The tab: an orange trapezoid that slides to the section under the pointer or focus. */
+/* The tab: a red slanted block that slides to the section under the pointer or focus. */
 .nav-glide {
   position: absolute;
   left: 0;
-  top: 10px;
+  top: 0;
   bottom: 0;
   width: var(--gw, 0);
   transform: translate3d(var(--gx, 0), 0, 0);
-  background: var(--signal);
+  background: var(--red);
   clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
   pointer-events: none;
   list-style: none;
 }
 .nav-list[data-ready] .nav-glide {
   transition:
-    transform 360ms var(--ease),
-    width 360ms var(--ease),
+    transform 300ms var(--ease-snap),
+    width 300ms var(--ease-snap),
     opacity var(--dur) var(--ease);
 }
 .nav-list[data-glide='off'] .nav-glide,
@@ -100,42 +96,42 @@ html[data-scrolled='true'] .read-line {
   display: flex;
 }
 .nav-list a {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  min-height: var(--tap);
-  padding: 0.5rem 22px 0.35rem;
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  min-height: 44px;
+  padding: 0 1.3rem;
+  font-family: var(--font-hud);
+  font-weight: 700;
+  font-size: 1.1875rem;
+  letter-spacing: var(--track-hud);
   text-transform: uppercase;
-  color: var(--text-2);
+  color: var(--hud-text-2);
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease);
 }
-/* Text over the orange tab is ink. Anything else stays light. */
+/* Text over the red tab is ink. */
 .nav-list a:hover,
 .nav-list a:focus-visible,
 .nav-list a[aria-current] {
-  color: var(--ink-on);
+  color: var(--ink);
 }
 .nav-list[data-hover='true'] a[aria-current]:not(:hover):not(:focus-visible) {
-  color: var(--text-2);
+  color: var(--hud-text-2);
 }
 .nav-list:not([data-glide='on']) a[aria-current] {
-  background: var(--signal);
-  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  background: var(--red);
+}
+.nav-list a:focus-visible {
+  outline-color: #ffffff;
 }
 
 .menu-toggle {
   display: none;
-  align-self: center;
 }
 .menu-bars {
   position: relative;
-  width: 18px;
-  height: 12px;
+  width: 20px;
+  height: 14px;
   border-block: 3px solid currentColor;
 }
 .menu-bars::after {
@@ -156,6 +152,7 @@ html[data-scrolled='true'] .read-line {
 @media (max-width: 880px) {
   .menu-toggle {
     display: inline-flex;
+    min-height: 44px;
   }
   .site-nav {
     display: none;
@@ -165,18 +162,15 @@ html[data-scrolled='true'] .read-line {
     right: calc(var(--gutter) * -1);
     margin: 0;
     padding: var(--s-2) var(--gutter) var(--s-5);
-    background: var(--bg);
-    box-shadow:
-      0 3px 0 var(--signal),
-      0 40px 0 0 rgb(10 11 16 / 0.7);
+    background: var(--navy);
+    border-bottom: 4px solid var(--red);
   }
   .site-header[data-open='true'] .site-nav {
     display: block;
-    animation: sheet-in 320ms var(--ease) backwards;
+    animation: sheet-in 260ms var(--ease-snap) backwards;
   }
   .nav-list {
     flex-direction: column;
-    height: auto;
     gap: 0;
   }
   .nav-glide {
@@ -188,32 +182,25 @@ html[data-scrolled='true'] .read-line {
   .nav-list a {
     display: flex;
     width: 100%;
-    min-height: 60px;
+    min-height: 56px;
     padding-inline: var(--s-3);
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
   .nav-list li + li a {
-    box-shadow: 0 -1px 0 var(--line);
-  }
-  .nav-list a[aria-current],
-  .nav-list:not([data-glide='on']) a[aria-current] {
-    background: var(--signal);
-    clip-path: none;
-    color: var(--ink-on);
-  }
-  .nav-list[data-hover='true'] a[aria-current]:not(:hover):not(:focus-visible) {
-    color: var(--ink-on);
+    box-shadow: 0 -1px 0 var(--line-soft);
   }
   .nav-list a:hover:not([aria-current]),
   .nav-list a:focus-visible:not([aria-current]) {
-    color: var(--text);
-    background: var(--fill-3);
+    color: var(--hud-text);
+    background: var(--navy-3);
   }
-  .nav-list a:focus-visible {
-    outline-color: #ffffff;
+  .nav-list a[aria-current],
+  .nav-list:not([data-glide='on']) a[aria-current] {
+    background: var(--red);
+    color: var(--ink);
   }
-  .nav-list a[aria-current]:focus-visible {
-    outline-color: #0a0b10;
+  .nav-list[data-hover='true'] a[aria-current]:not(:hover):not(:focus-visible) {
+    color: var(--ink);
   }
 }
 @media (max-width: 420px) {
@@ -221,17 +208,16 @@ html[data-scrolled='true'] .read-line {
     gap: var(--s-3);
   }
   .wordmark {
-    font-size: 1.5rem;
+    font-size: 1.7rem;
     gap: 8px;
   }
   .wordmark .glyph {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
   }
   .menu-toggle.btn {
-    font-size: 1.125rem;
-    padding-inline: 1rem;
-    --so: 4px;
+    font-size: 1.0625rem;
+    padding-inline: 1.1rem;
   }
 }
 @keyframes sheet-in {
@@ -243,14 +229,14 @@ html[data-scrolled='true'] .read-line {
   }
 }
 
-/* ---- colophon ---------------------------------------------------------------------------------- */
+/* ---- footer ----------------------------------------------------------------------------------- */
 .site-footer {
   position: relative;
   margin-top: var(--section);
-  padding-top: var(--s-8);
-  overflow: clip;
-  background: var(--bg-elev);
-  box-shadow: inset 0 6px 0 var(--signal);
+  padding-block: var(--s-8) var(--s-7);
+  background: var(--navy);
+  color: var(--hud-text);
+  border-top: 4px solid var(--red);
 }
 .colophon {
   display: grid;
@@ -258,10 +244,14 @@ html[data-scrolled='true'] .read-line {
   gap: var(--s-6);
   align-items: start;
 }
+.site-footer .wordmark {
+  color: var(--hud-text);
+}
 .colophon-note {
   max-width: 42ch;
   margin-top: var(--s-3);
-  color: var(--text-3);
+  color: var(--text-2);
+  font-family: var(--font-type);
   font-size: var(--fs-small);
 }
 .colophon-links {
@@ -276,47 +266,34 @@ html[data-scrolled='true'] .read-line {
   align-items: center;
   min-width: var(--tap);
   min-height: var(--tap);
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-family: var(--font-hud);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: var(--track-hud);
   text-transform: uppercase;
-  color: var(--text-2);
+  color: var(--hud-text);
   text-decoration: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 3px;
-  text-underline-offset: 0.18em;
+  text-underline-offset: 0.2em;
 }
 .colophon-links a:hover {
-  color: var(--text);
-  text-decoration-color: var(--signal);
+  text-decoration-color: var(--red);
 }
 .colophon-links a[aria-current] {
-  color: var(--signal);
-  text-decoration-color: var(--signal);
+  text-decoration-color: var(--red);
 }
 .colophon-event {
   justify-self: end;
-  color: var(--cyan);
-}
-/* The oversized wordmark: outlined, cropped by the foot of the page. Decorative; the name is above. */
-.foot-mark {
-  margin: var(--s-6) 0 0;
-  padding-inline: var(--gutter);
-  font-size: clamp(4rem, 19.5vw, 24rem);
-  line-height: 0.74;
-  transform: translate3d(0, 0.12em, 0);
-}
-/* The word is generated content, so it is not text for contrast checks or for a screen reader. */
-.foot-mark::before {
-  content: attr(data-word);
-  content: attr(data-word) / '';
-  color: transparent;
-  -webkit-text-stroke: 2px rgb(244 240 230 / 0.2);
+  padding: 0.2rem 0.9rem;
+  border: 2px solid var(--hud-text);
+  font-family: var(--font-type);
+  font-size: 0.9375rem;
+  color: var(--hud-text);
 }
 @media (max-width: 880px) {
   .site-footer {
-    padding-bottom: var(--s-5);
+    padding-bottom: var(--s-9);
   }
   .colophon {
     grid-template-columns: minmax(0, 1fr);

@@ -1,18 +1,14 @@
 <g>
-  <circle cx="108" cy="108" r="88" fill="#0a0b10"/>
-  <circle cx="100" cy="100" r="88" fill="#ffd02e" stroke="#0a0b10" stroke-width="6"/>
-  <circle cx="100" cy="100" r="66" fill="#f4f0e6" stroke="#0a0b10" stroke-width="5"/>
-  <g fill="none" stroke="#0a0b10" stroke-width="1.6" opacity=".4">
-    <circle cx="100" cy="100" r="56"/><circle cx="100" cy="100" r="47"/><circle cx="100" cy="100" r="38"/>
+  <defs><filter id="bd-rough" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+  <path d="M20.0 5.6L30.0 9.3L40.0 5.1L50.0 8.0L60.0 4.9L70.0 5.7L80.0 9.5L90.0 5.5L100.0 7.7L110.0 6.8L120.0 6.8L130.0 7.0L140.0 5.5L150.0 8.7L160.0 4.9L170.0 5.7L180.0 4.6L178.2 22.0L178.8 38.0L181.1 54.0L178.7 70.0L177.5 86.0L178.2 102.0L181.5 118.0L177.3 134.0L179.8 150.0L178.7 166.0L180.0 182.0L180.0 196.2L170.0 198.0L160.0 197.0L150.0 197.7L140.0 199.0L130.0 197.4L120.0 195.2L110.0 194.8L100.0 199.2L90.0 196.9L80.0 195.5L70.0 199.2L60.0 197.4L50.0 198.1L40.0 198.9L30.0 195.9L20.0 196.3L22.5 182.0L19.1 166.0L21.9 150.0L18.9 134.0L21.6 118.0L21.7 102.0L22.8 86.0L22.3 70.0L20.8 54.0L19.4 38.0L19.2 22.0Z" fill="#e6d5a8" stroke="#0f1923" stroke-width="2.4" stroke-linejoin="round" filter="url(#bd-rough)"/>
+  <rect x="30" y="16" width="140" height="176" fill="none" stroke="#0f1923" stroke-width="1.8" filter="url(#bd-rough)"/>
+  <text x="100" y="44" text-anchor="middle" font-family="Param Display, serif" font-size="27" fill="#0f1923" letter-spacing="1">Wanted</text>
+  <rect x="42" y="54" width="116" height="94" fill="#f3ecdc" stroke="#0f1923" stroke-width="2.4" filter="url(#bd-rough)"/>
+  <g filter="url(#bd-rough)" stroke="#0f1923" stroke-width="2.4" stroke-linejoin="round">
+    <path d="M52 132 Q70 126 88 131 T 126 130" fill="none" stroke-linecap="round" stroke-width="2.2"/>
+    <g transform="rotate(30 112 92)"><path d="M104 56h16l-2 24h-12z" fill="#0f1923"/><path d="M102 80h20l-4 12h-12z" fill="#f3ecdc"/><path d="M106 92h12l-4 28-2 6-2-6z" fill="#e0a423"/><circle cx="112" cy="98" r="2" fill="#0f1923" stroke="none"/></g>
+    <path d="M70 134c0-5 6-5 6 0s-6 5-6 0z" fill="#0f1923"/>
   </g>
-  <circle cx="100" cy="100" r="24" fill="#ffd02e" stroke="#0a0b10" stroke-width="4"/>
-  <circle cx="100" cy="100" r="5" fill="#0a0b10"/>
-  <g fill="#0a0b10" stroke="#0a0b10" stroke-linejoin="miter">
-    <path d="M174 24L118 88" stroke-width="8" fill="none" stroke-linecap="square"/>
-    <rect x="104" y="80" width="22" height="30" transform="rotate(40 115 95)"/>
-    <circle cx="176" cy="22" r="10"/>
-  </g>
-  <g fill="#f4f0e6" stroke="#0a0b10" stroke-width="3">
-    <rect x="24" y="86" width="12" height="28"/><rect x="164" y="146" width="12" height="28" transform="rotate(30 170 160)"/>
-  </g>
+  <path d="M46 160 Q70 156 94 161 T 154 160" fill="none" stroke="#0f1923" stroke-width="2.4" stroke-linecap="round" filter="url(#bd-rough)"/>
+  <text x="100" y="182" text-anchor="middle" font-family="Special Elite, monospace" font-size="15" fill="#0f1923">100 XP</text>
 </g>

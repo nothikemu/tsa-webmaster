@@ -1,186 +1,172 @@
 /*
  * Materials: the small set of shapes and controls everything else is built from.
  *
- *   plate    a flat slab with one cut corner; its fill is a clipped pseudo-element so focus rings and
- *            hard shadows are never clipped away
- *   edge     blueprint brackets drawn inside a plate, in the realm color
- *   banner   the tall card with a pointed foot (the learner card, the realm cards)
- *   btn      the print-shop button: a flat cut-corner block with a hard offset shadow that closes on press
- *   slab     a full-bleed field of one saturated color, set with ink-colored type
- *   giant    an oversized condensed word cropped by the edge of its container
- *   stamp    a small rotated label in a rule box
- *   tape     a ticker band
+ *   card     a sheet with an ink line, one cut corner and a hatched shadow (drawn with pen strokes, not blur)
+ *   button   an angular face, slanted at both ends, outlined, with a hatched shadow; it inverts on hover
+ *   chip     a square-cornered label or toggle with a line
+ *   poster   parchment with torn edges (the module cards)
+ *   hud      a dark panel (data-surface='ink') with red corner brackets
  *
- * No blur, no glow, no gradient fills. Depth is a flat offset, motion is a snap.
+ * There are no gradients, no blur and no rounded corners. Depth is hatching, the way manga shades.
  */
 :root {
-  --cut-tr: polygon(0 0, calc(100% - var(--n)) 0, 100% var(--n), 100% 100%, 0 100%);
-  --cut-tr-bl: polygon(0 0, calc(100% - var(--n)) 0, 100% var(--n), 100% 100%, var(--n) 100%, 0 calc(100% - var(--n)));
-  --cut-all: polygon(var(--n) 0, calc(100% - var(--n)) 0, 100% var(--n), 100% calc(100% - var(--n)), calc(100% - var(--n)) 100%, var(--n) 100%, 0 calc(100% - var(--n)), 0 var(--n));
-  --banner-shape: polygon(0 0, 100% 0, 100% calc(100% - var(--banner-tip)), 50% 100%, 0 calc(100% - var(--banner-tip)));
-  --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2 12h17M12 4l8 8-8 8' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='square'/%3E%3C/svg%3E");
-  --shadow-c: var(--m);
-  --halftone: radial-gradient(circle at 50% 50%, currentColor 0 1.3px, transparent 1.7px) 0 0 / 9px 9px;
-}
-[data-surface='paper'] {
-  --shadow-c: var(--paper-ink);
+  --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2 12h17M13 5l8 7-8 7' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='square'/%3E%3C/svg%3E");
+  --hatch: repeating-linear-gradient(135deg, var(--line) 0 1.5px, transparent 1.5px 5px);
+  --torn: polygon(0 1.2%, 6% 0, 13% 1.4%, 21% 0.2%, 30% 1.3%, 41% 0, 52% 1.2%, 63% 0.1%, 74% 1.3%, 86% 0, 94% 1.1%, 100% 0.3%, 99.4% 14%, 100% 31%, 99.2% 47%, 100% 63%, 99.3% 80%, 100% 93%, 100% 98.9%, 93% 100%, 84% 98.7%, 72% 100%, 61% 98.8%, 49% 100%, 38% 98.9%, 26% 100%, 15% 98.8%, 6% 100%, 0 99%, 0.6% 86%, 0 70%, 0.7% 52%, 0 36%, 0.6% 19%);
 }
 
-/* ---- plate -------------------------------------------------------------------------------------------- */
+/* ---- card --------------------------------------------------------------------------------------------- */
 .glass,
 .panel {
   position: relative;
   isolation: isolate;
+  background: var(--fill);
   color: var(--text);
+  border: var(--stroke) solid var(--line);
+}
+/* The shadow: a block of hatching behind the card, offset down and to the right. Only the L-shaped strip that
+ * sticks out past the card is drawn, so the hatching can never show through the card's own face. */
+.glass,
+.panel {
+  --so: var(--shadow-off);
 }
 .glass::before,
 .panel::before {
   content: '';
   position: absolute;
-  inset: 0;
   z-index: -1;
-  background: var(--fill);
-  clip-path: var(--cut-tr);
+  inset: var(--so) calc(var(--so) * -1) calc(var(--so) * -1) var(--so);
+  background: var(--hatch);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 calc(100% - var(--so) - 3px), calc(100% - var(--so) - 3px) calc(100% - var(--so) - 3px), calc(100% - var(--so) - 3px) 0);
   pointer-events: none;
-  transition: background-color var(--dur-fast) var(--ease);
+  transition: inset var(--dur-fast) var(--ease-snap);
 }
-.glass:hover::before,
-.panel:hover::before,
-.glass:focus-within::before,
-.panel:focus-within::before {
-  background: var(--fill-2);
-}
-/* The frame: four blueprint brackets, set in from the plate's edge, in the realm color. */
-.edge::after {
+/* The cut corner: the page's own color over the top right, with the card's line drawn along the cut. */
+.glass::after,
+.panel::after {
   content: '';
   position: absolute;
-  inset: 6px;
-  z-index: 1;
+  top: calc(var(--stroke) * -1);
+  right: calc(var(--stroke) * -1);
+  width: var(--cut);
+  height: var(--cut);
+  background: linear-gradient(
+    225deg,
+    var(--cut-bg, var(--page)) 0 calc(50% - 1.2px),
+    var(--line) calc(50% - 1.2px) calc(50% + 1.3px),
+    transparent calc(50% + 1.3px)
+  );
   pointer-events: none;
-  --b: var(--frame, var(--line-2));
-  background:
-    linear-gradient(var(--b), var(--b)) 0 0 / 14px 2px no-repeat,
-    linear-gradient(var(--b), var(--b)) 0 0 / 2px 14px no-repeat,
-    linear-gradient(var(--b), var(--b)) 0 100% / 14px 2px no-repeat,
-    linear-gradient(var(--b), var(--b)) 0 100% / 2px 14px no-repeat,
-    linear-gradient(var(--b), var(--b)) 100% 100% / 14px 2px no-repeat,
-    linear-gradient(var(--b), var(--b)) 100% 100% / 2px 14px no-repeat;
+}
+.glass:has(a.stretched):hover,
+.panel:has(a.stretched):hover,
+.glass:has(a.stretched):focus-within,
+.panel:has(a.stretched):focus-within {
+  --so: calc(var(--shadow-off) * 1.5);
+}
+.edge::after {
+  /* the cut corner of .glass; no separate bracket frame any more */
 }
 
-/* The banner: a tall card whose foot comes to a point. The caller leaves room under the content. */
-.banner {
-  position: relative;
-  isolation: isolate;
-  padding-bottom: calc(var(--banner-tip) + var(--s-5));
+/* A card that is itself dark sits on paper, so its cut corner is paper; cards inside it sit on navy. */
+.glass[data-surface='ink'],
+.panel[data-surface='ink'] {
+  --cut-bg: var(--paper);
 }
-.banner::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--banner-fill, var(--fill));
-  clip-path: var(--banner-shape);
-  pointer-events: none;
-  transition: background-color var(--dur-fast) var(--ease);
+[data-surface='ink'] .glass,
+[data-surface='ink'] .panel {
+  --cut-bg: var(--navy);
+}
+
+/* A slab: a card painted in the realm color. Type on it is ink. */
+.slab {
+  background: var(--slab, var(--m));
+  color: var(--ink);
+  --text: var(--ink);
+  --text-2: #1d2a38;
+  --text-3: #2a3948;
+  --line: var(--ink);
+  --focus-ring: 3px solid #0f1923;
+  border: var(--stroke) solid var(--ink);
+}
+.slab .label {
+  color: var(--ink);
 }
 
 /* ---- buttons ------------------------------------------------------------------------------------------ */
 .btn {
-  --tx: 0px;
-  --ty: 0px;
-  --sc: 1;
-  --so: 5px; /* the shadow's offset */
-  --face: var(--signal);
-  --ink: var(--ink-on);
+  --face: var(--m);
+  --ink-on: var(--ink);
   position: relative;
   isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--s-2);
-  min-height: var(--tap);
-  padding: 0.45rem 1.5rem 0.4rem;
+  min-height: 48px;
+  padding: 0.5rem 2rem 0.45rem;
   border: 0;
   background: none;
-  color: var(--ink);
-  font-family: var(--font-display);
+  color: var(--ink-on);
+  font-family: var(--font-hud);
   font-weight: 800;
-  font-size: 1.375rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 1.25rem;
+  letter-spacing: var(--track-hud);
   line-height: 1;
   text-align: center;
   text-decoration: none;
-  transform: translate3d(var(--tx), var(--ty), 0) scale(var(--sc));
-  filter: drop-shadow(var(--so) var(--so) 0 var(--shadow-c));
-  transition:
-    translate var(--dur-fast) var(--ease),
-    filter var(--dur-fast) var(--ease),
-    transform var(--dur) var(--ease);
+  text-transform: uppercase;
+  filter: drop-shadow(2px 0 0 var(--ink)) drop-shadow(-2px 0 0 var(--ink)) drop-shadow(0 2px 0 var(--ink)) drop-shadow(0 -2px 0 var(--ink));
+  transition: translate var(--dur-fast) var(--ease-snap);
 }
+/* The face is slanted at both ends. It is a pseudo-element so the button's own box, and its focus ring, are not clipped. */
 .btn::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
   background: var(--face);
-  clip-path: var(--cut-tr-bl);
-  --n: 10px;
-  pointer-events: none;
-}
-.btn:hover:not(:disabled) {
-  translate: -2px -2px;
-  --so: 7px;
-}
-.btn:active:not(:disabled) {
-  translate: var(--so) var(--so);
-  filter: drop-shadow(0 0 0 var(--shadow-c));
-  transition-duration: 0ms;
-}
-.btn-primary {
-  --face: var(--signal);
-  --ink: var(--ink-on);
-}
-
-/* Ghost: the same block, empty, outlined in the text color. */
-.btn-ghost {
-  --ink: var(--text);
-}
-.btn-ghost::before {
-  background: var(--text);
-}
-.btn-ghost::after {
-  content: '';
-  position: absolute;
-  inset: 2px;
-  z-index: -1;
-  background: var(--bg);
-  clip-path: var(--cut-tr-bl);
-  --n: 8px;
-  pointer-events: none;
+  clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
   transition: background-color var(--dur-fast) var(--ease);
 }
-.btn-ghost:hover:not(:disabled)::after {
-  background: var(--fill-2);
+.btn:hover:not(:disabled)::before {
+  background: var(--ink);
+}
+.btn:hover:not(:disabled) {
+  color: var(--paper);
+}
+.btn:active:not(:disabled) {
+  translate: 0 2px;
+}
+.btn-primary {
+  --face: var(--m);
+}
+.btn-ghost {
+  --face: var(--white);
 }
 .btn-danger {
-  --ink: var(--ink-on);
+  --face: var(--red);
 }
-.btn-danger::before {
-  background: var(--crimson);
-}
-/* Unavailable: flat grey. The label stays readable. */
 .btn:disabled {
   cursor: not-allowed;
-  --ink: var(--text-3);
-  filter: none;
-  transform: none;
+  --face: var(--paper-2);
+  color: var(--ink-2);
+  filter: drop-shadow(2px 0 0 var(--ink-3)) drop-shadow(-2px 0 0 var(--ink-3)) drop-shadow(0 2px 0 var(--ink-3)) drop-shadow(0 -2px 0 var(--ink-3));
 }
-.btn:disabled::before {
-  background: var(--fill-3);
+
+/* On a dark panel the ghost button is paper-colored and the lines are paper. */
+[data-surface='ink'] .btn {
+  filter: drop-shadow(2px 0 0 var(--navy)) drop-shadow(-2px 0 0 var(--navy)) drop-shadow(0 2px 0 var(--navy)) drop-shadow(0 -2px 0 var(--navy));
 }
-.btn:disabled::after {
-  background: var(--fill);
+[data-surface='ink'] .btn-ghost {
+  --face: var(--paper);
+  color: var(--ink);
+}
+[data-surface='ink'] .btn:hover:not(:disabled)::before {
+  background: var(--paper);
+}
+[data-surface='ink'] .btn:hover:not(:disabled) {
+  color: var(--ink);
 }
 
 /* A text link with an arrow, drawn in CSS so it needs no glyph from the font. */
@@ -189,98 +175,75 @@
   align-items: center;
   gap: 0.5em;
   min-height: var(--tap);
-  font-family: var(--font-display);
+  font-family: var(--font-hud);
   font-weight: 800;
-  font-size: 1.375rem;
-  letter-spacing: 0.04em;
+  font-size: 1.25rem;
+  letter-spacing: var(--track-hud);
   text-transform: uppercase;
   color: var(--text);
   text-decoration: underline;
-  text-decoration-color: var(--signal);
-  text-decoration-thickness: 3px;
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 4px;
   text-underline-offset: 0.2em;
 }
 .link-arrow::after {
   content: '';
   width: 1em;
   height: 1em;
-  background: var(--signal);
+  background: var(--red);
   -webkit-mask: var(--arrow) center / contain no-repeat;
   mask: var(--arrow) center / contain no-repeat;
-  transition: translate var(--dur-fast) var(--ease);
+  transition: translate var(--dur-fast) var(--ease-snap);
 }
 .link-arrow:hover::after {
   translate: 6px 0;
-}
-.link-arrow:hover {
-  text-decoration-color: currentColor;
 }
 
 /* Status pill: always carries a text label, so state never depends on color alone. */
 .pill {
   display: inline-flex;
   align-items: center;
-  padding: 0.12rem 0.7rem;
+  padding: 0.05rem 0.7rem;
   background: transparent;
-  box-shadow: inset 0 0 0 2px var(--line-control);
-  color: var(--text-2);
-  font-family: var(--font-sans);
+  border: 2px solid var(--line);
+  color: var(--text);
+  font-family: var(--font-hud);
   font-weight: 700;
-  font-size: 0.8125rem;
-  letter-spacing: 0.12em;
+  font-size: 0.9375rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 .pill[data-state='mastered'] {
-  background: var(--m, var(--signal));
-  box-shadow: none;
-  color: var(--ink-on);
+  background: var(--m);
+  color: var(--ink);
 }
 .pill[data-state='practiced'] {
-  background: var(--fill-3);
-  box-shadow: inset 0 0 0 2px var(--m, var(--cyan));
-  color: var(--text);
+  background: var(--m-hi);
+  color: var(--ink);
 }
 
-/* Markers: a tilted square for bullets, a diamond for stations. Both take the text color. */
+/* Markers: a small square, tilted, for bullets. */
 .spark,
 .diamond {
   display: inline-block;
   width: 0.55em;
   height: 0.55em;
-  background: currentColor;
+  background: var(--red);
   transform: rotate(45deg);
-  vertical-align: 0.08em;
-}
-.diamond {
-  width: 0.7em;
-  height: 0.7em;
+  vertical-align: 0.06em;
 }
 
-/* Colour words: plain text in the signal color. */
 .chrome-text,
 .metal-text {
-  color: var(--signal);
+  color: var(--accent);
 }
 
-/* A rule: a baseline with a tick ruler above it and a small orange square at the left. */
+/* A rule: a hand-drawn line, thick at one end. */
 .rule {
-  position: relative;
-  height: 14px;
-  color: var(--text-3);
-  background:
-    repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 12px) 0 0 / 100% 7px no-repeat,
-    linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
-  opacity: 0.7;
-}
-.rule::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -1px;
-  width: 42px;
-  height: 5px;
-  background: var(--signal);
+  height: 6px;
+  background: var(--line);
+  clip-path: polygon(0 40%, 30% 0, 100% 40%, 100% 62%, 40% 100%, 0 70%);
 }
 .rule > i {
   display: none;
@@ -295,95 +258,28 @@
   text-decoration: none;
 }
 
-/* ---- slab, giant, stamp, tape ----------------------------------------------------------------------- */
-/* A slab: a field of one flat color. Type on it is ink. */
-.slab {
-  --text: var(--ink-on);
-  --text-2: #1d1812;
-  --text-3: #2c241a;
-  --line: rgb(10 11 16 / 0.28);
-  --line-2: rgb(10 11 16 / 0.55);
-  --focus-ring: 3px solid #0a0b10;
-  --shadow-c: #0a0b10;
-  background: var(--slab, var(--signal));
-  color: var(--ink-on);
-}
-.slab .label {
-  color: var(--ink-on);
-}
-/* Buttons on a slab: the ghost is an ink outline around a hole in the slab's color. */
-.slab .btn-ghost {
-  --ink: var(--ink-on);
-}
-.slab .btn-ghost::before {
-  background: var(--ink-on);
-}
-.slab .btn-ghost::after {
-  background: var(--slab, var(--signal));
-}
-.slab .btn-ghost:hover:not(:disabled)::after {
-  background: color-mix(in srgb, var(--slab, var(--signal)) 82%, #000);
+/* Rough: the slight wobble of a hand, for stamps and rules. The filter is defined once in the app shell. */
+.rough {
+  filter: url(#ink-rough);
 }
 
-/* The giant word: decorative type at the scale of the layout. Always aria-hidden. */
-.giant {
-  display: block;
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: var(--t-giant);
-  line-height: 0.78;
-  letter-spacing: -0.005em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: transparent;
-  -webkit-text-stroke: 2px currentColor;
-  user-select: none;
-  pointer-events: none;
-}
-.giant-solid {
-  color: currentColor;
-  -webkit-text-stroke: 0;
-}
-
-/* A stamp: a boxed label, turned a few degrees. */
-.stamp {
-  display: inline-block;
-  padding: 0.18rem 0.7rem 0.12rem;
-  border: 2px solid currentColor;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.125rem;
-  letter-spacing: 0.1em;
-  line-height: 1.1;
-  text-transform: uppercase;
-  transform: rotate(-3deg);
-}
-
-/* Halftone: a field of dots in the current color. Decorative. */
-.halftone {
-  background: var(--halftone);
-}
-
-/* The numeral of a realm: outlined, not filled. Decorative; the title carries the meaning. */
+/* The numeral of a realm: a heavy condensed number. Decorative; the title carries the meaning. */
 .mod-numeral {
-  font-family: var(--font-display);
+  font-family: var(--font-hud);
   font-weight: 900;
   line-height: 0.8;
-  color: transparent;
-  -webkit-text-stroke: 3px var(--m);
+  color: var(--m);
 }
 
-/* Controls speak in the body face, in capitals. */
-.chip,
-.segmented-item,
-.stepper a,
-.nav-list a,
-.colophon-links a,
-.gloss-index a,
-.status-tag,
-summary,
-.crumbs,
-.hub-toggle-text,
-.hub-link {
-  font-family: var(--font-sans);
+/* Parchment is darker than paper, so the quiet text colours are re-pointed to darker inks wherever it is the ground
+ * (--ink-3 on parchment is only 4.4:1; these are 6.5:1 and above). */
+.cmap,
+.cat-path,
+.keypoints-box,
+.pd-next,
+.hero-art,
+.heatmap td[data-state='practiced'],
+.instrument-kind[data-kind='simulation'] {
+  --text-2: #1f2c3a;
+  --text-3: #33414f;
 }

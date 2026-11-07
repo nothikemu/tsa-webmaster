@@ -1,107 +1,111 @@
-# Design system: Signal Print
+# Design system: Black Ledger
 
-Parameter is printed and broadcast at once. From the print shop it takes flat ink colors, a hard offset shadow under every raised thing, paper grain, and a second color printed a few pixels out of register. From a broadcast interface it takes notched plates, headlines at the scale of the layout, blueprint hairlines and one flat color that carries the state of a screen. Nothing is blurred, glowing, beveled or gradient-filled.
+Parameter looks like a manga page with a tactical HUD laid over it. The ground is off-white paper with a little grain, everything on it is drawn in navy-black ink, and red is used for emphasis only. Light paper cards carry reading; dark navy panels carry instruments, the learner's record and the footer. Depth is hatching, not blur. There are no gradients as decoration, no glow, no rounded corners and no drop-shadow blur. The reasoning, sources and what could not be checked are in [DESIGN_RESEARCH.md](DESIGN_RESEARCH.md).
 
-How this identity was reached, what was studied, what could not be verified and what was abandoned is in [DESIGN_RESEARCH.md](DESIGN_RESEARCH.md). The short version: the studied sources shared a habit of flat, high-contrast shapes with one color per state, and one of them (Riot's own interface write-up) said outright that decoration with no purpose had been removed. This system keeps only decoration that carries meaning.
+## The rules, in each medium
+
+| Medium                         | How the look is made                                                                                                                                                                                  |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CSS                            | Square corners with one cut corner drawn by `.glass::after`; a 2.5px ink line; a block of 135-degree hatch lines behind each card (`--hatch`), clipped so it only shows past the card's edge; slanted buttons |
+| SVG artwork (`ui/Ink.tsx`)     | An ink engine: seeded variable-width tapered brush strokes, blobs, polygons, hatching, and two SVG filters (`ink-rough` displaces edges, `ink-grain` adds paper noise). The artwork is built from these, never from stock shapes |
+| 3D (GLSL and TSL)              | Flat discs with one hard shade crescent and a dark ring, paper-coloured links, red for what the learner touched, on a navy stage. The Ethics globe is three flat navy bands and a paper rim under a paper mesh |
 
 ## Tokens
 
-All in `src/styles/tokens.css`. Components never use a raw color or a raw size.
+All in `src/styles/tokens.css`. Components use tokens, not raw values.
 
-| Group       | Tokens                                                                                                                             | Rule                                                                                                          |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Ground      | `--bg #0a0b10`, `--bg-elev`, `--fill`, `--fill-2`, `--fill-3`                                                                      | Five flat steps of ink. A plate is one step above the ground                                                  |
-| Text        | `--text #f4f0e6`, `--text-2`, `--text-3`                                                                                           | Warm white on ink                                                                                             |
-| Paper       | `--paper #efe6d2`, `--paper-2`, `--paper-3`, `--paper-ink`, `--paper-text-2`, `--paper-text-3`                                     | `[data-surface='paper']` redefines the text and fill tokens, so anything inside reads as ink on paper         |
-| Signal      | `--signal #ff6a1f`                                                                                                                 | The brand: primary actions, the hero slab, the current section. Text on any signal color is `--ink-on #0a0b10` |
-| Realms      | `--m-foundations #2cd5f4` (cyan), `--m-synthesis #ffd02e` (yellow), `--m-ethics #ff4f80` (pink); `--m-*-deep` for text on paper     | `data-module` sets `--m` and `--m-deep` for everything inside it. A realm color is a fill or a stroke; as text on dark only, or its `-deep` on paper |
-| Danger, sim | `--crimson #ff5a64`, `--sim #c8b8ff`                                                                                               | Crimson is only wrong answers, destructive actions and the not-yet result. The simulation tag is the only lilac  |
-| Shape       | `--n` (corner cut, 14px), `--n-lg` (28px), `--banner-tip`, `--offset` (hard shadow, 5px); every radius token is 0                  | Corners are square or cut. The only round things are dots and the progress ring                               |
-| Type        | `--font-display`, `--font-sans`, `--font-num`; `--t-hero`, `--t-giant`, `--t-h2`, `--t-display`; body 17px, labels 13px             | Display sizes are fluid with `clamp()`; the largest words are cropped by their container on purpose           |
-| Targets     | `--tap: 44px`                                                                                                                      | Every control, including the map nodes at 320px                                                               |
+| Group      | Tokens                                                                                           | Rule                                                                                                                   |
+| ---------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| Ink        | `--ink #0f1923`, `--ink-2 #3a4756`, `--ink-3 #536171`                                            | Every line and all text on paper. `--ink-3` is only for quiet text (5.2:1 on paper)                                    |
+| Ground     | `--paper #ece8e1`, `--paper-2`, `--white #f6f2ea` (cards), `--parch #e6d5a8` (posters, charts)   | The page is paper, cards are lighter, posters and charts are parchment                                                 |
+| HUD        | `--navy #0f1923`, `--navy-2`, `--navy-3`, `--hud-text`, `--hud-text-2`, `--hud-text-3`           | `data-surface='ink'` re-points the surface and text tokens for everything inside a dark panel                          |
+| Accent     | `--red #ff4655`, `--red-lo #c4172b`, `--red-hi`                                                  | Emphasis only. `--red-lo` is the red that is dark enough to read as text on paper                                      |
+| Realm      | `--m`, `--m-lo`, `--m-hi`, `--m-text`, set by `data-module`                                      | Foundations sea-blue, Synthesis gold, Ethics red. `--m-text` is the realm colour dark enough for text on paper (5.6:1 to 5.7:1) |
+| Shape      | `--stroke 2.5px`, `--cut 16px`, `--shadow-off 7px`; every radius is 0                            | One cut corner, one hatch offset                                                                                        |
+| Type       | `--font-display`, `--font-hud`, `--font-body`, `--font-type`; body 17px                          | See below                                                                                                              |
+| Targets    | `--tap 44px`                                                                                      | Every control, including map nodes and radio inputs                                                                    |
+| Motion     | `--ease-snap`, `--dur-fast 110ms`, `--dur 240ms`, `--dur-slow 560ms`                              | One fast snap curve, then stop                                                                                         |
 
 ### Type
 
-Three typefaces, all SIL Open Font License 1.1, bundled as `@fontsource` packages and served from this site, Latin subset only (`src/styles/fonts.css`). Each has a metric-matched local fallback so the swap does not shift the layout.
+Four typefaces, all open licences, bundled with the site and served from this origin, Latin subset only (`src/styles/fonts.css`), each with a metric-matched fallback.
 
-| Role    | Face                              | Used for                                                                                                |
-| ------- | --------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Display | Big Shoulders Display (variable)  | Headlines, buttons, tabs, numerals, the wordmark. Capitals, tight leading, never below 1.25rem          |
-| Text    | Barlow (400, 500, 600, 700, 400 italic) | Body, lessons, controls, small caps labels with 0.14em tracking                                   |
-| Numbers | Barlow Condensed (600, 700)       | XP, percentages, ledger figures, chart scales                                                           |
+| Role    | Face                                  | Licence    | Used for                                                                                   |
+| ------- | ------------------------------------- | ---------- | ------------------------------------------------------------------------------------------ |
+| Display | Pirata One (blackletter)              | OFL 1.1    | Large titles only (h1, h2, poster names). Never sentences                                  |
+| HUD     | Big Shoulders Display (variable)      | OFL 1.1    | Labels, buttons, numerals, small headings, in capitals, tracked out                        |
+| Body    | Barlow                                | OFL 1.1    | Reading text, lesson copy, learning objectives, controls                                    |
+| Type    | Special Elite (typewriter)            | Apache 2.0 | Captions, taglines, ledger and poster text                                                 |
 
-### Shapes and materials (`src/styles/material.css`)
+Static (no JavaScript) pages keep headings in mixed case; the smoke test asserts the exact heading text.
 
-| Name     | What it is                                                                                                                                                   |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Plate    | `.glass`, `.panel`: a flat slab with one cut corner. The fill is a clipped pseudo-element, so focus rings and drop shadows are never clipped away           |
-| Edge     | `.edge`: four blueprint brackets inside a plate, in the realm color                                                                                          |
-| Banner   | `.banner`: a tall card with a pointed foot. The learner card on Home and the three realm cards                                                               |
-| Button   | `.btn`: a flat cut-corner block that casts a hard offset shadow in the realm color. Hover lifts it 2px and lengthens the shadow; press closes the shadow to 0 |
-| Slab     | `.slab`: a full-bleed field of one saturated color. Every token inside it is redefined for ink type. The hero, each module header, the next-step band, the result screen |
-| Giant    | `.giant`: oversized outlined condensed type, `aria-hidden`, cropped by its edge. Hero word, footer wordmark, dossier numbers, the score behind a result      |
-| Stamp    | `.stamp`: a boxed label turned a few degrees                                                                                                                 |
-| Tape     | `.marquee`: a slanted yellow strip running the course's own terms                                                                                            |
+### Materials (`src/styles/material.css`)
+
+| Name    | What it is                                                                                                                                                              |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Card    | `.glass`, `.panel`: a surface with a 2.5px ink line, one cut corner and an offset block of hatching. A card with a stretched link moves its hatch out when reached        |
+| Button  | `.btn`: a slanted face (clip-path on a `::before`, so the element itself is unclipped and focus rings are never cut), outlined by a drop-shadow, inverting on hover      |
+| Chip    | `.chip`, `.segmented`, `.stepper a`: square labels with a line; the current one is a red tab                                                                            |
+| Slab    | `.slab`: a card painted in the realm colour with ink type                                                                                                               |
+| Poster  | Parchment with a torn edge (`--torn`): module cards and earned achievements                                                                                             |
+| HUD     | `data-surface='ink'`: a navy panel with paper text and red corner brackets: instruments, the record, the notebook, the header and footer                                |
+| Marker  | `.accent-word`: one phrase per page title sits on a rough red brush stroke                                                                                              |
 
 ### Contrast
 
-Token pairs, computed: warm white on the ground 17:1, `--text-2` 12:1, `--text-3` 7.4:1; on the lightest plate `--text-3` is 5.9:1. Ink on signal orange 7.3:1, on cyan 11:1, on yellow 14:1, on pink 6.6:1, on crimson 6.9:1. On paper: ink 15:1, `--paper-text-2` 11:1, `--paper-text-3` 6.4:1; the `-deep` realm colors 5.5:1 to 6.6:1.
-
-Then measured on the rendered page. A probe (`pixcontrast`) hides all text, screenshots the viewport at each scroll position and compares the pixels under every text run with that run's real color, so slabs, paper, banners and the film grain are included. Result at 1440 and 390px: across 14 routes with partial progress saved, and on Home, Modules, Progress, Achievements and Ethics with all progress complete, no text run falls below 4.5:1 (3:1 for large text). The first runs found real faults, all fixed: dark card labels inheriting slab ink, a danger button with crimson text on a crimson fill, ghost numerals showing through the text on Achievements, and a table header on paper at 4.0:1. A rotated text box was the only false alarm and was removed by rotating only the box behind the words.
-
-## Layout principles
-
-- One 1320px measure with a fluid gutter. The DOM is in reading order, so the visual order and the tab order agree.
-- Below 1040px every page collapses to a single column; split panes stack; nothing scrolls sideways at 320px or at 400% zoom.
-- Each module has its own composition, set by `data-module` on the overview: Foundations (reading column, swarm stage dominant), Synthesis (objective, the wide console, then sequence and badge) and Ethics (the wireframe stage first, reading on the right). Each module's header is a slab in its realm color.
-- Lessons are read on paper (`data-surface='paper'`): ink on a warm sheet, with a bar of the realm color on its top edge. The instrument beside it stays dark.
-- Reference pages (About, Accessibility, Credits) are one paper sheet beside a contents rail.
+Computed token pairs: ink on paper 14.5:1, `--ink-2` 7.8:1, `--ink-3` 5.2:1 (5.7:1 on cards); paper text on navy 14.5:1, `--hud-text-2` 10.3:1, `--hud-text-3` 7.3:1; ink on red 5.3:1; `--red-lo` on paper 4.9:1; `--m-text` colours 5.6:1 to 5.7:1. `--ink-3` on parchment is only 4.4:1, so quiet text on posters uses `--ink-2` (6.5:1). Red and gold are never used as small text on paper; the darker `--red-lo` and `--gold-lo` are. The rendered-pixel contrast probe (which measures the pixels behind every text run) is the check that matters, and its results are recorded in the commit that introduced this identity.
 
 ## Which visual is built from which state
 
-| Visual                                                        | Where                   | Reads                                                                                                                                                                                                                                  |
-| ------------------------------------------------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The learner card (`pages/Home.tsx`)                           | Home                    | Level, XP, streak, overall percentage, one vertical gauge per module filled to `modules[id].progress`, and the next step. The same numbers are written as text in the card                                                          |
-| Realm prints (`ui/RealmArt.tsx`)                              | Home, catalog, overview | Foundations draws the real swarm layer counts (`NODES_PER_LAYER`) and fills nodes from the bottom up to the module percentage. Synthesis draws a mixing desk with the four presets' real values marked on four faders; an applied preset is joined by a line. Ethics draws an eye in a diamond with the four vulnerabilities at its corners; an inspected one is filled |
-| Curriculum map (`ui/CurriculumMap.tsx`)                       | Home, Progress          | Per lesson mastery, check and challenge done, badge earned. State is shape and fill (hollow, dot, half, filled with a tick), never color alone; every node is a link with a full label; a text summary and legend sit beside it        |
-| Path list (`ui/PathList.tsx`)                                 | Catalog, overview       | Mastery per lesson, the current lesson, check and challenge state                                                                                                                                                                      |
-| Result screen (`ui/Verdict.tsx`)                              | Knowledge check, challenge | The slab is the realm color with the word CLEARED, or red with NOT YET; the score is also echoed as an outlined numeral. The word, not the color, carries the state                                                               |
-| Completion bars, XP history, streak calendar, mastery heatmap | Progress                | `modules[id].progress`, `xpByDay`, `activeDays`, `streak`, per-lesson mastery. Charts are HTML with a text summary; calendar cells are an empty square, a third, two thirds and a full block                                          |
-| Badges (`src/assets/badges/*.svg`)                            | Overview, Achievements  | Flat emblems, one per realm. Locked is drawn in grey; earned is full color. An earned dossier on Achievements is printed in the realm color                                                                                           |
-| Progress hub                                                  | Every page              | Level, XP, next step and each module's percentage                                                                                                                                                                                      |
+| Visual                                        | Where                      | Reads                                                                                                                                                                                       |
+| --------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The flag (`ui/Flag.tsx`)                      | Home                       | A skull-and-crossbones on a ragged flag. Tally marks count lessons opened (first group) and mastered (second), out of the course total. The label gives the same numbers as text            |
+| The record (`pages/Home.tsx`)                 | Home                       | Level, XP toward the next level, streak, overall percentage, each module's percentage and the next step, as text and meters                                                                 |
+| Realm posters (`ui/RealmArt.tsx`)             | Home, catalog, overview    | Foundations: a sea chart whose islands are the swarm's real layer sizes, X marks as modules progress. Synthesis: a pen on a ruled page, lines from the mean of applied presets, ink drops for presets. Ethics: an eye with four corner rings crossed out as vulnerabilities are inspected |
+| Curriculum map (`ui/CurriculumMap.tsx`)       | Home, Progress             | A sea chart: per-lesson mastery, check and challenge done, badge earned. State is shape and fill, never colour alone; every node is a link with a full label; a text summary and legend sit beside it |
+| Verdict (`ui/Verdict.tsx`)                    | Knowledge check, challenge | A ledger page with a rubber stamp: CLEARED in red or NOT YET in ink, and a tally of the score                                                                                                |
+| Badges (`src/assets/badges/*.svg`)            | Overview, Achievements     | Torn parchment wanted posters, one per module. Locked is grey; an earned dossier on Achievements is a parchment poster                                                                      |
+| Bars, XP history, calendar, heatmap           | Progress                   | `modules[id].progress`, `xpByDay`, `activeDays`, `streak`, per-lesson mastery. Calendar cells are an empty box, a third, two thirds and a full block: the fill, not the hue, says which   |
+
+## 3D scenes
+
+The swarm is flat discs on point sprites (opaque, depth-tested, alpha to coverage on an MSAA canvas) with thin paper-coloured links; touched or displaced discs turn red. The Ethics sphere is three flat navy bands with a paper rim under a paper wireframe; the marker deformations and the warning colour (red) still come from the vertex shader. The stage is flat navy `#0b131b`. There is no bloom, aberration or grain, and the post-processing library is not a dependency.
 
 ## Motion
 
-Everything below is an enhancement, started by `ui/fx.ts` only when motion is welcome (`html[data-fx='on']`). With reduced motion the page is complete and still. There is one easing curve and no looping ornament except the ticker.
+Everything below is an enhancement, started by `ui/fx.ts` only when motion is welcome (`html[data-fx='on']`). With reduced motion the page is complete and still.
 
-| Effect            | How                                                                                                                                             | Limits                                                                                                                                       |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Page changes      | A view transition: the old page steps back and dims while the new one is revealed by a slanted edge travelling left to right. Header and hub keep their own transition names | Used when the browser has `startViewTransition`; the next page's code is fetched first for at most half a second; the last of several quick clicks wins; Back is immediate |
-| Scroll reveals    | `data-reveal` elements slide up 40px as they enter, staggered when several arrive together                                                      | CSS hides them only while `data-fx='on'`; printing reveals everything                                                                        |
-| Headline          | Each line rises out of a mask                                                                                                                   | On load only                                                                                                                                 |
-| Result screen     | The slab wipes in from the left and the state word slams in                                                                                     | Once, when the result appears                                                                                                                |
-| Buttons           | Lift on hover, close their shadow on press; lean up to 7px toward a pointer within 64px                                                         | Magnetic lean on fine pointers only                                                                                                          |
-| Navigation tab    | One orange trapezoid slides to the item under the pointer or focus and rests on the current section                                             | First placement is instant                                                                                                                   |
-| Gauges, ticker    | Gauges rise once on load; the term tape scrolls                                                                                                 | Static under reduced motion                                                                                                                  |
+| Effect          | How                                                                                                         | Limits                                                         |
+| --------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Reveals         | `data-reveal` elements slide up 28px on the snap curve                                                      | CSS hides them only while `data-fx='on'`; print shows everything |
+| Page changes    | A quick wipe from the left (clip-path on the new page); header and hub keep their own transition names       | Used when the browser has `startViewTransition`                |
+| Headline        | Each line rises out of a mask                                                                               | On load only                                                   |
+| Navigation tab  | One red slanted block slides to the item under the pointer or focus and rests on the current section        | First placement is instant                                     |
+| Stamp           | The verdict stamp lands once                                                                                | Static under reduced motion                                    |
+| Loading         | An ink square turning a quarter at a time, like a cel flipping                                               | The pre-rendered page replaces it after 1.4 seconds at the latest |
 
-There is no live background. The ground is two static layers: a blueprint of hairlines every 120px and a few percent of paper grain.
+## Layout principles
+
+- One 1280px measure with a fluid gutter. The DOM is in reading order, so the visual order and the tab order agree.
+- Below 1040px every page collapses to a single column; nothing scrolls sideways at 320px or at 400% zoom.
+- Each module has its own composition, set by `data-module` on the overview: Foundations (objective and sequence beside the swarm stage), Synthesis (objective, the wide console, then sequence and badge) and Ethics (the sphere first, reading on the right). The title banner is a navy HUD panel with a slanted stripe in the realm colour and the realm's poster, turned a little, on the right.
+- Lessons are read on a paper card beside the instrument. Reference pages are one ruled sheet (with a double red margin line, as in a ledger) beside a contents rail.
 
 ## Failure states
 
 - If WebGL or WebGPU cannot start, or a scene neither starts nor fails within 15 seconds, `SceneCanvas` shows an explanation, the reason, and the text alternative of the centerpiece. It never sits on a permanent loading state.
 - If a lazy module chunk stalls for 15 seconds, `StageLoading` shows a message with a reload action.
 - A render error is caught by the error boundary and shows a recovery page.
-- The first paint is an orange diamond turning beside a filling bar, and the pre-rendered page replaces it after 1.4 seconds at the latest.
 - Empty states state the fact plainly and the next-step recommendation always links to a concrete place.
 
 ## Accessibility notes
 
 - Landmarks: skip link, `header`, `nav` (with `aria-current` on the active section), `main`, `footer`. One `h1` per page; focus moves to it on every route change, and the new title is announced.
 - Compact menu: below 880px the navigation is a disclosure button with `aria-expanded`; Escape closes it and returns focus to the button.
-- Focus ring is a 3px white outline with a 3px offset and a dark halo (ink on paper) on every interactive element; sticky chrome never covers the focused element. Plates are never clipped on the element itself, only on a pseudo-element, so the ring is never cut off.
-- Disabled controls keep a readable label; state is never carried by color alone (shape, word, hatch or position as well). A wrong answer is hatched as well as red; a right answer is a solid field with ink type and the written word.
-- Every visualization has a text alternative nearby: the learner card's numbers, the map summary, the chart summaries, the centerpiece description and the "Text alternative" disclosure on each stage. Decorative layers (giant words, the ticker, halftone, the hero word) are `aria-hidden`.
+- Focus ring is a 3px dark red (`#c4172b`) outline with a 3px offset on paper; pale red on the navy HUD; ink on painted panels. No element is clipped, so the ring is never cut off.
+- State is never carried by colour alone: shape, word, tally, stamp or position as well. A wrong answer is marked in words and a pattern as well as colour; a right answer has a filled marker and the written word.
+- Every visualization has a text alternative nearby: the flag's label, the record, the map summary, the chart summaries, the centerpiece description and the "Text alternative" disclosure on each stage. Decorative layers are `aria-hidden`.
 
 ## Checks
 
-Covered by the existing suites (`pnpm test`, `pnpm lint`, `pnpm typecheck`, `scripts/smoke.mjs` including axe on seven routes) and by scripted browser probes run during the redesign: the rendered-pixel contrast probe above, an overflow and target-size audit at 1440, 390 and 320px, an axe sweep across 17 routes in three saved states, focus-not-obscured, 200% and 400% reflow, keyboard use of the menu and the hub, quiz and challenge flows, persistence across reload, view-transition navigation, and the WebGL-failure fallback. Real screen-reader and physical-device testing have not been done and remain on the team's checklist.
+The existing suites (`pnpm test`, `pnpm lint`, `pnpm typecheck`, `scripts/smoke.mjs` including axe on seven routes) and scripted browser probes: the rendered-pixel contrast probe, an overflow and target-size audit at 1440, 390 and 320px, an axe sweep across 17 routes in three saved states, focus-not-obscured, reflow at six widths, quiz and challenge flows, persistence, and the WebGL-failure fallback. Real screen-reader and physical-device testing have not been done and remain on the team's checklist.

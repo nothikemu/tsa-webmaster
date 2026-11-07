@@ -9,18 +9,20 @@ function locationState(path: string, href: string): 'page' | 'true' | undefined 
   return path.startsWith(`${href}/`) ? 'true' : undefined;
 }
 
-/**
- * The mark: a notched orange square printed over a cyan one that is slightly out of register, with
- * a slider drawn in ink: a rule with a square knob, the thing a parameter is. Drawn here so it needs no asset.
- */
-export function Glyph({ size = 32 }: { size?: number }): ReactNode {
+/** The mark: a small inked skull. */
+export function Glyph({ size = 34 }: { size?: number }): ReactNode {
   return (
     <svg className="glyph" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      <path d="M5 5h17l5 5v17H10l-5-5z" fill="#2cd5f4" />
-      <path d="M2 2h17l5 5v17H7l-5-5z" fill="#ff6a1f" />
-      <path d="M6.5 13.5h13" stroke="#0a0b10" strokeWidth="2.4" strokeLinecap="square" />
-      <path d="M6.5 18.5h13" stroke="#0a0b10" strokeWidth="2.4" strokeLinecap="square" />
-      <rect x="13" y="10.5" width="5" height="11" fill="#0a0b10" />
+      <path
+        d="M16 2.6c-6.6 0-10.8 4.2-10.8 9.8 0 3.3 1.5 5.6 3.5 7V25c0 1.2.9 2.2 2.1 2.2h10.4c1.2 0 2.1-1 2.1-2.2v-5.6c2-1.4 3.5-3.7 3.5-7 0-5.6-4.2-9.8-10.8-9.8z"
+        fill="#ece8e1"
+        stroke="#0f1923"
+        strokeWidth="2.2"
+        strokeLinejoin="round"
+      />
+      <path d="M8.6 13.2l6-1.4-1 5.6-4.4.3zM23.4 13.2l-6-1.4 1 5.6 4.4.3z" fill="#0f1923" />
+      <path d="M16 18.4l-1.7 3.2h3.4z" fill="#0f1923" />
+      <path d="M12.6 23.4v3M16 23.4v3M19.4 23.4v3" stroke="#0f1923" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
 }
@@ -105,7 +107,7 @@ export function Header(): ReactNode {
   }, [open]);
 
   return (
-    <header className="site-header" data-open={open}>
+    <header className="site-header" data-surface="ink" data-open={open}>
       <div className="wrap site-header-inner">
         <Link to="/" className="wordmark" aria-label={t('nav.home')}>
           <Glyph />
@@ -133,7 +135,7 @@ export function Header(): ReactNode {
 
 export function Footer(): ReactNode {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" data-surface="ink">
       <div className="wrap colophon">
         <div className="colophon-id">
           <p className="wordmark">
@@ -151,11 +153,8 @@ export function Footer(): ReactNode {
             ))}
           </ul>
         </nav>
-        <p className="colophon-event">
-          <span className="stamp">{SITE.event}</span>
-        </p>
+        <p className="colophon-event">{SITE.event}</p>
       </div>
-      <p className="foot-mark giant" data-word={SITE.name} aria-hidden="true" />
     </footer>
   );
 }

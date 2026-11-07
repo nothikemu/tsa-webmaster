@@ -1,12 +1,14 @@
 import {
-  AdditiveBlending,
   BufferAttribute,
   BufferGeometry,
   Group,
+  IcosahedronGeometry,
   LineSegments,
+  Mesh,
   PerspectiveCamera,
   Scene,
   ShaderMaterial,
+  type Material,
 } from 'three';
 import type { Frame } from '../../core/loop';
 import { Spring } from '../../core/spring';
@@ -47,6 +49,7 @@ export class WireframeScene {
   readonly #material: ShaderMaterial | null;
   readonly #tsl: WireTsl | null;
   readonly #geometry: BufferGeometry;
+  readonly #globe: { geometry: IcosahedronGeometry; material: Material };
   #requested: number | null = null;
   #applied = 0;
 
@@ -81,11 +84,19 @@ export class WireframeScene {
         fragmentShader: init.asset('glsl/wire.frag.glsl'),
         transparent: true,
         depthWrite: false,
-        blending: AdditiveBlending,
       });
       this.#group.add(new LineSegments(this.#geometry, this.#material));
     }
     this.#group.children[0]!.frustumCulled = false;
+    // Under the mesh sits a cel-shaded globe: three flat bands and an ink rim. It hides the far side of the mesh.
+    const globeGeo = new IcosahedronGeometry(RADIUS * 0.965, 4);
+    const globeMat: Material = tsl
+      ? (tsl.globe as unknown as Material)
+      : new ShaderMaterial({ vertexShader: init.asset('glsl/globe.vert.glsl'), fragmentShader: init.asset('glsl/globe.frag.glsl') });
+    const globe = new Mesh(globeGeo, globeMat);
+    globe.frustumCulled = false;
+    this.#group.add(globe);
+    this.#globe = { geometry: globeGeo, material: globeMat };
     this.#group.rotation.x = 0.32;
     this.scene.add(this.#group);
     this.camera.position.set(0, 0, 5.4);
@@ -169,6 +180,8 @@ export class WireframeScene {
     this.#geometry.dispose();
     this.#material?.dispose();
     this.#tsl?.material.dispose();
+    this.#globe.geometry.dispose();
+    this.#globe.material.dispose();
     this.scene.clear();
   }
 }

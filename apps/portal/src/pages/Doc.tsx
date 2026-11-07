@@ -29,7 +29,7 @@ export function Doc({ page, children }: { page: DocPageContent; children?: React
             ))}
           </ol>
         </nav>
-        <div className="doc-main" data-surface="paper">
+        <div className="doc-main glass" data-surface="paper">
           {page.sections.map((s, i) => (
             <section
               key={s.heading}

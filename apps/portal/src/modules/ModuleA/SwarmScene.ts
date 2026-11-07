@@ -1,5 +1,4 @@
 import {
-  AdditiveBlending,
   BufferAttribute,
   BufferGeometry,
   DynamicDrawUsage,
@@ -34,7 +33,7 @@ export interface SwarmInit {
 export const INFLUENCE_RADIUS = 0.85;
 /** Pointer force per mode (deflect, attract, orbit), in the kernel's acceleration units. */
 const MODE_STRENGTH: readonly [number, number, number] = [26, 30, 30];
-const POINT_SIZE = 12;
+const POINT_SIZE = 58;
 const FOV = 40;
 const HALF_W = 2.75;
 const HALF_H = 1.75;
@@ -203,10 +202,10 @@ export class SwarmScene {
         },
         vertexShader: init.asset('glsl/particle.vert.glsl'),
         fragmentShader: init.asset('glsl/particle.frag.glsl'),
-        transparent: true,
-        depthWrite: false,
-        depthTest: false,
-        blending: AdditiveBlending,
+        transparent: false,
+        depthWrite: true,
+        depthTest: true,
+        alphaToCoverage: true,
       });
       const lineMat = new ShaderMaterial({
         defines,
@@ -223,7 +222,6 @@ export class SwarmScene {
         transparent: true,
         depthWrite: false,
         depthTest: false,
-        blending: AdditiveBlending,
       });
       this.#materials = [pointMat, lineMat];
       this.#disposables.push(pointMat, lineMat);

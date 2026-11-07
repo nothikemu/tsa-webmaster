@@ -5,25 +5,28 @@
 .page-head {
   display: grid;
   gap: var(--s-4);
-  margin-bottom: clamp(var(--s-7), 6vw, var(--s-9));
+  margin-bottom: clamp(var(--s-6), 5vw, var(--s-8));
   justify-items: start;
-}
-.page-head {
   min-width: 0;
 }
 .page-head > * {
   max-width: 100%;
 }
 .page-head .display {
-  font-size: clamp(2.5rem, 13.6vw, 11.5rem);
-  font-weight: 900;
-  line-height: 0.8;
+  font-size: clamp(3.25rem, 11vw, 9rem);
+  line-height: 0.86;
   max-width: 12ch;
   overflow-wrap: anywhere;
 }
-/* The page's title with a second print of the same word offset behind it, out of register. */
-.page-head .display {
-  text-shadow: 0.04em 0.04em 0 var(--signal-lo);
+/* The title is underlined with a hand-drawn brush stroke. */
+.page-head .display::after {
+  content: '';
+  display: block;
+  width: min(100%, 9ch);
+  height: 0.12em;
+  margin-top: 0.08em;
+  background: var(--red);
+  clip-path: polygon(0 40%, 8% 0, 40% 22%, 70% 4%, 100% 36%, 96% 100%, 62% 76%, 30% 100%, 4% 80%);
 }
 
 /* ---- the sequence list: shape, number, title, state in words ----------------------------------------- */
@@ -45,11 +48,11 @@
   transition: background var(--dur-fast) var(--ease);
 }
 .path li:hover {
-  background: var(--fill-2);
+  background: var(--paper-2);
 }
 .path li[data-current] {
-  background: var(--fill-3);
-  box-shadow: inset 6px 0 0 var(--m, var(--signal));
+  background: var(--m-hi);
+  box-shadow: inset 6px 0 0 var(--ink);
 }
 .path-step {
   margin-top: 0;
@@ -65,89 +68,76 @@
   padding-block: var(--s-2);
   color: var(--text);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
 }
 .path-link:hover .path-title {
   text-decoration: underline;
-  text-decoration-color: var(--m, var(--accent));
+  text-decoration-color: var(--red);
   text-decoration-thickness: 3px;
-  text-underline-offset: 0.25em;
+  text-underline-offset: 0.2em;
 }
 .path-n {
-  font-family: var(--font-display);
-  font-size: 1.375rem;
+  font-family: var(--font-hud);
+  font-size: 1.25rem;
   font-weight: 800;
-  color: var(--m, var(--text-3));
+  color: var(--m-text);
 }
 .path-meta {
+  font-family: var(--font-type);
   font-size: 0.8125rem;
-  font-weight: 600;
   color: var(--text-3);
   text-align: right;
 }
 .mn-mark {
   flex: none;
 }
+.path .mn-shape,
+.path .mn-fill {
+  filter: none;
+  stroke-width: 2.6;
+}
 
-/* ---- catalog: three paths, three widths, a descending stair ---------------------------------------- */
+/* ---- catalog: three posters ---------------------------------------------------------------------- */
 .cat-grid {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--s-5);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(var(--s-5), 3vw, var(--s-7));
   align-items: start;
 }
 .cat-path {
-  --banner-fill: var(--fill);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--s-5);
+  gap: var(--s-4);
   align-content: start;
-  padding: 0;
-  filter: drop-shadow(0 0 0 var(--m));
-  transition:
-    translate var(--dur) var(--ease),
-    filter var(--dur) var(--ease);
+  padding: var(--s-5);
+  background: var(--parch);
+  --fill: var(--parch);
+  --text: var(--ink);
+  --text-2: #1f2c3a;
+  --text-3: #33414f;
 }
 .cat-path:hover,
 .cat-path:focus-within {
-  translate: -4px -4px;
-  filter: drop-shadow(9px 9px 0 var(--m));
+  translate: -3px -3px;
 }
 .cat-path .realm-window {
   position: relative;
+  overflow: hidden;
+  border: 3px solid var(--ink);
 }
 .cat-path .realm-art {
   display: block;
   width: 100%;
   height: auto;
 }
-.cat-path > :not(.realm-window) {
-  padding-inline: var(--s-5);
-}
-.cat-path .realm-numeral {
-  position: absolute;
-  left: var(--s-4);
-  top: var(--s-3);
-}
-.cat-path-a {
-  grid-column: 1 / span 5;
-}
-.cat-path-b {
-  grid-column: 6 / span 4;
-  margin-top: var(--s-8);
-}
-.cat-path-c {
-  grid-column: 10 / span 3;
-  margin-top: var(--s-9);
-}
 .cat-head {
   display: grid;
   gap: var(--s-2);
+  text-align: center;
 }
 .cat-title {
-  font-size: clamp(3.25rem, 5vw, 4.75rem);
-  font-weight: 900;
-  line-height: 0.82;
+  font-size: clamp(3rem, 4.6vw, 4.5rem);
+  line-height: 0.9;
 }
 .cat-link {
   color: var(--text);
@@ -155,7 +145,7 @@
 }
 .cat-link:hover {
   text-decoration: underline;
-  text-decoration-color: var(--m);
+  text-decoration-color: var(--red);
   text-decoration-thickness: 4px;
 }
 .cat-link::after {
@@ -172,16 +162,13 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--s-3) var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 3px solid var(--ink);
 }
 .cat-foot .link-arrow {
   margin-left: auto;
-  color: var(--m);
-  text-decoration-color: var(--m);
   position: relative;
   z-index: 1;
-}
-.cat-foot .link-arrow::after {
-  background: var(--m);
 }
 /* The path list's own links must stay clickable above the card's stretched title link. */
 .cat-path .path,
@@ -189,13 +176,13 @@
   position: relative;
   z-index: 1;
 }
+.cat-path .path li:hover {
+  background: var(--parch-2);
+}
+.cat-path .path li[data-current] {
+  background: var(--parch-2);
+}
 @media (max-width: 1100px) {
-  .cat-path-a,
-  .cat-path-b,
-  .cat-path-c {
-    grid-column: 1 / -1;
-    margin-top: 0;
-  }
   .cat-grid {
     grid-template-columns: minmax(0, 1fr);
     row-gap: var(--s-8);

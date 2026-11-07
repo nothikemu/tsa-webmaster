@@ -1,130 +1,130 @@
 @import 'tailwindcss';
 
 /*
- * Parameter design tokens: Signal Print (docs/DESIGN_RESEARCH.md).
+ * Parameter design tokens: the Black Ledger.
  *
- * Two vocabularies mixed on purpose. A print shop: flat ink colors, hard offset shadows, paper grain,
- * a second color printed slightly out of register. A broadcast interface: notched plates, giant
- * condensed words, blueprint ticks, one flat color per state. Nothing is blurred, glowing or beveled.
- * Every text pair was measured for WCAG AA on the ground and on every plate (docs/DESIGN_SYSTEM.md).
+ * A manga page with a tactical HUD laid over it. The ground is off-white paper and everything on it is drawn
+ * in navy-black ink: hand-inked pictures (ui/Ink.tsx), hatched shadows instead of soft ones, a red that is
+ * used for emphasis only. Dark panels are the HUD: instruments, the record, the notebook, the footer.
+ * The look comes from three places (docs/DESIGN_RESEARCH.md): the angular, flat, uppercase interface of
+ * VALORANT; the dense, wobbling ink and the wanted posters and sea charts of One Piece; and the black and
+ * white, gothic, hatched, red-accented pages of Death Note.
  */
 
 @theme {
-  --color-ink: #0a0b10;
-  --color-elev: #0e1018;
-  --color-muted: #a9aba2;
-  --color-hair: rgb(244 240 230 / 0.18);
-  --color-blue: #2cd5f4;
-  --color-violet: #ff6a1f;
-  --color-cyan: #2cd5f4;
-  --color-warn: #ff5a64;
+  --color-ink: #0f1923;
+  --color-elev: #f6f2ea;
+  --color-muted: #536171;
+  --color-hair: #0f1923;
+  --color-blue: #2e9db9;
+  --color-violet: #ff4655;
+  --color-cyan: #2e9db9;
+  --color-warn: #ff4655;
   --font-sans: 'Param Body', 'Param Body Fallback', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Param Display', 'Param Display Fallback', 'Arial Narrow', ui-sans-serif, sans-serif;
-  --font-mono: 'Param Num', 'Param Num Fallback', 'Arial Narrow', ui-sans-serif, sans-serif;
+  --font-display: 'Param Display', 'Param Display Fallback', Georgia, serif;
+  --font-mono: 'Param Type', 'Param Type Fallback', ui-monospace, monospace;
   --ease-portal: cubic-bezier(0.16, 1, 0.3, 1);
   --radius-tile: 0px;
   --radius-panel: 0px;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
   /* ---- motion ---------------------------------------------------------------------------- */
   /* The one easing curve. JavaScript mirrors it in core/spring.ts (EASE_CSS). */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
   --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
-  --dur-fast: 140ms;
-  --dur: 280ms;
-  --dur-slow: 640ms;
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.2, 1);
+  --dur-fast: 110ms;
+  --dur: 240ms;
+  --dur-slow: 560ms;
 
-  /* ---- ground and plates: ink in five flat steps ------------------------------------------- */
-  --bg: #0a0b10; /* the ground */
-  --bg-elev: #0e1018; /* bands: footer, stage wells */
-  --fill: #151822; /* plates */
-  --fill-2: #1d212e; /* raised, hover */
-  --fill-3: #282d3f; /* pressed, dense headers */
+  /* ---- ink and paper -------------------------------------------------------------------------- */
+  --ink: #0f1923; /* every line and all text: 14.5:1 on paper */
+  --ink-2: #3a4756; /* secondary text: 7.8:1 */
+  --ink-3: #536171; /* quiet text: 5.2:1 on paper, 5.7:1 on cards, 4.4:1 on parchment (so not there) */
+  --paper: #ece8e1; /* the ground: a manga page */
+  --paper-2: #d9d2c4; /* the shade of paper */
+  --white: #f6f2ea; /* cards and sheets */
+  --parch: #e6d5a8; /* wanted posters and charts */
+  --parch-2: #cdb887;
+
+  /* ---- the HUD ------------------------------------------------------------------------------- */
+  --navy: #0f1923;
+  --navy-2: #18242f;
+  --navy-3: #243445;
+  --hud-text: #ece8e1;
+  --hud-text-2: #c9c5bd;
+  --hud-text-3: #a0a7b0;
+
+  /* ---- color ----------------------------------------------------------------------------------- */
+  --red: #ff4655;
+  --red-lo: #c4172b;
+  --red-hi: #ffb3ba;
+  --sea: #2e9db9;
+  --sea-lo: #14627a;
+  --sea-hi: #a6dceb;
+  --gold: #e0a020;
+  --gold-lo: #7a5300;
+  --gold-hi: #f4d58d;
+
+  /* ---- surfaces and text (the names the components use) -------------------------------------------- */
+  --page: var(--paper); /* what shows behind a card, so a cut corner can be drawn */
+  --bg: var(--paper);
+  --bg-elev: var(--paper-2);
+  --fill: var(--white);
+  --fill-2: var(--paper);
+  --fill-3: var(--paper-2);
   --surface: var(--fill);
-  --surface-hover: var(--fill-2);
-
-  /* ---- text: warm white on ink. 17:1 / 12:1 / 7.4:1 on the ground; 5.9:1 on the lightest plate -- */
-  --text: #f4f0e6;
-  --text-2: #d4d0c4;
-  --text-3: #a9aba2;
+  --text: var(--ink);
+  --text-2: var(--ink-2);
+  --text-3: var(--ink-3);
   --fg: var(--text);
   --muted: var(--text-3);
+  --line: var(--ink);
+  --line-soft: rgb(15 25 35 / 0.22);
+  --hair: var(--line-soft);
+  --accent: var(--red-lo);
+  --on-accent: var(--ink);
+  --warn: var(--red-lo);
+  --danger: var(--red-lo);
+  --sim: var(--parch);
 
-  /* ---- rules: warm white at three strengths ---------------------------------------------------- */
-  --line: rgb(244 240 230 / 0.16);
-  --line-2: rgb(244 240 230 / 0.34);
-  --line-strong: #6d7184; /* 3.9:1 on the ground */
-  --line-control: #8d91a4; /* 5.8:1 on the ground: the edge of every control */
-  --hair: var(--line);
-
-  /* ---- paper: the printed sheet that lessons and documents are read on ---------------------------- */
-  --paper: #efe6d2;
-  --paper-2: #e3d8bd;
-  --paper-3: #d4c7a8;
-  --paper-ink: #15120d;
-  --paper-text-2: #332e22; /* 11:1 on paper */
-  --paper-text-3: #574f3e; /* 6.4:1 on paper */
-
-  /* ---- signal colors. Flat, saturated, one job each ----------------------------------------------- */
-  --signal: #ff6a1f; /* the brand: primary actions, the hero slab */
-  --signal-hi: #ff8a4d;
-  --signal-lo: #c24400;
-  --cyan: #2cd5f4; /* the Lattice (Foundations) */
-  --yellow: #ffd02e; /* the Forge (Synthesis) */
-  --pink: #ff4f80; /* the Gate (Ethics) */
-  --crimson: #ff5a64; /* wrong answers, destructive actions */
-  --sim: #c8b8ff; /* the simulation tag */
-  --ink-on: #0a0b10; /* text on any signal color: 7.3:1 to 15:1 */
-
-  --accent: var(--cyan);
-  --accent-solid: var(--signal);
-  --accent-solid-hover: var(--signal-hi);
-  --accent-soft: rgb(44 213 244 / 0.14);
-  --accent-bright: #8fe8fb;
-  --on-accent: var(--ink-on);
-  --selected: var(--signal);
-  --selected-text: var(--ink-on);
-  --warn: var(--crimson);
-  --danger: var(--crimson);
-
-  /* ---- one color per realm ------------------------------------------------------------------- */
-  --m-foundations: #2cd5f4;
-  --m-synthesis: #ffd02e;
-  --m-ethics: #ff4f80;
-  --m-foundations-deep: #006a80; /* the same hue, dark enough to read as text on paper (6.0:1) */
-  --m-synthesis-deep: #6e5200; /* 6.6:1 on paper */
-  --m-ethics-deep: #b3103f; /* 5.5:1 on paper */
-  --m: var(--cyan);
-  --m-deep: var(--m-foundations-deep);
+  /* ---- realm color: set by data-module, used by everything inside ------------------------------- */
+  --m: var(--red);
+  --m-lo: var(--red-lo);
+  --m-hi: var(--red-hi);
+  --m-text: var(--red-lo);
+  --m-foundations: #2e9db9;
+  --m-synthesis: #e0a020;
+  --m-ethics: #ff4655;
 
   /* ---- type ----------------------------------------------------------------------------------- */
   --font-sans: 'Param Body', 'Param Body Fallback', ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-sans);
-  --font-display: 'Param Display', 'Param Display Fallback', 'Arial Narrow', ui-sans-serif, sans-serif;
+  --font-display: 'Param Display', 'Param Display Fallback', Georgia, serif;
+  --font-hud: 'Param HUD', 'Param HUD Fallback', 'Arial Narrow', ui-sans-serif, sans-serif;
+  --font-type: 'Param Type', 'Param Type Fallback', ui-monospace, monospace;
   --font-serif: var(--font-sans);
-  --font-ui: var(--font-sans);
-  --font-num: 'Param Num', 'Param Num Fallback', 'Arial Narrow', ui-sans-serif, sans-serif;
-  --font-mono: var(--font-num);
+  --font-ui: var(--font-hud);
+  --font-num: var(--font-hud);
+  --font-mono: var(--font-type);
 
-  --fs-label: 0.8125rem; /* 13px: caps with tracking */
+  --fs-label: 0.8125rem;
   --fs-small: 0.9375rem;
-  --fs-body: 1.0625rem; /* 17px */
+  --fs-body: 1.0625rem;
   --fs-lead-sm: 1.1875rem;
-  --t-lead: clamp(1.125rem, 0.5vw + 1.02rem, 1.375rem);
-  --t-h3: clamp(1.5rem, 1vw + 1.2rem, 2rem);
-  --t-h2: clamp(2.5rem, 4.4vw + 1rem, 4.75rem);
-  --t-display: clamp(3rem, 7vw + 0.5rem, 7rem);
-  --t-hero: clamp(4.5rem, 21vw, 20rem);
-  --t-giant: clamp(5.5rem, 26vw, 24rem);
-  --t-numeral: clamp(4.5rem, 14vw, 11rem);
+  --t-lead: clamp(1.1875rem, 0.5vw + 1.08rem, 1.4375rem);
+  --t-h3: clamp(1.75rem, 1vw + 1.4rem, 2.25rem);
+  --t-h2: clamp(2.75rem, 4.4vw + 1rem, 5rem);
+  --t-display: clamp(3rem, 7vw + 0.5rem, 6.5rem);
+  --t-hero: clamp(4rem, 9.4vw, 8.5rem);
   --lh-body: 1.6;
-  --lh-tight: 0.9;
-  --track-display: 0.01em;
-  --track-label: 0.14em;
+  --lh-tight: 0.92;
+  --track-display: 0.005em;
+  --track-hud: 0.07em;
   --measure: 62ch;
 
   /* ---- space: a 4px base --------------------------------------------------------------------- */
@@ -137,68 +137,74 @@
   --s-7: 3rem;
   --s-8: 4rem;
   --s-9: 6rem;
-  --section: clamp(4rem, 8vw, 7.5rem);
+  --section: clamp(4rem, 8vw, 7rem);
   --gutter: clamp(16px, 4vw, 48px);
-  --max: 1320px;
+  --max: 1280px;
 
-  /* ---- shape: hard edges and cut corners. Nothing is rounded -------------------------------------- */
+  /* ---- shape: square, with one cut corner ------------------------------------------------------- */
+  --stroke: 2.5px;
+  --stroke-hero: 3.5px;
+  --cut: 16px;
+  --shadow-off: 7px; /* the offset of a hatched shadow */
   --r-sm: 0px;
   --r-md: 0px;
   --r-lg: 0px;
   --r-xl: 0px;
   --r-pill: 0px;
-  --r-round: 999px; /* dots only */
-  --n: 14px; /* the corner cut */
-  --n-lg: 28px;
-  --banner-tip: 34px; /* the point at the foot of a banner card */
-  --offset: 5px; /* the hard print shadow */
+  --r-round: 999px;
 
   /* ---- interaction --------------------------------------------------------------------------- */
-  --tap: 44px; /* minimum target size */
-  --focus-ring: 3px solid #ffffff;
+  --tap: 44px;
+  --focus-ring: 3px solid #c4172b;
   --focus-offset: 3px;
-  --header-h: 68px;
-  --hub-clearance: 6rem; /* bottom space so the floating rank control never covers content */
+  --header-h: 72px;
+  --hub-clearance: 6rem;
 
   /* ---- live values written by the motion layer (ui/fx.ts); at rest they are zero ------------------ */
-  --px: 0; /* pointer, -1 to 1 */
+  --px: 0;
   --py: 0;
-  --sy: 0; /* scroll, in px */
+  --sy: 0;
 }
 
-/* Realm character: the same instruments, a different flat color. */
+/* Realm color: the same objects, a different ink. */
 [data-module] {
-  --accent: var(--m);
+  --accent: var(--m-text);
 }
 [data-module='foundations'] {
-  --m: var(--m-foundations);
-  --m-deep: var(--m-foundations-deep);
+  --m: var(--sea);
+  --m-lo: var(--sea-lo);
+  --m-hi: var(--sea-hi);
+  --m-text: #14627a; /* 5.6:1 on paper */
 }
 [data-module='synthesis'] {
-  --m: var(--m-synthesis);
-  --m-deep: var(--m-synthesis-deep);
+  --m: var(--gold);
+  --m-lo: var(--gold-lo);
+  --m-hi: var(--gold-hi);
+  --m-text: #7a5300; /* 5.6:1 */
 }
 [data-module='ethics'] {
-  --m: var(--m-ethics);
-  --m-deep: var(--m-ethics-deep);
+  --m: var(--red);
+  --m-lo: var(--red-lo);
+  --m-hi: var(--red-hi);
+  --m-text: #b3122a; /* 5.7:1 */
 }
 
-/* The printed sheet. Everything inside reads as ink on paper; the realm color is used only as a fill. */
-[data-surface='paper'] {
-  --bg: var(--paper);
-  --fill: var(--paper-2);
-  --fill-2: var(--paper-3);
-  --fill-3: #c3b490;
-  --text: var(--paper-ink);
-  --text-2: var(--paper-text-2);
-  --text-3: var(--paper-text-3);
-  --line: rgb(21 18 13 / 0.2);
-  --line-2: rgb(21 18 13 / 0.4);
-  --line-strong: #6b6350;
-  --line-control: #4a4332;
-  --accent: var(--m-deep);
-  --focus-ring: 3px solid #0a0b10;
-  color-scheme: light;
-  background: var(--paper);
-  color: var(--paper-ink);
+/* The HUD: dark navy with paper type. Instruments, the record, the notebook, the footer. */
+[data-surface='ink'] {
+  --page: var(--navy);
+  --bg: var(--navy);
+  --fill: var(--navy-2);
+  --fill-2: var(--navy-3);
+  --fill-3: #2f4256;
+  --text: var(--hud-text);
+  --text-2: var(--hud-text-2);
+  --text-3: var(--hud-text-3);
+  --line: var(--hud-text);
+  --line-soft: rgb(236 232 225 / 0.28);
+  --accent: var(--red);
+  --m-text: var(--m);
+  --focus-ring: 3px solid #ffb3ba;
+  color-scheme: dark;
+  background: var(--navy);
+  color: var(--hud-text);
 }

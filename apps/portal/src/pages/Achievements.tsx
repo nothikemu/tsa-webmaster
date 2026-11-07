@@ -18,7 +18,7 @@ function Dossier({ module, slot }: { module: ModuleContent; slot: 'a' | 'b' | 'c
       : t('ach.notStarted', { done, total });
   return (
     <li className={`ach ach-${slot}`} data-module={module.id} data-status={status}>
-      <article aria-labelledby={`ach-${module.id}`}>
+      <article className="glass" aria-labelledby={`ach-${module.id}`}>
         <div className="ach-art">
           <Badge module={module.id} unlocked={earned} size={slot === 'c' ? 150 : 200} anchor />
           <p className="label">{earned ? t('badge.unlocked') : t('badge.locked')}</p>

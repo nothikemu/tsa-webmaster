@@ -2,8 +2,8 @@
  * Motion. Everything here is an enhancement: with the motion layer off (reduced motion, no script)
  * the page is complete and still. ui/fx.ts sets html[data-fx='on'] only when motion is welcome.
  *
- * The vocabulary is a snap, not a drift: things slide into place on one fast curve and stop. A page
- * change is a diagonal wipe. There is no blur, no glow and no looping ornament except the ticker.
+ * The vocabulary is a snap: things slide into place on one fast curve and stop, like a panel in a manga.
+ * A page change is a quick wipe. There is no blur and no glow.
  */
 
 /* ---- reveals --------------------------------------------------------------------------------------------- */
@@ -11,7 +11,7 @@ html[data-fx='on'] [data-reveal]:not(.in) {
   opacity: 0;
 }
 html[data-fx='on'] [data-reveal].in {
-  animation: reveal-up 700ms var(--ease) var(--rd, 0ms) backwards;
+  animation: reveal-up 520ms var(--ease-snap) var(--rd, 0ms) backwards;
 }
 html[data-fx='on'] [data-reveal='fade'].in {
   animation-name: reveal-fade;
@@ -19,14 +19,10 @@ html[data-fx='on'] [data-reveal='fade'].in {
 html[data-fx='on'] [data-reveal='scale'].in {
   animation-name: reveal-scale;
 }
-html[data-fx='on'] [data-reveal='clip'].in {
-  animation-name: reveal-clip;
-  animation-duration: 900ms;
-}
 @keyframes reveal-up {
   from {
     opacity: 0;
-    transform: translate3d(0, 40px, 0);
+    transform: translate3d(0, 28px, 0);
   }
 }
 @keyframes reveal-fade {
@@ -37,40 +33,31 @@ html[data-fx='on'] [data-reveal='clip'].in {
 @keyframes reveal-scale {
   from {
     opacity: 0;
-    transform: translate3d(0, 24px, 0) scale(0.97);
-  }
-}
-@keyframes reveal-clip {
-  from {
-    opacity: 0;
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
+    transform: scale(0.94) rotate(-1.5deg);
   }
 }
 
-/* A headline that rises line by line out of a mask, each line a beat after the last. */
+/* A headline that drops line by line out of a mask, each line a beat after the last. */
 .hero-line {
   display: block;
   overflow: hidden;
-  padding: 0.04em 0.12em 0.06em 0.04em;
-  margin: -0.04em -0.12em -0.06em -0.04em;
+  padding: 0.06em 0.12em 0.1em 0.12em;
+  margin: -0.06em -0.12em -0.1em -0.12em;
 }
 .hero-line > span {
   display: inline-block;
 }
 html[data-fx='on'][data-boot='ready'] .hero-line > span {
-  animation: line-rise 800ms var(--ease) calc(var(--i, 0) * 90ms + 80ms) backwards;
+  animation: line-rise 600ms var(--ease-snap) calc(var(--i, 0) * 90ms + 60ms) backwards;
 }
 @keyframes line-rise {
   from {
-    transform: translate3d(0, 108%, 0) skewY(4deg);
+    transform: translate3d(0, 110%, 0);
     opacity: 0;
   }
 }
 
-/* ---- page changes: a diagonal wipe --------------------------------------------------------------------- */
+/* ---- page changes: a wipe from the left ------------------------------------------------------------- */
 .site-header {
   view-transition-name: site-header;
 }
@@ -81,7 +68,6 @@ html[data-fx='on'][data-boot='ready'] .hero-line > span {
 ::view-transition-group(hub) {
   animation-duration: 0s;
 }
-/* The new page is revealed by a slanted edge travelling left to right; the old page steps back and dims. */
 ::view-transition-image-pair(root) {
   isolation: isolate;
 }
@@ -90,29 +76,21 @@ html[data-fx='on'][data-boot='ready'] .hero-line > span {
   mix-blend-mode: normal;
 }
 ::view-transition-old(root) {
-  animation: vt-out 560ms var(--ease) both;
+  animation: vt-out 420ms var(--ease-snap) both;
 }
 ::view-transition-new(root) {
-  animation: vt-in 560ms var(--ease) both;
+  animation: vt-in 420ms var(--ease-snap) both;
 }
 @keyframes vt-out {
   to {
-    transform: translate3d(-3%, 0, 0);
-    filter: brightness(0.5);
+    opacity: 0.4;
   }
 }
 @keyframes vt-in {
   from {
-    clip-path: polygon(0 0, 0 0, -28% 100%, 0 100%);
+    clip-path: polygon(0 0, 0 0, -20% 100%, 0 100%);
   }
   to {
-    clip-path: polygon(0 0, 128% 0, 100% 100%, 0 100%);
-  }
-}
-
-/* ---- the ticker ----------------------------------------------------------------------------------------- */
-@keyframes marquee-x {
-  to {
-    transform: translateX(-50%);
+    clip-path: polygon(0 0, 120% 0, 100% 100%, 0 100%);
   }
 }

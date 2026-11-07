@@ -78,6 +78,8 @@ function Sliders({ displayed }: { displayed: SpringGroup }): ReactNode {
   );
 }
 
+const BANDS = ['#0b131b', '#c4172b', '#e0a020', '#ece8e1'] as const;
+
 export default function ModuleB({ module }: { module: ModuleContent }): ReactNode {
   const { loop, kernels, actor } = useServices();
   const game = useGame();
@@ -176,9 +178,8 @@ export default function ModuleB({ module }: { module: ModuleContent }): ReactNod
           for (let y = 0; y < GRID_H; y++) {
             for (let x = 0; x < GRID_W; x++) {
               const v = Math.pow(field[y * GRID_W + x]!, 1 + (1 - s.field.contrast) * 2.2);
-              // Ink to the Forge's yellow: a two-tone screen, like a halftone print.
-              const hue = 44 - v * 8;
-              ctx.fillStyle = `hsl(${hue.toFixed(0)} ${(60 + v * 36).toFixed(0)}% ${(7 + v * 55).toFixed(1)}%)`;
+              // The field is posterized into four flat bands, like a cel: shade, orange, yellow, highlight.
+              ctx.fillStyle = BANDS[Math.min(3, Math.floor(v * 4))]!;
               ctx.fillRect(x * cw, y * ch, Math.ceil(cw), Math.ceil(ch));
             }
           }

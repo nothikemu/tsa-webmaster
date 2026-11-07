@@ -12,7 +12,7 @@ export interface BurstOptions {
   count?: number;
 }
 
-export const BURST_PALETTE: readonly string[] = ['#ffffff', '#f4f0e6', '#ff6a1f', '#2cd5f4', '#ffd02e', '#ff4f80'];
+export const BURST_PALETTE: readonly string[] = ['#ff4655', '#ece8e1', '#e0a020', '#2e9db9', '#0f1923', '#ff4655'];
 
 export const BURST_GRAVITY = 900;
 export const BURST_DRAG = 2.2;

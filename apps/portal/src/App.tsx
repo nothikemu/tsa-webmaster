@@ -7,6 +7,7 @@ import { Link, RouterProvider, pageTitle, useRouter, type Route } from './router
 import { LiveRegion, SkipLink } from './ui/a11y';
 import { startFx } from './ui/fx';
 import { BurstOverlay } from './ui/BurstOverlay';
+import { InkDefs } from './ui/Ink';
 import { Footer, Header } from './ui/Chrome';
 import { TelemetryHub } from './ui/TelemetryHub';
 
@@ -95,6 +96,18 @@ function Shell(): ReactNode {
 
   return (
     <>
+      {/* The ink filters the stamps and rules use, defined once for the whole page. */}
+      <svg
+        width="0"
+        height="0"
+        style={{ position: 'absolute' }}
+        aria-hidden="true"
+        focusable="false"
+      >
+        <defs>
+          <InkDefs />
+        </defs>
+      </svg>
       <SkipLink />
       <Header />
       <main id="main" tabIndex={-1}>

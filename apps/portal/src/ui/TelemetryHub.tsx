@@ -42,7 +42,13 @@ export function TelemetryHub(): ReactNode {
   return (
     <aside className="hub" aria-label={t('hub.region')} data-open={open}>
       {open && (
-        <div className="hub-panel glass edge" id="hub-panel" data-hub-panel ref={panelRef}>
+        <div
+          className="hub-panel glass edge"
+          data-surface="ink"
+          id="hub-panel"
+          data-hub-panel
+          ref={panelRef}
+        >
           <div className="hub-head">
             <Ring value={overallT} size={84} stroke={6} label={t('hub.overall')}>
               <span className="num">{Math.round(overallT)}</span>
@@ -88,7 +94,8 @@ export function TelemetryHub(): ReactNode {
       <button
         type="button"
         id={HUB_TOGGLE_ID}
-        className="hub-toggle glass"
+        className="hub-toggle"
+        data-surface="ink"
         aria-expanded={open}
         aria-controls="hub-panel"
         onClick={() => hub.send({ type: 'TOGGLE' })}

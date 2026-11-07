@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- TSL builds shader graphs with a chained,
    dynamically typed node API; the graph is created once at startup, never per frame. */
-import { AdditiveBlending, LineBasicNodeMaterial } from 'three/webgpu';
-import { abs, clamp, cos, dot, float, floor, fract, mix, mx_noise_float, normalize, positionLocal, pow, sin, smoothstep, step, uniform, vec3 } from 'three/tsl';
+import { LineBasicNodeMaterial, MeshBasicNodeMaterial } from 'three/webgpu';
+import { abs, clamp, cos, dot, float, floor, fract, mix, mx_noise_float, normalView, normalize, positionLocal, pow, select, sin, smoothstep, step, uniform, vec3 } from 'three/tsl';
 
 /** TSL twin of wire.vert.glsl for the WebGPU renderer. Same uniforms, same four deformations. */
 export interface WireTsl {
   material: LineBasicNodeMaterial;
+  /** The cel-shaded globe under the mesh. */
+  globe: MeshBasicNodeMaterial;
   uniforms: {
     time: { value: number };
     displacement: { value: number };
@@ -65,17 +67,24 @@ export function createWireTsl(): WireTsl {
 
   const material = new LineBasicNodeMaterial();
   material.positionNode = base.add(offset).mul(1.35);
-  const cool: any = mix(vec3(1.0, 0.31, 0.5), vec3(0.96, 0.94, 0.9), p.y.mul(0.5).add(0.5));
-  const warn = vec3(1.0, 0.82, 0.18);
+  const cool: any = mix(vec3(0.93, 0.91, 0.88), vec3(0.52, 0.74, 0.82), p.y.mul(0.5).add(0.5));
+  const warn = vec3(1.0, 0.27, 0.33);
   const wmix: any = clamp(uWarn.mul(float(0.3).add(stress.mul(1.6))), 0, 1);
   material.colorNode = mix(cool, warn, wmix);
-  material.opacityNode = float(0.11).add(clamp(stress.mul(1.5), 0, 1).mul(0.2)).add(uWarn.mul(0.05));
+  material.opacityNode = float(0.34).add(clamp(stress.mul(1.5), 0, 1).mul(0.5)).add(uWarn.mul(0.1));
   material.transparent = true;
   material.depthWrite = false;
-  material.blending = AdditiveBlending;
+
+  // The globe: three flat navy bands and a paper rim, the twin of globe.frag.glsl.
+  const nv: any = normalize(normalView);
+  const ndl: any = dot(nv, normalize(vec3(-0.5, 0.6, 0.7)));
+  const bands: any = select(ndl.greaterThan(0.2), vec3(0.17, 0.25, 0.33), select(ndl.greaterThan(-0.3), vec3(0.11, 0.17, 0.23), vec3(0.06, 0.1, 0.14)));
+  const globe = new MeshBasicNodeMaterial();
+  globe.colorNode = select(float(1).sub(abs(nv.z)).greaterThan(0.93), vec3(0.93, 0.91, 0.88), bands);
 
   return {
     material,
+    globe,
     uniforms: { time: uTime as any, displacement: uDisplacement as any, fragment: uFragment as any, marker: uMarker as any, warn: uWarn as any },
   };
 }

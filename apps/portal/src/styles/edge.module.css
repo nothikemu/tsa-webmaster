@@ -1,7 +1,6 @@
-/* One surface style for panels: a solid fill one step above the black base. Interactive panels
-   lighten on hover and keyboard focus (set where they are used); static ones do not move. */
+/* The panel of a data section: a ruled box. */
 .edge {
   position: relative;
   background: var(--fill);
-  border: 0;
+  border: var(--stroke) solid var(--line);
 }

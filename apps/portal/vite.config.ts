@@ -28,7 +28,6 @@ function manualChunks(id: string): string | undefined {
   if (id.includes('node_modules')) {
     if (/node_modules\/three\/build\/three\.(webgpu|tsl)/.test(id)) return 'vendor-three-gpu';
     if (/node_modules\/three\//.test(id)) return 'vendor-three';
-    if (/node_modules\/postprocessing\//.test(id)) return 'vendor-post';
     if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return 'vendor-react';
     if (/node_modules\/(xstate|zustand|comlink)\//.test(id)) return 'vendor-state';
     return undefined;

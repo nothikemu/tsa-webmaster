@@ -105,7 +105,7 @@ export const ABOUT: DocPageContent = {
     {
       heading: 'Design brief',
       paragraphs: [
-        'The interface mixes a print shop with a broadcast screen. Color is flat and saturated, one for each module, set against near-black ink and warm paper. Shapes have hard edges and one cut corner, buttons cast a hard offset shadow, and headlines are set very large in a condensed face, sometimes cropped by the edge of the page. Every diagram and illustration is drawn from the lesson content or from your saved progress, and state is always shown by a shape or a word as well as by color. The direction came from studying principles in game interfaces and animation key art; no artwork, logo or typeface from those works is used.',
+        "The site looks like a manga page with a tactical interface laid over it: off-white paper, navy-black ink, red used only for emphasis, flat angular panels, hatching instead of soft shadows, and gothic titles. Each module has its own color, and the pictures are built from the lesson content or from your saved progress: the tally marks on the pirate flag count the lessons you have opened and mastered, the islands on the sea chart follow the swarm's layers, and the eye has one ring per vulnerability you inspect. State is always shown by a shape or a word as well as by color. The pictures are drawn in code by a small ink engine, not by hand. The look was inspired by the VALORANT interface, One Piece and Death Note; no artwork, logo, character or typeface from any game or series is used.",
         'Every interactive scene has a text alternative and a keyboard path. Motion respects the reduced-motion setting. The site is a set of static files and runs from any web host.',
       ],
     },
@@ -176,20 +176,20 @@ export interface CreditEntry {
 export const CREDIT_LIBRARIES: readonly CreditEntry[] = [
   { name: 'React and React DOM', version: '18.3.1', license: 'MIT', use: 'Interface components' },
   { name: 'three', version: '0.187.0', license: 'MIT', use: 'WebGL2 and WebGPU rendering' },
-  {
-    name: 'postprocessing',
-    version: '6.39.6',
-    license: 'Zlib',
-    use: 'Bloom, chromatic aberration and film grain',
-  },
   { name: 'XState', version: '5.33.3', license: 'MIT', use: 'State machines' },
   { name: 'Zustand', version: '5.0.16', license: 'MIT', use: 'Application store' },
   { name: 'Comlink', version: '4.4.2', license: 'Apache-2.0', use: 'Web Worker messaging' },
   {
-    name: 'Big Shoulders Display, Barlow, Barlow Condensed',
+    name: 'Pirata One, Big Shoulders Display, Barlow',
     version: '5.3.0 (each, as @fontsource packages)',
     license: 'SIL Open Font License 1.1',
-    use: 'Typefaces: display, text and numerals. Served from this site, Latin subset only',
+    use: 'Typefaces: titles, labels and numerals, and reading text. Served from this site, Latin subset only',
+  },
+  {
+    name: 'Special Elite',
+    version: '5.3.0 (as a @fontsource package)',
+    license: 'Apache-2.0',
+    use: 'Typeface for captions and ledger text. Served from this site, Latin subset only',
   },
   {
     name: 'wasm-bindgen',

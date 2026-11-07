@@ -2,20 +2,11 @@
  * Typefaces, bundled with the site and listed on /credits. Latin subsets only, served from this origin,
  * so there is no third-party request and the CSP stays 'self'.
  *
- *   Param Display  Pirata One (OFL 1.1): a blackletter with a pirate's swagger. Large titles only.
- *   Param HUD      Big Shoulders Display (OFL 1.1, variable): tall condensed capitals for labels, buttons, numerals.
- *   Param Body     Barlow (OFL 1.1): a plain, square text face for reading.
- *   Param Type     Special Elite (Apache 2.0): a worn typewriter, for captions, rules and posters.
+ *   Param HUD   Big Shoulders Display (OFL 1.1, variable): tall condensed capitals for headlines, labels, buttons, numerals.
+ *   Param Body  Barlow (OFL 1.1): a plain, square text face for reading.
  *
  * Each face has a local fallback with adjusted metrics so the swap does not shift the layout.
  */
-@font-face {
-  font-family: 'Param Display';
-  src: url('../../node_modules/@fontsource/pirata-one/files/pirata-one-latin-400-normal.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
 @font-face {
   font-family: 'Param HUD';
   src: url('../../node_modules/@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2')
@@ -26,49 +17,38 @@
 }
 @font-face {
   font-family: 'Param Body';
-  src: url('../../node_modules/@fontsource/barlow/files/barlow-latin-400-normal.woff2') format('woff2');
+  src: url('../../node_modules/@fontsource/barlow/files/barlow-latin-400-normal.woff2')
+    format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Param Body';
-  src: url('../../node_modules/@fontsource/barlow/files/barlow-latin-500-normal.woff2') format('woff2');
+  src: url('../../node_modules/@fontsource/barlow/files/barlow-latin-500-normal.woff2')
+    format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Param Body';
-  src: url('../../node_modules/@fontsource/barlow/files/barlow-latin-600-normal.woff2') format('woff2');
+  src: url('../../node_modules/@fontsource/barlow/files/barlow-latin-600-normal.woff2')
+    format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Param Body';
-  src: url('../../node_modules/@fontsource/barlow/files/barlow-latin-700-normal.woff2') format('woff2');
+  src: url('../../node_modules/@fontsource/barlow/files/barlow-latin-700-normal.woff2')
+    format('woff2');
   font-weight: 700 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Param Type';
-  src: url('../../node_modules/@fontsource/special-elite/files/special-elite-latin-400-normal.woff2') format('woff2');
-  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 /* Metric-matched fallbacks, used until the real face is ready. */
-@font-face {
-  font-family: 'Param Display Fallback';
-  src: local('Georgia'), local('Times New Roman'), local('Liberation Serif');
-  size-adjust: 92%;
-  ascent-override: 90%;
-  descent-override: 24%;
-  line-gap-override: 0%;
-}
 @font-face {
   font-family: 'Param HUD Fallback';
   src: local('Arial Narrow'), local('Liberation Sans Narrow'), local('Arial');
@@ -82,14 +62,6 @@
   src: local('Arial'), local('Liberation Sans'), local('Helvetica');
   size-adjust: 98%;
   ascent-override: 98%;
-  descent-override: 24%;
-  line-gap-override: 0%;
-}
-@font-face {
-  font-family: 'Param Type Fallback';
-  src: local('Courier New'), local('Liberation Mono');
-  size-adjust: 94%;
-  ascent-override: 96%;
   descent-override: 24%;
   line-gap-override: 0%;
 }

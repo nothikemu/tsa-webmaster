@@ -32,14 +32,14 @@ Next steps, in order of expected gain: (1) load WebAssembly lazily and boot on t
 
 | Asset | Raw | Gzip | When it loads |
 | --- | --- | --- | --- |
-| Entry script (`index`, string-encoded) | 285 KB | 89 KB | Always |
+| Entry script (`index`, string-encoded) | 312 KB | 95 KB | Always |
 | `vendor-react` | 140 KB | 46 KB | Always |
 | `vendor-state` (XState, Zustand, Comlink) | 44 KB | 15 KB | Always |
-| CSS | 90 KB | 19 KB | Always |
-| Typefaces (seven Latin woff2 files: Barlow in four weights 89 KB, Big Shoulders Display variable 36 KB, Pirata One 9 KB, Special Elite 53 KB) | 188 KB | 188 KB | Each file when the page first uses it (`font-display: swap`) |
+| CSS | 91 KB | 19 KB | Always |
+| Typefaces (five Latin woff2 files: Barlow in four weights 90 KB, Big Shoulders Display variable 36 KB) | 126 KB | 126 KB | Each file when the page first uses it (`font-display: swap`) |
 | WebAssembly (SIMD or scalar) | 51 KB | 24 KB | Always, one of the two |
 | Encrypted asset blob | 28 KB | 28 KB | Always |
-| Home page chunk | 34 KB | 11 KB | Home |
+| Home page chunk | 21 KB | 7 KB | Home |
 | `vendor-three` | 752 KB | 193 KB | Module pages (WebGL2 path) |
 | `vendor-three-gpu` | 732 KB | 207 KB | Only when WebGPU is used |
 | Module chunks | 10 to 26 KB | 4 to 9 KB | Their module |
@@ -49,7 +49,7 @@ Next steps, in order of expected gain: (1) load WebAssembly lazily and boot on t
 - No new always-loaded dependency without a measured reason.
 - Heavy code stays in lazy chunks: three, post-processing and every page.
 - Off-screen canvases are paused (IntersectionObserver) and the loop stops when the tab is hidden.
-- There is no live background and no post-processing. The page is flat paper and the 3D scenes render straight to the canvas (MSAA on, no bloom, aberration or grain), so the `postprocessing` library and its 320 kB chunk are gone. There is no continuous animation outside the 3D scenes: motion elsewhere is one-shot (reveals, the page wipe, the verdict stamp) and stops under reduced motion. The artwork is static SVG built once from seeded data; the `ink-rough` filter is applied to small drawings, not to the page.
+- There is no live background and no post-processing. The page is flat paper and the 3D scenes render straight to the canvas (MSAA on, no bloom, aberration or grain), so the `postprocessing` library and its 320 kB chunk are gone. There is no continuous animation outside the 3D scenes: motion elsewhere is one-shot (reveals, the page wipe, the verdict stamp) and stops under reduced motion. The key art is static SVG built from seeded data (a few thousand elements per picture; one small blur filter on lit elements only), and nothing in it animates.
 - Motion that is not the background (reveals, the pointer spotlight, the magnetic pull) is batched into one requestAnimationFrame per event burst and writes custom properties only; none of it runs on touch devices except reveals and scroll values.
 - Pointer, touch and scroll listeners are passive. Device pixel ratio is capped at 2 (and 1 to 1.5 on lower tiers).
 - Geometries, materials and vectors are created once per scene and reused. Particle data lives in typed arrays.

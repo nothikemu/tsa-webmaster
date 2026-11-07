@@ -15,9 +15,8 @@ import {
 } from '../core/gamification';
 import { Link } from '../router';
 import { CurriculumMap } from '../ui/CurriculumMap';
-import { Flag } from '../ui/Flag';
+import { HeroArt, KeyArt } from '../ui/KeyArt';
 import { Track } from '../ui/ModuleArt';
-import { RealmArt } from '../ui/RealmArt';
 import { useData, useOverall, useRecommendation } from '../ui/hooks';
 
 /** The record: level, XP toward the next level, streak, overall progress, each module's own percentage, and the next step. */
@@ -30,12 +29,7 @@ function Record(): ReactNode {
   const cells = 20;
   const filled = Math.round(level.fraction * cells);
   return (
-    <aside
-      className="wrap record"
-      data-surface="ink"
-      aria-label={t('home.record')}
-      data-reveal="up"
-    >
+    <aside className="record wrap" data-surface="ink" aria-label={t('home.record')}>
       <div className="record-rank">
         <span className="rank-n num" aria-hidden="true">
           {String(level.level).padStart(2, '0')}
@@ -72,10 +66,13 @@ function Record(): ReactNode {
           </li>
         ))}
       </ul>
-      <p className="record-next">
-        <span className="label">{t('hub.next')}</span>
-        <Link to={rec.href}>{rec.label}</Link>
-      </p>
+      <div className="record-next">
+        <p className="label">{t('hub.next')}</p>
+        <p className="record-next-title">{rec.label}</p>
+        <Link to={rec.href} className="btn btn-primary btn-sm">
+          {rec.kind === 'start' ? t('home.begin') : t('home.continue')}
+        </Link>
+      </div>
     </aside>
   );
 }
@@ -83,14 +80,18 @@ function Record(): ReactNode {
 function Hero(): ReactNode {
   const rec = useRecommendation();
   const started = rec.kind !== 'start';
-  // The headline is set in lines; the last word of the last line sits on the yellow marker.
+  // The headline is set in lines; the last word of the last line sits on the red slab.
   const [first, ...rest] = HOME.headline;
   const tail = (rest.join(' ') || '').split(' ');
   const accent = tail.pop() ?? '';
   const lines = [first, tail.join(' ')].filter((l): l is string => !!l);
   return (
-    <section className="wrap home-hero" aria-labelledby="hero-h">
-      <div className="hero-copy">
+    <section className="home-hero" aria-labelledby="hero-h">
+      <div className="hero-art" aria-hidden={false}>
+        <HeroArt />
+      </div>
+      <div className="hero-shade" aria-hidden="true" />
+      <div className="hero-copy wrap">
         <p className="tag" data-reveal="fade">
           {HOME.kicker}
         </p>
@@ -109,22 +110,19 @@ function Hero(): ReactNode {
         </p>
         <div className="hero-actions" data-reveal="up">
           {started ? (
-            <Link to={rec.href} className="btn btn-primary">
+            <Link to={rec.href} className="btn btn-primary btn-lg">
               {rec.kind === 'complete' ? t('hero.badges') : t('hero.continue')}
             </Link>
           ) : (
-            <Link to="/modules/foundations" className="btn btn-primary">
+            <Link to="/modules/foundations" className="btn btn-primary btn-lg">
               {t('hero.start')}
             </Link>
           )}
-          <Link to="/modules" className="link-arrow">
+          <Link to="/modules" className="btn btn-lg btn-go">
             {t('hero.all')}
           </Link>
         </div>
       </div>
-      <figure className="hero-art glass" data-reveal="scale">
-        <Flag />
-      </figure>
     </section>
   );
 }
@@ -150,7 +148,7 @@ function SectionHead({
 
 function MapSection(): ReactNode {
   return (
-    <section className="wrap home-map" aria-labelledby="map-h">
+    <section className="home-map wrap" aria-labelledby="map-h">
       <SectionHead id="map-h" title={HOME.map.heading}>
         <p className="prose">{HOME.map.body}</p>
       </SectionHead>
@@ -163,8 +161,8 @@ function MapSection(): ReactNode {
 
 function Method(): ReactNode {
   return (
-    <section className="wrap home-method" aria-labelledby="method-h">
-      <div className="notebook" data-surface="ink" data-reveal="up">
+    <section className="home-method" aria-labelledby="method-h" data-surface="paper">
+      <div className="wrap notebook" data-reveal="up">
         <h2 id="method-h" className="h2">
           {HOME.method.heading}
         </h2>
@@ -186,50 +184,51 @@ function Method(): ReactNode {
 
 const minutes = (m: ModuleContent): number => m.lessons.reduce((a, l) => a + l.minutes, 0);
 
-function Realm({ m, slot }: { m: ModuleContent; slot: 'a' | 'b' | 'c' }): ReactNode {
+function Realm({ m }: { m: ModuleContent }): ReactNode {
   const d = useData().modules[m.id];
   return (
-    <article className={`realm realm-${slot}`} data-module={m.id} data-reveal="up">
-      <div className="realm-sheet">
-        <p className="poster-head label">{t('home.module', { n: m.index })}</p>
-        <div className="realm-window">
-          <RealmArt id={m.id} />
-        </div>
-        <div className="realm-body">
-          <p className="label realm-name">{REALM[m.id]}</p>
-          <h3 className="mod-title">
-            <Link to={`/modules/${m.id}`} className="stretched">
-              {m.title}
-            </Link>
-          </h3>
-          <p className="mod-tagline">{m.tagline}</p>
-          <p className="mod-objective">{m.objective}</p>
-          <dl className="mod-facts">
-            <div>
-              <dt>{t('module.lessons')}</dt>
-              <dd className="num">{m.lessons.length}</dd>
-            </div>
-            <div>
-              <dt>{t('home.reading')}</dt>
-              <dd className="num">{t('lesson.minutes', { n: minutes(m) })}</dd>
-            </div>
-            <div>
-              <dt>{t('home.centerpiece')}</dt>
-              <dd>{m.centerpiece.name}</dd>
-            </div>
-            <div>
-              <dt>{t('home.badge')}</dt>
-              <dd>{m.badge.name}</dd>
-            </div>
-          </dl>
-          <div className="mod-foot">
-            <Track id={m.id} />
-            <span className="num mod-percent">{t('home.percent', { n: d.progress })}</span>
-            <span className="mod-cta" aria-hidden="true">
-              {d.progress > 0 ? t('home.continue') : t('home.begin')}
-            </span>
+    <article className="realm" data-module={m.id} data-reveal="up">
+      <KeyArt id={m.id} w={600} h={900} lift={0.3} scale={0.72} className="realm-art" />
+      <div className="realm-shade" aria-hidden="true" />
+      <div className="realm-body">
+        <p className="realm-n num" aria-hidden="true">
+          {String(m.index).padStart(2, '0')}
+        </p>
+        <p className="label realm-name">
+          {t('home.module', { n: m.index })} <span aria-hidden="true">//</span> {REALM[m.id]}
+        </p>
+        <h3 className="mod-title">
+          <Link to={`/modules/${m.id}`} className="stretched">
+            {m.title}
+          </Link>
+        </h3>
+        <p className="mod-tagline">{m.tagline}</p>
+        <p className="mod-objective">{m.objective}</p>
+        <dl className="mod-facts">
+          <div>
+            <dt>{t('module.lessons')}</dt>
+            <dd className="num">{m.lessons.length}</dd>
           </div>
+          <div>
+            <dt>{t('home.reading')}</dt>
+            <dd className="num">{t('lesson.minutes', { n: minutes(m) })}</dd>
+          </div>
+          <div>
+            <dt>{t('home.centerpiece')}</dt>
+            <dd>{m.centerpiece.name}</dd>
+          </div>
+          <div>
+            <dt>{t('home.badge')}</dt>
+            <dd>{m.badge.name}</dd>
+          </div>
+        </dl>
+        <div className="mod-foot">
+          <Track id={m.id} />
+          <span className="num mod-percent">{t('home.percent', { n: d.progress })}</span>
         </div>
+        <span className="mod-cta btn btn-primary" aria-hidden="true">
+          {d.progress > 0 ? t('home.continue') : t('home.begin')}
+        </span>
       </div>
     </article>
   );
@@ -237,12 +236,14 @@ function Realm({ m, slot }: { m: ModuleContent; slot: 'a' | 'b' | 'c' }): ReactN
 
 function Realms(): ReactNode {
   return (
-    <section className="wrap home-mods" aria-labelledby="mods-h">
-      <SectionHead id="mods-h" title={HOME.bento.heading} />
+    <section className="home-mods" aria-labelledby="mods-h">
+      <div className="wrap">
+        <SectionHead id="mods-h" title={HOME.bento.heading} />
+      </div>
       <div className="home-mods-grid">
-        <Realm m={MODULES[0]!} slot="a" />
-        <Realm m={MODULES[1]!} slot="b" />
-        <Realm m={MODULES[2]!} slot="c" />
+        <Realm m={MODULES[0]!} />
+        <Realm m={MODULES[1]!} />
+        <Realm m={MODULES[2]!} />
       </div>
     </section>
   );
@@ -262,7 +263,7 @@ function Ledger(): ReactNode {
     [t('xp.cap'), `${DAILY_SOFT_CAP}`],
   ];
   return (
-    <section className="wrap home-ledger" aria-labelledby="ledger-h">
+    <section className="home-ledger wrap" aria-labelledby="ledger-h">
       <div className="ledger-copy" data-reveal="up">
         <h2 id="ledger-h" className="h2">
           {HOME.gamification.heading}

@@ -24,12 +24,6 @@ importers:
       '@fontsource/barlow':
         specifier: 5.3.0
         version: 5.3.0
-      '@fontsource/pirata-one':
-        specifier: 5.3.0
-        version: 5.3.0
-      '@fontsource/special-elite':
-        specifier: 5.3.0
-        version: 5.3.0
       comlink:
         specifier: 4.4.2
         version: 4.4.2
@@ -392,12 +386,6 @@ packages:
 
   '@fontsource/barlow@5.3.0':
     resolution: {integrity: sha512-tGR0y6QObRtKv71MOth44222+mdNFM/ZWFWDV1VLzNbG4oK9PNRlyJzmkck4vHAi9ibHBXgt4SlY51amFP55CA==}
-
-  '@fontsource/pirata-one@5.3.0':
-    resolution: {integrity: sha512-qeaDy+F+TcCVdODaIvD4U0ZoaWPejpkXwHAAHIBtauwP/9mf+Sj8ORX5UYcnBpnyhd7ihYPpW+WWPbz9FryrJQ==}
-
-  '@fontsource/special-elite@5.3.0':
-    resolution: {integrity: sha512-fOQ9XU8m4KnqzcLibAXCxTsKzbxePNDjPqVss5GSMcPVCY1TuCv+Wq8gm1ebqIR6XS1rhMbQ7ECP9ocKVEEpTA==}
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -2668,10 +2656,6 @@ snapshots:
   '@fontsource-variable/big-shoulders-display@5.3.0': {}
 
   '@fontsource/barlow@5.3.0': {}
-
-  '@fontsource/pirata-one@5.3.0': {}
-
-  '@fontsource/special-elite@5.3.0': {}
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:

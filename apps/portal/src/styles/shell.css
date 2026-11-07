@@ -1,30 +1,41 @@
 /* ---- shell: the top bar, the compact menu, the footer ---------------------------------------------- */
 
-/* The bar is the HUD: dark, with a red rule under it. A red slanted tab slides under the section you are in,
-   and a paper-colored line along the bottom edge fills as you read down the page. */
+/* The bar runs the full width of the window. Wordmark left, the five sections as keys in the middle, the rank at the right.
+   The section you are in is a light plate with a red edge, like the PLAY tab of a game client. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 60;
-  background: var(--navy);
-  color: var(--hud-text);
-  border-bottom: 4px solid var(--red);
+  background: linear-gradient(to bottom, var(--navy-0), #0b141c);
+  color: var(--text);
+  border-bottom: 1px solid var(--line-soft);
+}
+.site-header::after {
+  /* a short red slash under the wordmark, the only red in the bar */
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: clamp(120px, 14vw, 240px);
+  height: 3px;
+  background: var(--red);
 }
 .site-header-inner {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: var(--s-5);
   min-height: var(--header-h);
+  padding-inline: var(--gutter);
 }
 .read-line {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -4px;
-  height: 4px;
-  background: var(--paper);
+  bottom: -1px;
+  height: 3px;
+  background: var(--teal);
   transform-origin: left center;
   transform: scaleX(var(--sp, 0));
   opacity: 0;
@@ -36,14 +47,17 @@ html[data-scrolled='true'] .read-line {
 }
 
 .wordmark {
+  justify-self: start;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-height: var(--tap);
   font-family: var(--font-display);
-  font-size: 2.1rem;
-  letter-spacing: 0.01em;
+  font-weight: 700;
+  font-size: 1.75rem;
+  letter-spacing: 0.16em;
   line-height: 1;
+  text-transform: uppercase;
   color: var(--text);
   text-decoration: none;
 }
@@ -52,77 +66,71 @@ html[data-scrolled='true'] .read-line {
   transition: transform var(--dur) var(--ease-snap);
 }
 .wordmark:hover .glyph {
-  transform: rotate(-10deg) translateY(-2px);
+  transform: rotate(-8deg) scale(1.06);
 }
 
 .site-nav {
-  margin-left: auto;
+  justify-self: center;
 }
 .nav-list {
-  position: relative;
   display: flex;
-  align-items: stretch;
-  gap: 2px;
+  align-items: center;
+  gap: var(--s-3);
   list-style: none;
   padding: 0;
   margin: 0;
 }
-/* The tab: a red slanted block that slides to the section under the pointer or focus. */
-.nav-glide {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: var(--gw, 0);
-  transform: translate3d(var(--gx, 0), 0, 0);
-  background: var(--red);
-  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-  pointer-events: none;
-  list-style: none;
-}
-.nav-list[data-ready] .nav-glide {
-  transition:
-    transform 300ms var(--ease-snap),
-    width 300ms var(--ease-snap),
-    opacity var(--dur) var(--ease);
-}
-.nav-list[data-glide='off'] .nav-glide,
-.nav-list:not([data-glide]) .nav-glide {
-  opacity: 0;
-}
-.nav-list li:not(.nav-glide) {
-  position: relative;
-  z-index: 1;
+.nav-list li {
   display: flex;
 }
 .nav-list a {
+  --edge: 3px;
+  min-height: 44px;
+  padding: 0 1.25rem;
+  font-size: 1.0625rem;
+}
+/* The rank: level and XP, a key that opens the progress page. */
+.site-rank {
+  justify-self: end;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  padding: 0 1.3rem;
-  font-family: var(--font-hud);
-  font-weight: 700;
-  font-size: 1.1875rem;
-  letter-spacing: var(--track-hud);
-  text-transform: uppercase;
-  color: var(--hud-text-2);
+  gap: var(--s-3);
+  min-height: var(--tap);
+  padding: 0 var(--s-4);
+  border: 1px solid var(--line);
+  background: var(--navy-2);
+  color: var(--text);
   text-decoration: none;
-  transition: color var(--dur-fast) var(--ease);
+  font-family: var(--font-hud);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  clip-path: polygon(
+    10px 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    0 100%,
+    0 10px
+  );
+  transition: background-color var(--dur-fast) var(--ease);
 }
-/* Text over the red tab is ink. */
-.nav-list a:hover,
-.nav-list a:focus-visible,
-.nav-list a[aria-current] {
-  color: var(--ink);
+.site-rank:hover {
+  background: var(--navy-4);
 }
-.nav-list[data-hover='true'] a[aria-current]:not(:hover):not(:focus-visible) {
-  color: var(--hud-text-2);
+.site-rank b {
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--red);
 }
-.nav-list:not([data-glide='on']) a[aria-current] {
-  background: var(--red);
+.site-rank span {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text-2);
 }
-.nav-list a:focus-visible {
-  outline-color: #ffffff;
+.site-rank:focus-visible {
+  clip-path: none;
+  outline-offset: 2px;
 }
 
 .menu-toggle {
@@ -149,21 +157,34 @@ html[data-scrolled='true'] .read-line {
   opacity: 0;
 }
 
+@media (max-width: 1080px) {
+  .nav-list a {
+    padding-inline: 0.9rem;
+    font-size: 1.0625rem;
+  }
+  .site-rank span {
+    display: none;
+  }
+}
 @media (max-width: 880px) {
+  .site-header-inner {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
   .menu-toggle {
     display: inline-flex;
-    min-height: 44px;
+    min-height: 46px;
+    padding-inline: 1.1rem;
   }
   .site-nav {
     display: none;
     position: absolute;
     top: 100%;
-    left: calc(var(--gutter) * -1);
-    right: calc(var(--gutter) * -1);
+    left: 0;
+    right: 0;
     margin: 0;
-    padding: var(--s-2) var(--gutter) var(--s-5);
-    background: var(--navy);
-    border-bottom: 4px solid var(--red);
+    padding: var(--s-4) var(--gutter) var(--s-6);
+    background: var(--navy-0);
+    border-bottom: 3px solid var(--red);
   }
   .site-header[data-open='true'] .site-nav {
     display: block;
@@ -171,10 +192,8 @@ html[data-scrolled='true'] .read-line {
   }
   .nav-list {
     flex-direction: column;
-    gap: 0;
-  }
-  .nav-glide {
-    display: none;
+    align-items: stretch;
+    gap: var(--s-3);
   }
   .nav-list li {
     display: block;
@@ -183,24 +202,9 @@ html[data-scrolled='true'] .read-line {
     display: flex;
     width: 100%;
     min-height: 56px;
-    padding-inline: var(--s-3);
-    font-size: 1.75rem;
-  }
-  .nav-list li + li a {
-    box-shadow: 0 -1px 0 var(--line-soft);
-  }
-  .nav-list a:hover:not([aria-current]),
-  .nav-list a:focus-visible:not([aria-current]) {
-    color: var(--hud-text);
-    background: var(--navy-3);
-  }
-  .nav-list a[aria-current],
-  .nav-list:not([data-glide='on']) a[aria-current] {
-    background: var(--red);
-    color: var(--ink);
-  }
-  .nav-list[data-hover='true'] a[aria-current]:not(:hover):not(:focus-visible) {
-    color: var(--ink);
+    font-size: 1.5rem;
+    justify-content: flex-start;
+    padding-inline: var(--s-4);
   }
 }
 @media (max-width: 420px) {
@@ -208,16 +212,20 @@ html[data-scrolled='true'] .read-line {
     gap: var(--s-3);
   }
   .wordmark {
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     gap: 8px;
+    letter-spacing: 0.08em;
   }
   .wordmark .glyph {
     width: 28px;
     height: 28px;
   }
+  .site-rank {
+    padding-inline: var(--s-3);
+  }
   .menu-toggle.btn {
     font-size: 1.0625rem;
-    padding-inline: 1.1rem;
+    padding-inline: 1rem;
   }
 }
 @keyframes sheet-in {
@@ -234,9 +242,18 @@ html[data-scrolled='true'] .read-line {
   position: relative;
   margin-top: var(--section);
   padding-block: var(--s-8) var(--s-7);
-  background: var(--navy);
-  color: var(--hud-text);
-  border-top: 4px solid var(--red);
+  background: var(--navy-0);
+  color: var(--text);
+  border-top: 1px solid var(--line-soft);
+}
+.site-footer::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: clamp(120px, 14vw, 240px);
+  height: 3px;
+  background: var(--red);
 }
 .colophon {
   display: grid;
@@ -244,14 +261,10 @@ html[data-scrolled='true'] .read-line {
   gap: var(--s-6);
   align-items: start;
 }
-.site-footer .wordmark {
-  color: var(--hud-text);
-}
 .colophon-note {
   max-width: 42ch;
   margin-top: var(--s-3);
   color: var(--text-2);
-  font-family: var(--font-type);
   font-size: var(--fs-small);
 }
 .colophon-links {
@@ -271,25 +284,26 @@ html[data-scrolled='true'] .read-line {
   font-size: 1.25rem;
   letter-spacing: var(--track-hud);
   text-transform: uppercase;
-  color: var(--hud-text);
+  color: var(--text);
   text-decoration: underline;
-  text-decoration-color: transparent;
+  text-decoration-color: var(--line);
   text-decoration-thickness: 3px;
   text-underline-offset: 0.2em;
 }
-.colophon-links a:hover {
-  text-decoration-color: var(--red);
-}
+.colophon-links a:hover,
 .colophon-links a[aria-current] {
   text-decoration-color: var(--red);
 }
 .colophon-event {
   justify-self: end;
   padding: 0.2rem 0.9rem;
-  border: 2px solid var(--hud-text);
-  font-family: var(--font-type);
-  font-size: 0.9375rem;
-  color: var(--hud-text);
+  border: 1px solid var(--line);
+  font-family: var(--font-hud);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 1rem;
+  color: var(--text-2);
 }
 @media (max-width: 880px) {
   .site-footer {

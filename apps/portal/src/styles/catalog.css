@@ -13,52 +13,76 @@
   max-width: 100%;
 }
 .page-head .display {
-  font-size: clamp(3.25rem, 11vw, 9rem);
+  font-size: clamp(3.5rem, 11vw, 10rem);
   line-height: 0.86;
-  max-width: 12ch;
+  max-width: 14ch;
   overflow-wrap: anywhere;
 }
-/* The title is underlined with a hand-drawn brush stroke. */
+/* The title sits on a short red bar. */
 .page-head .display::after {
   content: '';
   display: block;
-  width: min(100%, 9ch);
-  height: 0.12em;
-  margin-top: 0.08em;
+  width: min(100%, 7ch);
+  height: 0.1em;
+  margin-top: 0.1em;
   background: var(--red);
-  clip-path: polygon(0 40%, 8% 0, 40% 22%, 70% 4%, 100% 36%, 96% 100%, 62% 76%, 30% 100%, 4% 80%);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 0.2em) 100%, 0 100%);
 }
 
-/* ---- the sequence list: shape, number, title, state in words ----------------------------------------- */
+/* ---- the sequence list: each row is a key with a state, a title and an arrow ---------------------------- */
 .path {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 2px;
+  gap: 6px;
 }
 .path li {
   position: relative;
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
+  grid-template-columns: 24px minmax(0, 1fr) auto 34px;
   align-items: center;
   gap: var(--s-3);
-  min-height: var(--tap);
-  padding-inline: var(--s-3);
-  transition: background var(--dur-fast) var(--ease);
+  min-height: 56px;
+  padding-left: var(--s-4);
+  background: var(--navy-3);
+  border-left: 4px solid var(--line);
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    translate var(--dur-fast) var(--ease-snap);
+}
+/* The arrow at the end of a row: the row is a button, and this says so. */
+.path li::after {
+  content: '';
+  align-self: stretch;
+  width: 34px;
+  background:
+    var(--chev-paper) center / 14px 14px no-repeat,
+    var(--navy-4);
+}
+.path li:hover::after {
+  background-color: var(--red);
 }
 .path li:hover {
-  background: var(--paper-2);
+  background: var(--navy-4);
+  border-left-color: var(--m);
+  translate: 3px 0;
+}
+.path li:active {
+  translate: 6px 0;
 }
 .path li[data-current] {
-  background: var(--m-hi);
-  box-shadow: inset 6px 0 0 var(--ink);
+  background: var(--paper);
+  border-left-color: var(--red);
+  --text: var(--ink);
+  --text-2: var(--ink-2);
+  --text-3: var(--ink-3);
+  --m-text: var(--m-ink);
+  color: var(--ink);
 }
 .path-step {
   margin-top: 0;
-}
-.path-step:first-of-type {
-  margin-top: var(--s-2);
 }
 .path-link {
   display: grid;
@@ -70,11 +94,21 @@
   text-decoration: none;
   font-weight: 700;
 }
-.path-link:hover .path-title {
-  text-decoration: underline;
-  text-decoration-color: var(--red);
-  text-decoration-thickness: 3px;
-  text-underline-offset: 0.2em;
+/* The whole row is the link. */
+.path-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.path-link:focus-visible {
+  outline: none;
+}
+.path li:has(.path-link:focus-visible) {
+  outline: var(--focus-ring);
+  outline-offset: 3px;
+}
+.path li[data-current]:has(.path-link:focus-visible) {
+  outline: 3px solid #ffffff;
 }
 .path-n {
   font-family: var(--font-hud);
@@ -83,8 +117,11 @@
   color: var(--m-text);
 }
 .path-meta {
-  font-family: var(--font-type);
-  font-size: 0.8125rem;
+  font-family: var(--font-hud);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--text-3);
   text-align: right;
 }
@@ -93,51 +130,71 @@
 }
 .path .mn-shape,
 .path .mn-fill {
-  filter: none;
   stroke-width: 2.6;
 }
+.path li[data-current] .mn-shape {
+  stroke: var(--ink);
+}
+.path li[data-current] .mn-node[data-state='none'] .mn-shape {
+  stroke: var(--ink-3);
+}
 
-/* ---- catalog: three posters ---------------------------------------------------------------------- */
+/* ---- catalog: three screens ------------------------------------------------------------------------------ */
+.catalog {
+  padding-inline: 0;
+}
+.catalog > .page-head {
+  padding-inline: var(--gutter);
+}
 .cat-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(var(--s-5), 3vw, var(--s-7));
-  align-items: start;
+  gap: 6px;
+  align-items: stretch;
 }
 .cat-path {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto 1fr auto;
   gap: var(--s-4);
   align-content: start;
-  padding: var(--s-5);
-  background: var(--parch);
-  --fill: var(--parch);
-  --text: var(--ink);
-  --text-2: #1f2c3a;
-  --text-3: #33414f;
+  padding: 0 0 var(--s-5);
+  background: var(--navy-2);
+  border: 0;
+}
+.cat-path::before,
+.cat-path::after {
+  display: none;
 }
 .cat-path:hover,
 .cat-path:focus-within {
-  translate: -3px -3px;
+  translate: 0;
 }
-.cat-path .realm-window {
+.cat-art {
   position: relative;
-  overflow: hidden;
-  border: 3px solid var(--ink);
+  height: clamp(13rem, 20vw, 19rem);
+  overflow: clip;
+  border-bottom: 5px solid var(--m);
 }
-.cat-path .realm-art {
+.cat-art .key-art {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  transition: transform 600ms var(--ease);
+}
+.cat-path:hover .cat-art .key-art {
+  transform: scale(1.05);
+}
+.cat-path > :not(.cat-art) {
+  margin-inline: var(--s-5);
 }
 .cat-head {
   display: grid;
   gap: var(--s-2);
-  text-align: center;
 }
 .cat-title {
-  font-size: clamp(3rem, 4.6vw, 4.5rem);
-  line-height: 0.9;
+  font-size: clamp(3rem, 4.4vw, 5rem);
+  line-height: 0.88;
 }
 .cat-link {
   color: var(--text);
@@ -145,7 +202,7 @@
 }
 .cat-link:hover {
   text-decoration: underline;
-  text-decoration-color: var(--red);
+  text-decoration-color: var(--m);
   text-decoration-thickness: 4px;
 }
 .cat-link::after {
@@ -162,31 +219,26 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--s-3) var(--s-4);
-  padding-top: var(--s-3);
-  border-top: 3px solid var(--ink);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line-soft);
 }
-.cat-foot .link-arrow {
+.cat-foot .btn {
   margin-left: auto;
   position: relative;
   z-index: 1;
 }
-/* The path list's own links must stay clickable above the card's stretched title link. */
+/* The path list's own links stay clickable above the card's stretched title link. */
 .cat-path .path,
 .cat-path .path-link {
   position: relative;
   z-index: 1;
 }
-.cat-path .path li:hover {
-  background: var(--parch-2);
-}
-.cat-path .path li[data-current] {
-  background: var(--parch-2);
-}
 @media (max-width: 1100px) {
   .cat-grid {
     grid-template-columns: minmax(0, 1fr);
-    row-gap: var(--s-8);
-    max-width: 640px;
-    margin-inline: auto;
+    gap: var(--s-5);
+  }
+  .cat-art {
+    height: clamp(12rem, 34vw, 18rem);
   }
 }

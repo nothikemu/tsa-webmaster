@@ -113,10 +113,12 @@ const xpOf = async (page) => {
   if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
   // The counter glides to its value on a spring; wait until two reads agree.
   let last = -1;
-  for (let i = 0; i < 40; i++) {
+  let same = 0;
+  for (let i = 0; i < 60; i++) {
     const now = Number((await page.locator('.hub-xp').innerText()).replace(/[^0-9]/g, ''));
-    if (now === last) break;
+    same = now === last ? same + 1 : 0;
     last = now;
+    if (same >= 3) break;
     await page.waitForTimeout(350);
   }
   await toggle.click();

@@ -1,4 +1,4 @@
-/* Base: the paper, type, focus, selection and the staged load. */
+/* Base: the screen, type, focus, selection and the staged load. */
 html {
   background: var(--bg);
   color: var(--text);
@@ -11,14 +11,16 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scroll-behavior: auto;
-  scrollbar-color: var(--ink) var(--paper-2);
+  scrollbar-color: var(--navy-4) var(--navy-0);
   scrollbar-width: thin;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: transparent;
+  background:
+    radial-gradient(90rem 50rem at 78% -8%, rgb(37 70 98 / 0.55), transparent 62%),
+    radial-gradient(70rem 40rem at 0% 100%, rgb(60 30 40 / 0.35), transparent 60%), var(--bg);
   color: var(--text);
   font-size: var(--fs-body);
   font-weight: 500;
@@ -27,16 +29,17 @@ body {
   overflow-x: clip;
 }
 
-/* The paper has a grain: a few percent of fine noise over the whole page, fixed, so it never scrolls. */
+/* A very fine grid under everything, like the lines of a blueprint. It is fixed, so it never scrolls. */
 html::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.5;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .18 0 0 0 .14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
+  background-image:
+    linear-gradient(rgb(236 232 225 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(236 232 225 / 0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
 }
 
 ::selection {
@@ -49,14 +52,14 @@ html::before {
   height: 12px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--paper-2);
-  border-left: 2px solid var(--ink);
+  background: var(--navy-0);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--ink);
+  background: var(--navy-4);
+  border: 2px solid var(--navy-0);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--red-lo);
+  background: var(--line);
 }
 
 h1,
@@ -72,19 +75,20 @@ figure {
   margin: 0;
 }
 
-/* Big titles are blackletter. Small headings are tall condensed capitals, like a HUD. */
+/* Headlines are tall condensed capitals, set tight. Small headings are the same face, smaller and tracked out. */
 h1,
 h2 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: var(--track-display);
   line-height: var(--lh-tight);
+  text-transform: uppercase;
   text-wrap: balance;
 }
 h3,
 h4 {
   font-family: var(--font-hud);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: var(--track-hud);
   line-height: 1;
   text-transform: uppercase;
@@ -97,15 +101,16 @@ dd {
   text-wrap: pretty;
 }
 
+/* A link is underlined, so it never has to be guessed. The underline thickens on hover. */
 a {
   color: inherit;
-  text-decoration-color: var(--line);
+  text-decoration-color: currentColor;
   text-decoration-thickness: 2px;
-  text-underline-offset: 0.2em;
-  transition: text-decoration-color var(--dur) var(--ease);
+  text-underline-offset: 0.22em;
+  transition: text-decoration-thickness var(--dur-fast) var(--ease);
 }
 a:hover {
-  text-decoration-color: var(--red);
+  text-decoration-thickness: 4px;
 }
 .prose a,
 .doc-list a,
@@ -159,33 +164,35 @@ button {
 .display {
   font-family: var(--font-display);
   font-size: var(--t-display);
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: var(--track-display);
-  line-height: 0.92;
+  line-height: 0.86;
+  text-transform: uppercase;
   color: var(--text);
 }
 
 .h2 {
   font-family: var(--font-display);
   font-size: var(--t-h2);
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: var(--track-display);
-  line-height: 0.95;
+  line-height: 0.9;
+  text-transform: uppercase;
 }
 
 .lead {
   font-size: var(--t-lead);
   color: var(--text-2);
-  max-width: 44ch;
+  max-width: 46ch;
   font-weight: 500;
   line-height: 1.5;
 }
-/* A label: tall condensed capitals, tracked out. */
+/* A label: small tracked capitals. */
 .label {
   font-family: var(--font-hud);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-3);
   font-variant-numeric: lining-nums tabular-nums;
@@ -194,7 +201,7 @@ button {
   font-weight: 800;
   color: var(--text);
 }
-/* One phrase per title is struck through with a red brush stroke behind it. */
+/* One phrase per headline sits on a slanted red slab, like a highlighted name plate. */
 .serif,
 .accent-word {
   font-style: normal;
@@ -202,32 +209,18 @@ button {
 .accent-word {
   position: relative;
   isolation: isolate;
-  padding-inline: 0.1em;
-  margin-inline: -0.1em;
+  display: inline-block;
+  padding-inline: 0.18em;
+  margin-inline: -0.04em;
+  color: var(--ink);
 }
 .accent-word::before {
   content: '';
   position: absolute;
   z-index: -1;
-  left: 0;
-  right: 0;
-  top: 52%;
-  height: 34%;
+  inset: 0.06em 0 0.02em;
   background: var(--red);
-  clip-path: polygon(
-    0 18%,
-    4% 0,
-    30% 12%,
-    52% 2%,
-    78% 14%,
-    97% 0,
-    100% 40%,
-    96% 100%,
-    70% 84%,
-    44% 100%,
-    20% 88%,
-    2% 100%
-  );
+  transform: skewX(-7deg);
 }
 
 .sub {
@@ -238,9 +231,11 @@ button {
   margin-bottom: var(--s-4);
 }
 
+/* The page is as wide as the window; only a gutter keeps text off the edge. */
 .wrap {
-  width: min(100% - 2 * var(--gutter), var(--max));
-  margin-inline: auto;
+  width: 100%;
+  padding-inline: var(--gutter);
+  margin-inline: 0;
 }
 
 /* Skip link: first tab stop, visible on focus. */
@@ -250,9 +245,9 @@ button {
   top: -80px;
   z-index: 2000;
   padding: var(--s-3) var(--s-5);
-  background: var(--red);
+  background: var(--paper);
   color: var(--ink);
-  border: var(--stroke) solid var(--ink);
+  border: 3px solid var(--red);
   font-family: var(--font-hud);
   font-size: 1.125rem;
   font-weight: 800;
@@ -277,9 +272,9 @@ h1:focus {
 }
 
 /* ---- staged load ---------------------------------------------------------------------------------------
- * Before the app is ready the page shows an ink square turning a quarter at a time, like a cel flipping.
- * The app then fades in. If it is not ready after 1.4 s (a slow device or network) the pre-rendered
- * readable page is shown instead, so there is never a permanent blank screen. */
+ * Before the app is ready the page shows a red square turning a quarter at a time. The app then fades in.
+ * If it is not ready after 1.4 s (a slow device or network) the pre-rendered readable page is shown instead,
+ * so there is never a permanent blank screen. */
 #root {
   transition: opacity var(--dur-slow) var(--ease);
 }
@@ -302,8 +297,8 @@ body::before {
   width: 34px;
   height: 34px;
   margin: -17px 0 0 -17px;
-  background: linear-gradient(135deg, var(--ink) 0 50%, var(--red) 50%);
-  border: 3px solid var(--ink);
+  background: var(--red);
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 100%, 0 100%);
   opacity: 0;
   pointer-events: none;
   z-index: 1000;
@@ -340,7 +335,7 @@ body::before {
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: var(--stroke) solid var(--ink);
+  border-bottom: var(--stroke) solid var(--line);
   padding-bottom: 1rem;
   margin-bottom: 3rem;
 }
@@ -395,7 +390,7 @@ body::before {
 }
 .static-page details {
   margin: 0.5rem 0 1rem;
-  border: var(--stroke) solid var(--ink);
+  border: var(--stroke) solid var(--line);
   padding: 0.7rem 1rem;
 }
 .static-page summary {
@@ -404,7 +399,7 @@ body::before {
 }
 .static-page footer {
   margin-top: 4rem;
-  border-top: var(--stroke) solid var(--ink);
+  border-top: var(--stroke) solid var(--line);
   padding-top: 1.5rem;
 }
 .static-page .wordmark {

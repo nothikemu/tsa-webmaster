@@ -21,7 +21,7 @@ import { BADGE_QUIZ_MIN } from '../core/gamification';
 import { Link } from '../router';
 import { Badge } from '../ui/Badges';
 import { Mark, lessonNodeState, type MarkState } from '../ui/CurriculumMap';
-import { RealmArt } from '../ui/RealmArt';
+import { KeyArt } from '../ui/KeyArt';
 import { Track } from '../ui/ModuleArt';
 import { PathList } from '../ui/PathList';
 import { useData } from '../ui/hooks';
@@ -358,20 +358,17 @@ export function ModulePage({ id, view }: { id: ModuleId; view: ModuleView }): Re
 
   return (
     <div className="module-page" data-module={id} data-view={view.kind}>
-      <header className="wrap mp-head" data-surface="ink">
-        <div className="mp-head-inner">
+      <header className="mp-head" data-surface="ink">
+        <div className="mp-head-art">
+          <KeyArt id={id} w={1600} h={700} shift={0.22} scale={0.92} />
+        </div>
+        <div className="mp-head-shade" aria-hidden="true" />
+        <div className="wrap mp-head-inner">
           <Crumbs module={module} view={view} />
           <div className="mp-title">
-            <div>
-              {view.kind === 'overview' && <p className="label">{module.themeSection}</p>}
-              <h1 className="display">{heading}</h1>
-              {view.kind === 'overview' && <p className="mod-tagline">{module.tagline}</p>}
-            </div>
-            {view.kind === 'overview' && (
-              <div className="mp-head-art" aria-hidden="true">
-                <RealmArt id={id} />
-              </div>
-            )}
+            {view.kind === 'overview' && <p className="label">{module.themeSection}</p>}
+            <h1 className="display">{heading}</h1>
+            {view.kind === 'overview' && <p className="mod-tagline">{module.tagline}</p>}
           </div>
           <Stepper module={module} view={view} />
         </div>

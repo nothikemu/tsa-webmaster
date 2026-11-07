@@ -49,9 +49,6 @@
   margin: 0;
   min-width: 0;
 }
-.check.glass {
-  border: var(--stroke) solid var(--line);
-}
 .check legend {
   float: left;
   width: 100%;
@@ -72,36 +69,70 @@
   display: grid;
   gap: 0.65rem;
 }
-/* An answer: a ruled box, a square to mark, a red bar that grows on the left when you reach for it. */
+/* An answer: a key. It sits up on its edge, lifts when reached, sinks when chosen. A bar on its left says which way it leans. */
 .option {
+  --face: var(--navy-3);
+  --edge-c: #05090d;
+  --on: var(--text);
+  --bar: var(--line);
   position: relative;
+  isolation: isolate;
   display: flex;
   align-items: flex-start;
   gap: var(--s-3);
+  min-height: 56px;
   padding: var(--s-3) var(--s-5) var(--s-3) var(--s-3);
-  min-height: var(--tap);
-  background: var(--white);
-  border: 2.5px solid var(--ink);
-  box-shadow: inset 0 0 0 0 var(--red);
+  background: none;
+  color: var(--on);
   cursor: pointer;
   text-align: left;
   font-weight: 600;
-  transition: box-shadow var(--dur-fast) var(--ease-snap);
+  filter: drop-shadow(0 4px 0 var(--edge-c));
+  transition:
+    translate var(--dur-fast) var(--ease-snap),
+    filter var(--dur-fast) var(--ease-snap);
+}
+.option::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, var(--bar) 0 6px, transparent 6px), var(--face);
+  clip-path: polygon(
+    10px 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    0 100%,
+    0 10px
+  );
 }
 .option:hover {
-  box-shadow: inset 8px 0 0 0 var(--red);
+  --bar: var(--m);
+  translate: 0 -2px;
+  filter: drop-shadow(0 6px 0 var(--edge-c));
+}
+.option:active {
+  translate: 0 4px;
+  filter: drop-shadow(0 0 0 var(--edge-c));
+  transition-duration: 40ms;
+}
+.option:has(input:focus-visible) {
+  outline: var(--focus-ring);
+  outline-offset: 6px;
 }
 .option input {
   appearance: none;
   flex: none;
   width: var(--tap);
   height: var(--tap);
-  margin: -9px -4px -9px -4px;
+  margin: -9px -4px -9px 2px;
   padding: 0;
   border: 0;
   background: none;
   display: grid;
   place-content: center;
+  outline: none;
 }
 /* The marker is drawn on the input's pseudo-elements, so the input itself is a full 44px target. */
 .option input::before {
@@ -109,8 +140,8 @@
   grid-area: 1 / 1;
   width: 22px;
   height: 22px;
-  border: 2.5px solid var(--ink);
-  background: var(--white);
+  border: 2.5px solid currentColor;
+  background: transparent;
 }
 .option input::after {
   content: '';
@@ -118,8 +149,8 @@
   width: 22px;
   height: 22px;
   background:
-    linear-gradient(45deg, transparent 44%, var(--ink) 44% 56%, transparent 56%),
-    linear-gradient(-45deg, transparent 44%, var(--ink) 44% 56%, transparent 56%);
+    linear-gradient(45deg, transparent 44%, currentColor 44% 56%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, currentColor 44% 56%, transparent 56%);
   transform: scale(0);
   transition: transform var(--dur-fast) var(--ease-snap);
 }
@@ -127,27 +158,55 @@
   transform: scale(1);
 }
 .option[data-chosen='true'] {
-  background: var(--paper-2);
-  box-shadow: inset 8px 0 0 0 var(--ink);
+  --face: var(--paper);
+  --on: var(--ink);
+  --bar: var(--red);
+  --edge-c: var(--red);
 }
-/* Marked answers: the right one is a solid field of the realm color; the wrong choice is struck in red with diagonal
-   hatching. Neither depends on color: the hatching, the marker and the written feedback say it too. */
+/* Marked answers. The right one is a solid field in the hue of the module; the wrong choice is hatched red.
+   Neither depends on colour: the hatching, the marker and the written feedback say it too. */
 .option[data-right='true'] {
-  background: var(--m);
-  box-shadow: inset 8px 0 0 0 var(--ink);
-}
-.option[data-right='true'] input::before {
-  background: var(--ink);
-}
-.option[data-right='true'] input::after {
-  background:
-    linear-gradient(45deg, transparent 44%, var(--m) 44% 56%, transparent 56%),
-    linear-gradient(-45deg, transparent 44%, var(--m) 44% 56%, transparent 56%);
-  transform: scale(1);
+  --face: var(--m);
+  --on: var(--ink);
+  --bar: var(--ink);
+  --edge-c: var(--m-lo);
 }
 .option[data-wrong='true'] {
-  background: repeating-linear-gradient(135deg, rgb(196 23 43 / 0.3) 0 3px, transparent 3px 8px), var(--red-hi);
-  box-shadow: inset 8px 0 0 0 var(--red-lo);
+  --face: #7d1823;
+  --on: #ffffff;
+  --bar: var(--red);
+  --edge-c: #3b0a10;
+}
+.option[data-wrong='true']::before {
+  background:
+    linear-gradient(90deg, var(--bar) 0 6px, transparent 6px),
+    repeating-linear-gradient(135deg, rgb(255 255 255 / 0.14) 0 3px, transparent 3px 9px),
+    var(--face);
+}
+/* On a light plate (the check inside a lesson) the keys stay dark, so they never disappear into the ground. */
+[data-surface='paper'] .option {
+  --face: var(--navy-4);
+  --on: var(--paper);
+  --bar: var(--m);
+  --edge-c: #05090d;
+}
+[data-surface='paper'] .option[data-chosen='true'] {
+  --face: var(--navy-0);
+  --on: var(--paper);
+  --bar: var(--red);
+  --edge-c: var(--red);
+}
+[data-surface='paper'] .option[data-right='true'] {
+  --face: var(--m);
+  --on: var(--ink);
+  --bar: var(--ink);
+  --edge-c: var(--m-lo);
+}
+[data-surface='paper'] .option[data-wrong='true'] {
+  --face: #7d1823;
+  --on: #ffffff;
+  --bar: var(--red);
+  --edge-c: #3b0a10;
 }
 .option-button {
   font-weight: 600;
@@ -170,7 +229,7 @@
   color: var(--text);
 }
 .feedback[data-result='wrong'] strong {
-  color: var(--red-lo);
+  color: var(--red-hi);
 }
 .feedback[data-result='right'] strong {
   color: var(--m-text);
@@ -232,8 +291,8 @@
 }
 
 /* ---- the verdict: a result screen ------------------------------------------------------------------
- * A page from the ledger with a rubber stamp on it, and a tally of the score. The stamp says CLEARED in red, or
- * NOT YET in ink; the word, not the color, carries the state. The stamp slams down once. */
+ * A result card with a stamp. CLEARED is a plate in the hue of the module; NOT YET is a dark card with a red stamp.
+ * The word, not the colour, carries the state. The stamp lands once. */
 .verdict {
   position: relative;
   display: grid;
@@ -242,27 +301,41 @@
   padding: var(--s-6);
   padding-top: calc(var(--s-6) + var(--s-3));
 }
+.verdict[data-state='cleared'] {
+  background: var(--m);
+  color: var(--ink);
+  --text: var(--ink);
+  --text-2: #1d2a38;
+  --text-3: #2a3948;
+  --line: var(--ink);
+  --focus-ring: 3px solid #0f1923;
+  border-color: var(--m);
+}
+.verdict[data-state='cleared']::before,
+.verdict[data-state='cleared']::after {
+  border-color: var(--ink);
+}
 .verdict:focus-visible {
   outline-offset: 6px;
 }
 .verdict-stamp {
   justify-self: start;
   padding: 0.3rem 1.4rem 0.2rem;
-  border: 5px solid var(--red-lo);
-  color: var(--red-lo);
+  border: 5px solid currentColor;
   font-family: var(--font-hud);
   font-size: clamp(3rem, 8vw, 5.5rem);
   font-weight: 900;
   letter-spacing: 0.06em;
   line-height: 0.9;
   text-transform: uppercase;
-  rotate: -4deg;
-  filter: url(#ink-rough);
+  rotate: -3deg;
   animation: stamp 420ms var(--ease-snap) both;
 }
-.verdict[data-state='notyet'] .verdict-stamp {
-  border-color: var(--ink);
+.verdict[data-state='cleared'] .verdict-stamp {
   color: var(--ink);
+}
+.verdict[data-state='notyet'] .verdict-stamp {
+  color: var(--red-hi);
 }
 .verdict-sheet {
   display: grid;
@@ -285,7 +358,7 @@
   display: block;
   width: 5px;
   height: 40px;
-  background: var(--ink);
+  background: currentColor;
   transform: rotate(var(--r, 0deg));
 }
 .tally-group i[data-slash='true'] {
@@ -311,6 +384,9 @@
   font-weight: 600;
   max-width: 42ch;
 }
+.verdict .muted {
+  color: var(--text-3);
+}
 @keyframes stamp {
   from {
     opacity: 0;
@@ -333,9 +409,9 @@
   aspect-ratio: 4 / 3;
   background: #0b131b;
   overflow: hidden;
-  border: 2px solid var(--hud-text);
+  border: 1px solid var(--line);
 }
-/* Red brackets in the four corners, like a targeting frame. */
+/* Brackets in the hue of the module, in the four corners, like a targeting frame. */
 .stage::after {
   content: '';
   position: absolute;
@@ -343,14 +419,14 @@
   z-index: 3;
   pointer-events: none;
   background:
-    linear-gradient(var(--red), var(--red)) 0 0 / 26px 3px no-repeat,
-    linear-gradient(var(--red), var(--red)) 0 0 / 3px 26px no-repeat,
-    linear-gradient(var(--red), var(--red)) 100% 0 / 26px 3px no-repeat,
-    linear-gradient(var(--red), var(--red)) 100% 0 / 3px 26px no-repeat,
-    linear-gradient(var(--red), var(--red)) 0 100% / 26px 3px no-repeat,
-    linear-gradient(var(--red), var(--red)) 0 100% / 3px 26px no-repeat,
-    linear-gradient(var(--red), var(--red)) 100% 100% / 26px 3px no-repeat,
-    linear-gradient(var(--red), var(--red)) 100% 100% / 3px 26px no-repeat;
+    linear-gradient(var(--m), var(--m)) 0 0 / 26px 3px no-repeat,
+    linear-gradient(var(--m), var(--m)) 0 0 / 3px 26px no-repeat,
+    linear-gradient(var(--m), var(--m)) 100% 0 / 26px 3px no-repeat,
+    linear-gradient(var(--m), var(--m)) 100% 0 / 3px 26px no-repeat,
+    linear-gradient(var(--m), var(--m)) 0 100% / 26px 3px no-repeat,
+    linear-gradient(var(--m), var(--m)) 0 100% / 3px 26px no-repeat,
+    linear-gradient(var(--m), var(--m)) 100% 100% / 26px 3px no-repeat,
+    linear-gradient(var(--m), var(--m)) 100% 100% / 3px 26px no-repeat;
 }
 .stage-wire {
   aspect-ratio: 1 / 1;
@@ -422,36 +498,10 @@
 .segmented {
   display: inline-flex;
   flex-wrap: wrap;
-  padding: 0;
-  gap: 0;
-  border: 2px solid var(--line);
-  background: transparent;
-}
-.segmented-item {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--s-2);
-  min-width: 5.5rem;
-  min-height: var(--tap);
-  padding: 0.1rem var(--s-5) 0;
+  gap: var(--s-3);
+  padding: 0 0 6px;
   border: 0;
   background: transparent;
-  color: var(--text);
-  font-family: var(--font-hud);
-  font-weight: 700;
-  font-size: 1.1875rem;
-  letter-spacing: var(--track-hud);
-  text-transform: uppercase;
-  transition: background-color var(--dur-fast) var(--ease);
-}
-.segmented-item:hover:not([aria-checked='true']) {
-  background: var(--fill-3);
-}
-.segmented-item[aria-checked='true'] {
-  background: var(--red);
-  color: var(--ink);
-  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
 }
 .readouts {
   display: flex;
@@ -509,7 +559,7 @@
   overflow: hidden;
   perspective: 1500px;
   background: var(--navy-2);
-  border: 2px solid var(--hud-text);
+  border: 1px solid var(--line);
 }
 .grid-overlay {
   position: absolute;
@@ -578,51 +628,59 @@
   font-size: 1.5rem;
   font-weight: 800;
 }
-/* A fader: a thin ruled track with a red fill, and a tall block for a knob. */
+/* A fader: a ruled track filled in the hue of the module, and a light block for a knob that can be grabbed. */
 input[type='range'] {
   appearance: none;
   -webkit-appearance: none;
   width: 100%;
   height: var(--tap);
   background: transparent;
-  cursor: pointer;
+  cursor: grab;
   --pct: 50%;
 }
+input[type='range']:active {
+  cursor: grabbing;
+}
 input[type='range']::-webkit-slider-runnable-track {
-  height: 8px;
-  background: linear-gradient(90deg, var(--red) var(--pct), var(--fill-3) var(--pct));
-  border: 2px solid var(--line);
+  height: 10px;
+  background: linear-gradient(90deg, var(--m) var(--pct), var(--navy-4) var(--pct));
+  border: 1px solid var(--line);
 }
 input[type='range']::-moz-range-track {
-  height: 8px;
-  background: var(--fill-3);
-  border: 2px solid var(--line);
+  height: 10px;
+  background: var(--navy-4);
+  border: 1px solid var(--line);
 }
 input[type='range']::-moz-range-progress {
-  height: 8px;
-  background: var(--red);
+  height: 10px;
+  background: var(--m);
 }
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   box-sizing: border-box;
-  width: 16px;
-  height: 32px;
-  margin-top: -13px;
-  background: linear-gradient(var(--red) 0 9px, var(--hud-text) 9px);
-  border: 2px solid var(--navy);
-  outline: 2px solid var(--hud-text);
+  width: 22px;
+  height: 36px;
+  margin-top: -14px;
+  background: linear-gradient(var(--m) 0 10px, var(--paper) 10px);
+  border: 2px solid var(--navy-0);
+  box-shadow: 0 4px 0 #05090d;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
   transition: transform var(--dur-fast) var(--ease-snap);
 }
 input[type='range']::-moz-range-thumb {
   box-sizing: border-box;
-  width: 16px;
-  height: 32px;
+  width: 22px;
+  height: 36px;
   border-radius: 0;
-  background: linear-gradient(var(--red) 0 9px, var(--hud-text) 9px);
-  border: 2px solid var(--navy);
+  background: linear-gradient(var(--m) 0 10px, var(--paper) 10px);
+  border: 2px solid var(--navy-0);
 }
 input[type='range']:hover::-webkit-slider-thumb {
-  transform: scaleY(1.12);
+  transform: translateY(-2px);
+}
+input[type='range']:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
 }
 .preset-row,
 .marker-row {
@@ -631,37 +689,10 @@ input[type='range']:hover::-webkit-slider-thumb {
   gap: var(--s-3);
   align-items: center;
 }
-.chip {
-  min-height: var(--tap);
-  padding: 0.1rem var(--s-5) 0;
-  border: 2px solid var(--line);
-  background: transparent;
-  color: var(--text);
-  font-family: var(--font-hud);
-  font-weight: 700;
-  font-size: 1.1875rem;
-  letter-spacing: var(--track-hud);
-  text-transform: uppercase;
-  transition:
-    background-color var(--dur-fast) var(--ease),
-    color var(--dur-fast) var(--ease),
-    translate var(--dur-fast) var(--ease-snap);
-}
-.chip:hover {
-  background: var(--fill-3);
-}
-.chip[aria-pressed='true'] {
-  background: var(--red);
-  color: var(--ink);
-  border-color: var(--red);
-}
-.chip:active {
-  translate: 0 2px;
-}
 .prompt-template {
   display: grid;
   gap: 0.5rem;
-  border-top: 2px dashed var(--line-soft);
+  border-top: 1px solid var(--line-soft);
   padding-top: 0.9rem;
 }
 .prompt-part {
@@ -713,7 +744,7 @@ input[type='range']:hover::-webkit-slider-thumb {
   gap: 0.6rem;
 }
 .marker[data-seen='true']:not([aria-pressed='true']) {
-  border-color: var(--red);
+  --edge-c: var(--m);
 }
 .explain:empty {
   display: block;
@@ -742,6 +773,7 @@ input[type='range']:hover::-webkit-slider-thumb {
   gap: var(--s-3);
 }
 .hub-toggle {
+  --edge-c: #05090d;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -749,13 +781,14 @@ input[type='range']:hover::-webkit-slider-thumb {
   min-width: 66px;
   min-height: 66px;
   padding: var(--s-2);
-  border: 0;
-  background: var(--navy);
-  color: var(--hud-text);
-  --line: var(--hud-text);
-  box-shadow: inset 0 0 0 2px var(--hud-text);
-  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-  transition: translate var(--dur-fast) var(--ease-snap);
+  border: 2px solid var(--line);
+  background: var(--navy-3);
+  color: var(--text);
+  cursor: pointer;
+  filter: drop-shadow(0 5px 0 var(--edge-c));
+  transition:
+    translate var(--dur-fast) var(--ease-snap),
+    filter var(--dur-fast) var(--ease-snap);
 }
 .hub-toggle::before,
 .hub-toggle::after {
@@ -763,6 +796,12 @@ input[type='range']:hover::-webkit-slider-thumb {
 }
 .hub-toggle:hover {
   translate: 0 -3px;
+  filter: drop-shadow(0 8px 0 var(--edge-c));
+  background: var(--navy-4);
+}
+.hub-toggle:active {
+  translate: 0 5px;
+  filter: drop-shadow(0 0 0 var(--edge-c));
 }
 .hub-toggle-text {
   display: none;
@@ -787,7 +826,6 @@ input[type='range']:hover::-webkit-slider-thumb {
   display: grid;
   gap: var(--s-4);
   animation: hub-in 260ms var(--ease-snap) both;
-  --cut-bg: var(--paper);
 }
 @keyframes hub-in {
   from {
@@ -1021,9 +1059,9 @@ input[type='range']:hover::-webkit-slider-thumb {
   color: var(--text);
 }
 .status-tag[data-status='earned'] {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
+  background: var(--m);
+  border-color: var(--m);
+  color: var(--ink);
 }
 .status-tag[data-status='progress'] {
   background: var(--m-hi);
@@ -1048,15 +1086,23 @@ input[type='range']:hover::-webkit-slider-thumb {
   position: relative;
   display: block;
   height: 18px;
-  background: repeating-linear-gradient(90deg, var(--paper-2) 0 calc(10% - 4px), transparent calc(10% - 4px) 10%);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--fill-3) 0 calc(10% - 4px),
+    transparent calc(10% - 4px) 10%
+  );
   overflow: hidden;
-  border-bottom: 2px solid var(--line);
+  border-bottom: 2px solid var(--line-soft);
 }
 .bar::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 4px), var(--page) calc(10% - 4px) 10%);
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 calc(10% - 4px),
+    var(--page) calc(10% - 4px) 10%
+  );
   pointer-events: none;
 }
 .bar span {
@@ -1084,7 +1130,7 @@ input[type='range']:hover::-webkit-slider-thumb {
 }
 .calendar li {
   aspect-ratio: 1;
-  background: var(--paper-2);
+  background: var(--fill-3);
 }
 .calendar li[data-level='x'] {
   background: transparent;
@@ -1109,7 +1155,7 @@ input[type='range']:hover::-webkit-slider-thumb {
 .credits-table td {
   padding: var(--s-3);
   text-align: left;
-  border-top: 2px solid var(--line-soft);
+  border-top: 1px solid var(--line-soft);
   font-weight: 500;
 }
 .heatmap th[scope='col'],
@@ -1146,7 +1192,7 @@ input[type='range']:hover::-webkit-slider-thumb {
   gap: var(--s-3);
   align-content: start;
   padding-top: var(--s-4);
-  border-top: 3px solid var(--line);
+  border-top: 2px solid var(--line);
 }
 .data-group h3 {
   font-size: 1.75rem;
@@ -1192,19 +1238,19 @@ input[type='range']:hover::-webkit-slider-thumb {
 .field input {
   min-height: 52px;
   padding: 0 var(--s-5);
-  background: var(--white);
-  border: 2.5px solid var(--ink);
+  background: var(--fill-2);
+  border: 2px solid var(--line);
   color: var(--text);
 }
 .field input:focus-visible {
-  border-color: var(--red-lo);
+  border-color: var(--m);
 }
 .gl-item {
   display: grid;
   grid-template-columns: 14rem 1fr;
   gap: 1.5rem;
   padding: 1rem 0;
-  border-top: 2px dashed var(--line-soft);
+  border-top: 1px solid var(--line-soft);
 }
 .gl-item dt {
   font-family: var(--font-hud);
@@ -1271,7 +1317,7 @@ input[type='range']:hover::-webkit-slider-thumb {
     transform: none !important;
   }
   .pane-right {
-    border-top: 2px dashed var(--line-soft);
+    border-top: 1px solid var(--line-soft);
   }
   .prompt-part {
     grid-template-columns: minmax(0, 1fr);

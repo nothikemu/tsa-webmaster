@@ -31,8 +31,8 @@ void main() {
 
   float t = clamp((aRest.x + 2.4) / 4.8, 0.0, 1.0);
   // Sea-glass on the left layer, paper on the right; anything touched or knocked from rest turns red.
-  vec3 left = vec3(0.65, 0.86, 0.92);
-  vec3 right = vec3(0.93, 0.91, 0.88);
+  vec3 left = vec3(0.23, 0.66, 0.62);
+  vec3 right = vec3(0.78, 0.95, 0.92);
   vec3 hot = vec3(1.00, 0.27, 0.33);
   vColor = mix(mix(left, right, t), hot, clamp(infl + disp * 1.4, 0.0, 1.0));
   vAlpha = 0.30 + 0.35 * aSeed + infl * 0.45 + clamp(disp, 0.0, 0.5) * 0.4;

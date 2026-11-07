@@ -27,11 +27,11 @@ export function createSwarmTsl(seed: Float32Array, rest: Float32Array, initial: 
   const uMaxLen = uniform(maxLen);
   const uOpacity = uniform(0.55);
 
-  const left = vec3(0.65, 0.86, 0.92);
-  const right = vec3(0.93, 0.91, 0.88);
+  const left = vec3(0.23, 0.66, 0.62);
+  const right = vec3(0.78, 0.95, 0.92);
   const hot = vec3(1.0, 0.27, 0.33);
-  const linkLeft = vec3(0.52, 0.74, 0.82);
-  const linkRight = vec3(0.8, 0.78, 0.74);
+  const linkLeft = vec3(0.16, 0.5, 0.48);
+  const linkRight = vec3(0.55, 0.8, 0.77);
 
   // Points ------------------------------------------------------------------------------------
   const pos: any = instancedBufferAttribute(positions as unknown as BufferAttribute);

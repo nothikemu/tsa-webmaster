@@ -27,7 +27,7 @@
 | Vite (latest) | Vite 7.3.7 (8.3.5 exists) | Plugin set (`vite-plugin-wasm`, `vite-plugin-top-level-await`) not tested on Vite 8's Rolldown |
 | TSL sources encrypted | TSL materials obfuscated, GLSL/WGSL/SVG/strings encrypted | TSL is executable JavaScript, not a string; it can only be obfuscated |
 | `vite-plugin-top-level-await` | Used, with `@swc/core` pinned to 1.12.14 | 1.6.0 of the plugin crashes against `@swc/core` 1.16 ("missing field `type`") |
-| Post-processing | None | The look is flat ink and paper, so there is no bloom, aberration or grain on either renderer; the `postprocessing` library was removed |
+| Post-processing | None | The scenes are flat discs and wires on a dark stage, so there is no bloom, aberration or grain on either renderer; the `postprocessing` library was removed |
 
 ## Renderer and compute strategy
 

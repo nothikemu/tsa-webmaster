@@ -105,7 +105,7 @@ export const ABOUT: DocPageContent = {
     {
       heading: 'Design brief',
       paragraphs: [
-        "The site looks like a manga page with a tactical interface laid over it: off-white paper, navy-black ink, red used only for emphasis, flat angular panels, hatching instead of soft shadows, and gothic titles. Each module has its own color, and the pictures are built from the lesson content or from your saved progress: the tally marks on the pirate flag count the lessons you have opened and mastered, the islands on the sea chart follow the swarm's layers, and the eye has one ring per vulnerability you inspect. State is always shown by a shape or a word as well as by color. The pictures are drawn in code by a small ink engine, not by hand. The look was inspired by the VALORANT interface, One Piece and Death Note; no artwork, logo, character or typeface from any game or series is used.",
+        'The site looks like the front end of a competitive game, built for reading and for doing: one dark, full-width screen, thin lines and small capitals for the interface, and a single red for the call to action. Each module has its own hue (teal, violet or red) that grades its whole screen. Everything you can press is a filled shape with an edge under it, so you never have to hover to find out; links in running text are underlined. The pictures are drawn in code from the lesson content and from your saved progress: the lattice lights up as you move through Foundations, the faders stand where your applied presets put them, and each bracket on the lens is a vulnerability you have inspected. They are generated, not hand-drawn. The look was inspired by the VALORANT interface; no artwork, logo, character or typeface from any game is used.',
         'Every interactive scene has a text alternative and a keyboard path. Motion respects the reduced-motion setting. The site is a set of static files and runs from any web host.',
       ],
     },
@@ -180,16 +180,10 @@ export const CREDIT_LIBRARIES: readonly CreditEntry[] = [
   { name: 'Zustand', version: '5.0.16', license: 'MIT', use: 'Application store' },
   { name: 'Comlink', version: '4.4.2', license: 'Apache-2.0', use: 'Web Worker messaging' },
   {
-    name: 'Pirata One, Big Shoulders Display, Barlow',
+    name: 'Big Shoulders Display, Barlow',
     version: '5.3.0 (each, as @fontsource packages)',
     license: 'SIL Open Font License 1.1',
-    use: 'Typefaces: titles, labels and numerals, and reading text. Served from this site, Latin subset only',
-  },
-  {
-    name: 'Special Elite',
-    version: '5.3.0 (as a @fontsource package)',
-    license: 'Apache-2.0',
-    use: 'Typeface for captions and ledger text. Served from this site, Latin subset only',
+    use: 'Typefaces: headlines, labels and numerals, and reading text. Served from this site, Latin subset only',
   },
   {
     name: 'wasm-bindgen',

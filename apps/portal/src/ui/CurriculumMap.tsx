@@ -12,7 +12,6 @@ import { BADGE_QUIZ_MIN } from '../core/gamification';
 import { masteryRank, type Mastery, type PersistedState } from '../core/schema';
 import { Link } from '../router';
 import { useData } from './hooks';
-import { brush, poly, rng, type P } from './Ink';
 
 /**
  * The curriculum map: every lesson, knowledge check, challenge and badge as one drawn network,
@@ -226,86 +225,6 @@ function Shape({ node, r }: { node: MapNode; r: number }): ReactNode {
   );
 }
 
-/** The sea around the chains: ink waves in the gaps and a compass rose in a corner. Decoration only. */
-function MapDecor({ orientation }: { orientation: 'wide' | 'tall' }): ReactNode {
-  const wide = orientation === 'wide';
-  const r = rng(wide ? 31 : 37);
-  const lanes = wide
-    ? [
-        [12, 52],
-        [140, 172],
-        [276, 308],
-      ]
-    : [
-        [64, 86],
-        [210, 226],
-        [346, 362],
-      ];
-  const waves: ReactNode[] = [];
-  let n = 0;
-  for (const [y0, y1] of lanes) {
-    const count = wide ? 7 : 3;
-    for (let i = 0; i < count; i++) {
-      const x = (wide ? 150 : 24) + r() * (wide ? 760 : 300);
-      const y = y0! + r() * (y1! - y0!);
-      const w = 20 + r() * 16;
-      waves.push(
-        <path
-          key={n}
-          d={brush(
-            [
-              [x, y],
-              [x + w * 0.3, y - 5],
-              [x + w * 0.6, y],
-              [x + w, y - 5],
-            ],
-            { w: 2.2, seed: 200 + n, wobble: 0.3 },
-          )}
-          fill="#14627a"
-          opacity="0.85"
-        />,
-      );
-      n += 1;
-    }
-  }
-  const s = wide ? 26 : 0;
-  const pts: P[] = [];
-  for (let k = 0; k < 16; k++) {
-    const a = (k / 16) * Math.PI * 2 - Math.PI / 2;
-    const rr = k % 4 === 0 ? 1 : k % 2 === 0 ? 0.62 : 0.34;
-    pts.push([Math.cos(a) * rr * s, Math.sin(a) * rr * s]);
-  }
-  return (
-    <g aria-hidden="true" className="mn-decor" filter="url(#ink-rough)">
-      {waves}
-      {wide && (
-        <g transform="translate(906 40)">
-          <circle r={s * 0.8} fill="none" stroke="#0f1923" strokeWidth="1.8" />
-          <path
-            d={poly(pts, { seed: 4, rough: 0.5 })}
-            fill="#efe9dc"
-            stroke="#0f1923"
-            strokeWidth="1.8"
-            strokeLinejoin="round"
-          />
-          <path
-            d={poly(
-              [
-                [0, -s],
-                [s * 0.12, 0],
-                [0, 0],
-              ],
-              { seed: 5, rough: 0.2 },
-            )}
-            fill="#ff4655"
-          />
-          <circle r="2.4" fill="#0f1923" />
-        </g>
-      )}
-    </g>
-  );
-}
-
 function ChainView({
   chain,
   orientation,
@@ -372,7 +291,6 @@ export function CurriculumMap({ compact = false }: { compact?: boolean }): React
         aria-label={t('map.label')}
         focusable="false"
       >
-        <MapDecor orientation="wide" />
         {w.chains.map((c) => (
           <ChainView key={c.module.id} chain={c} orientation="wide" labels={!compact} />
         ))}
@@ -384,7 +302,6 @@ export function CurriculumMap({ compact = false }: { compact?: boolean }): React
         aria-label={t('map.label')}
         focusable="false"
       >
-        <MapDecor orientation="tall" />
         {v.chains.map((c) => (
           <ChainView key={c.module.id} chain={c} orientation="tall" labels={false} />
         ))}

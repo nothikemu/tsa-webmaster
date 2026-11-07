@@ -4,7 +4,7 @@ import { MODULES, moduleHref, type ModuleContent } from '../content';
 import { t } from '../core/assets';
 import { Link } from '../router';
 import { Track } from '../ui/ModuleArt';
-import { RealmArt } from '../ui/RealmArt';
+import { KeyArt } from '../ui/KeyArt';
 import { PathList } from '../ui/PathList';
 import { useData } from '../ui/hooks';
 
@@ -17,8 +17,8 @@ function Path({ m, slot }: { m: ModuleContent; slot: 'a' | 'b' | 'c' }): ReactNo
       data-reveal="up"
       aria-labelledby={`cat-${m.id}`}
     >
-      <div className="realm-window">
-        <RealmArt id={m.id} />
+      <div className="cat-art">
+        <KeyArt id={m.id} w={800} h={420} />
       </div>
       <header className="cat-head">
         <p className="label realm-name">{m.themeSection}</p>
@@ -34,7 +34,7 @@ function Path({ m, slot }: { m: ModuleContent; slot: 'a' | 'b' | 'c' }): ReactNo
       <footer className="cat-foot">
         <Track id={m.id} />
         <span className="num mod-percent">{t('home.percent', { n: d.progress })}</span>
-        <Link to={moduleHref(m.id)} className="link-arrow">
+        <Link to={moduleHref(m.id)} className="btn btn-primary btn-sm">
           {d.progress > 0 ? t('home.continue') : t('home.begin')}
         </Link>
       </footer>

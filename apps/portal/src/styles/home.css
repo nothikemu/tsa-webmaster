@@ -1,9 +1,12 @@
-/* ---- shared drawing vocabulary ------------------------------------------------------------------------ */
+/* ---- shared vocabulary ------------------------------------------------------------------------------- */
 .section-head {
   display: grid;
   gap: var(--s-4);
-  max-width: 46rem;
+  max-width: 62rem;
   margin-bottom: var(--s-7);
+}
+.section-head .h2 {
+  max-width: 26ch;
 }
 
 /* A track: one square for each lesson, marked by how well it is known. Words sit beside it. */
@@ -14,8 +17,8 @@
 }
 .track i {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border: 2px solid var(--line);
   background: transparent;
 }
@@ -23,19 +26,20 @@
   background: linear-gradient(var(--line), var(--line)) 50% 50% / 6px 6px no-repeat;
 }
 .track i[data-state='practiced'] {
-  background: linear-gradient(135deg, var(--line) 50%, transparent 50%);
+  background: linear-gradient(135deg, var(--m) 50%, transparent 50%);
+  border-color: var(--m);
 }
 .track i[data-state='mastered'] {
   background: var(--m);
+  border-color: var(--m);
 }
 
-/* ---- the curriculum map: a sea chart ----------------------------------------------------------------- */
+/* ---- the curriculum map ------------------------------------------------------------------------------- */
 .cmap {
   margin: 0;
   padding: var(--s-6) var(--s-6) var(--s-5);
-  background: var(--parch);
-  --fill: var(--parch);
-  --page: var(--paper);
+  background: var(--navy-2);
+  --fill: var(--navy-2);
 }
 .cmap > svg {
   display: block;
@@ -53,42 +57,40 @@
   outline: none;
 }
 .mn-shape {
-  fill: var(--white);
-  stroke: var(--ink);
-  stroke-width: 3;
-  stroke-linejoin: round;
-  filter: url(#ink-rough);
+  fill: var(--navy-3);
+  stroke: var(--paper);
+  stroke-width: 2.5;
+  stroke-linejoin: miter;
+  transition: fill var(--dur-fast) var(--ease);
 }
 .mn-node[data-state='none'] .mn-shape {
-  fill: var(--parch);
+  fill: var(--navy);
+  stroke: var(--line);
+}
+.mn-node:hover .mn-shape {
+  fill: var(--navy-4);
 }
 .mn-fill {
   fill: var(--m);
-  stroke: var(--ink);
-  stroke-width: 3;
-  stroke-linejoin: round;
-  filter: url(#ink-rough);
+  stroke: none;
 }
 .mn-tick {
   fill: none;
   stroke: var(--ink);
-  stroke-width: 3.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  stroke-width: 3.6;
+  stroke-linecap: square;
 }
 .mn-link {
   fill: none;
-  stroke: var(--ink);
-  stroke-width: 2.4;
-  stroke-dasharray: 1 8;
-  stroke-linecap: round;
-  opacity: 0.7;
-  filter: url(#ink-rough);
+  stroke: var(--line);
+  stroke-width: 2;
+  stroke-dasharray: 2 7;
+  stroke-linecap: square;
 }
 .mn-link[data-lit='true'] {
+  stroke: var(--m);
   stroke-width: 4;
-  stroke-dasharray: 10 6;
-  opacity: 1;
+  stroke-dasharray: none;
 }
 .mn-halo {
   fill: transparent;
@@ -101,11 +103,11 @@
   stroke: none;
 }
 .mn-node:hover .mn-halo {
-  stroke: var(--ink);
+  stroke: var(--paper);
   stroke-dasharray: 4 5;
 }
 .mn-node:focus-visible .mn-halo {
-  stroke: #c4172b;
+  stroke: #ffffff;
   stroke-width: 4.5;
 }
 .mn-numeral {
@@ -113,19 +115,22 @@
 }
 .mn-name {
   font-family: var(--font-display);
-  font-size: 30px;
-  fill: var(--ink);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 26px;
+  fill: var(--m);
 }
 .mn-n {
   font-family: var(--font-hud);
   font-weight: 800;
   font-size: 16px;
-  fill: var(--ink);
+  fill: var(--text-2);
 }
 .cmap-legend {
   margin-top: var(--s-4);
   padding-top: var(--s-3);
-  border-top: 2px dashed var(--line-soft);
+  border-top: 1px solid var(--line-soft);
 }
 .cmap-legend ul {
   display: flex;
@@ -138,7 +143,7 @@
   font-size: 0.9375rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--text-2);
 }
 .cmap-legend li {
   display: inline-flex;
@@ -162,7 +167,7 @@
   grid-template-columns: minmax(6.5rem, 1fr) minmax(0, 5fr);
   gap: var(--s-4);
   padding-top: var(--s-3);
-  border-top: 2px dashed var(--line-soft);
+  border-top: 1px solid var(--line-soft);
 }
 .cmap-summary dt {
   font-family: var(--font-hud);
@@ -197,76 +202,100 @@
   }
 }
 
-/* ---- home: the hero ----------------------------------------------------------------------------------- */
+/* ---- the hero: art that fills the window, copy laid over it ------------------------------------------- */
 .home-hero {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(var(--s-6), 5vw, var(--s-8));
   align-items: center;
-  padding-block: clamp(var(--s-6), 5vw, var(--s-8)) var(--s-8);
+  min-height: clamp(36rem, calc(100svh - var(--header-h)), 62rem);
+  overflow: clip;
+  isolation: isolate;
+}
+.hero-art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.hero-art .key-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* The shade: the screen colour from the left edge fading out, so the headline is always on a dark ground. */
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      90deg,
+      var(--navy-0) 0%,
+      rgb(7 13 19 / 0.95) 30%,
+      rgb(7 13 19 / 0.6) 40%,
+      rgb(7 13 19 / 0) 50%
+    ),
+    linear-gradient(0deg, var(--navy) 0%, transparent 22%);
 }
 .hero-copy {
   display: grid;
   gap: var(--s-5);
   justify-items: start;
+  max-width: min(100%, 64rem);
+  margin-left: 0;
+  padding-block: var(--s-8);
 }
 .tag {
   display: inline-block;
-  padding: 0.25rem 0.9rem 0.2rem;
-  background: var(--ink);
-  color: var(--paper);
+  padding: 0.35rem 1.1rem 0.3rem 0.9rem;
+  border-left: 6px solid var(--red);
+  background: rgb(236 232 225 / 0.1);
+  color: var(--text);
   font-family: var(--font-hud);
   font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: 0.14em;
+  font-size: 1.0625rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-  padding-right: 1.5rem;
 }
 .hero-title {
-  font-size: var(--t-hero);
-  font-weight: 400;
-  line-height: 0.88;
+  display: grid;
+  font-size: clamp(3.75rem, 9.6vw, 11.5rem);
+  line-height: 0.84;
   letter-spacing: 0.005em;
 }
-.home-hero .lead {
+.hero-title .accent-word {
+  padding-inline: 0.16em 0.22em;
+}
+.hero-copy .lead {
   max-width: 34ch;
+  font-size: clamp(1.25rem, 1vw + 1rem, 1.625rem);
+  color: var(--text);
 }
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
+  gap: var(--s-5) var(--s-5);
   align-items: center;
-  gap: var(--s-4) var(--s-6);
+  margin-top: var(--s-2);
 }
-/* The picture: a manga splash page, framed like a card. */
-.hero-art {
-  margin: 0;
-  background: var(--parch);
-  aspect-ratio: 640 / 560;
-  overflow: visible;
-}
-.hero-art .flag-art {
-  display: block;
-  width: 100%;
-  height: 100%;
+.btn-lg {
+  min-height: 64px;
+  padding-inline: 2.25rem;
+  font-size: 1.5rem;
+  --c: 16px;
 }
 
-/* ---- home: the record (a HUD strip) ----------------------------------------------------------------- */
+/* ---- the record: one band under the hero, like the status bar of a client --------------------------------- */
 .record {
   display: grid;
-  grid-template-columns: auto minmax(0, 1.3fr) minmax(0, 1fr) auto;
-  gap: var(--s-5) var(--s-6);
+  grid-template-columns: auto minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: var(--s-6);
   align-items: center;
-  padding: var(--s-5) var(--s-6);
-  border-left: 6px solid var(--red);
-  clip-path: polygon(
-    0 0,
-    calc(100% - 22px) 0,
-    100% 22px,
-    100% 100%,
-    22px 100%,
-    0 calc(100% - 22px)
-  );
+  padding-block: var(--s-5);
+  background: var(--navy-0);
+  border-block: 1px solid var(--line-soft);
+}
+.record > * {
+  min-width: 0;
 }
 .record-rank {
   display: flex;
@@ -274,345 +303,321 @@
   gap: var(--s-4);
 }
 .rank-n {
-  font-weight: 800;
-  font-size: 4.25rem;
+  font-size: clamp(4rem, 6vw, 6rem);
+  font-weight: 900;
   line-height: 0.8;
   color: var(--red);
 }
 .rank-name {
   font-family: var(--font-display);
-  font-size: 2.1rem;
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   line-height: 1;
-}
-.record-xp {
-  display: grid;
-  gap: var(--s-2);
 }
 .record-line {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.35rem;
-  color: var(--text-2);
+  gap: 0.2rem 0.6rem;
+  margin-bottom: var(--s-3);
   font-family: var(--font-hud);
   font-weight: 600;
-  font-size: 1.0625rem;
-  letter-spacing: 0.05em;
+  font-size: 1.125rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: var(--text-2);
 }
 .record-line .num {
-  font-size: 1.75rem;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
   color: var(--text);
 }
-.record-line .dot {
+.record .dot {
   width: 6px;
   height: 6px;
-  margin-inline: 0.5rem;
   align-self: center;
   background: var(--red);
   transform: rotate(45deg);
 }
-/* The meter: twenty cells, slanted, the way a HUD shows a bar. */
 .xp-meter {
   display: grid;
   grid-template-columns: repeat(20, minmax(0, 1fr));
-  gap: 3px;
-  height: 18px;
+  gap: 4px;
+  height: 14px;
 }
 .xp-meter i {
-  display: block;
   background: var(--navy-3);
-  transform: skewX(-20deg);
+  clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
 }
 .xp-meter i[data-on='true'] {
   background: var(--red);
 }
 .record-mods {
+  display: grid;
+  gap: var(--s-1);
   list-style: none;
   padding: 0;
-  display: grid;
-  gap: 6px;
 }
 .record-mods li {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--s-2);
+  gap: var(--s-3);
   font-family: var(--font-hud);
-  font-weight: 600;
-  font-size: 1.0625rem;
-  letter-spacing: 0.06em;
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.record-mods .swatch {
+.swatch {
   width: 12px;
   height: 12px;
   background: var(--m);
   transform: rotate(45deg);
 }
-.record-mods .num {
-  font-size: 1.25rem;
-}
 .record-next {
   display: grid;
-  gap: 2px;
+  gap: var(--s-2);
+  justify-items: start;
+  padding-left: var(--s-6);
+  border-left: 1px solid var(--line-soft);
 }
-.record-next a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
+.record-next-title {
   font-family: var(--font-hud);
-  font-size: 1.4rem;
   font-weight: 800;
+  font-size: 1.5rem;
   letter-spacing: 0.04em;
   line-height: 1.05;
   text-transform: uppercase;
-  max-width: 17rem;
-  text-decoration-color: var(--red);
-  text-decoration-thickness: 4px;
 }
 
-/* ---- home: the three modules, as wanted posters ----------------------------------------------------- */
+/* ---- the three modules: tall banners, one hue each, like the player cards of a lobby -------------------- */
 .home-mods {
   padding-top: var(--section);
 }
 .home-mods-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(var(--s-5), 3vw, var(--s-7));
-  align-items: stretch;
+  gap: 6px;
 }
-/* The poster is a parchment sheet with torn edges. A block of hatching sits behind it, offset, as on the cards. */
 .realm {
   position: relative;
   isolation: isolate;
   display: grid;
-  transition: translate var(--dur-fast) var(--ease-snap);
+  min-height: 48rem;
+  overflow: clip;
+  background: var(--navy-2);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 56px),
+    calc(100% - 56px) 100%,
+    56px 100%,
+    0 calc(100% - 56px)
+  );
 }
-.realm::before {
+.realm .realm-art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  transition: transform 600ms var(--ease);
+}
+.realm:hover .realm-art,
+.realm:focus-within .realm-art {
+  transform: scale(1.05);
+}
+.realm-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    0deg,
+    var(--navy-0) 0%,
+    rgb(7 13 19 / 0.94) 38%,
+    rgb(7 13 19 / 0.35) 72%,
+    transparent 100%
+  );
+}
+/* The frame that closes when the banner is reached. */
+.realm::after {
   content: '';
   position: absolute;
-  z-index: -1;
-  inset: var(--shadow-off) calc(var(--shadow-off) * -1) calc(var(--shadow-off) * -1)
-    var(--shadow-off);
-  background: var(--hatch);
+  inset: 0;
+  border: 0 solid var(--m);
+  pointer-events: none;
+  transition: border-width var(--dur-fast) var(--ease-snap);
 }
-.realm:hover,
-.realm:focus-within {
-  translate: -3px -3px;
-}
-.realm:nth-child(1) {
-  rotate: -0.6deg;
-}
-.realm:nth-child(3) {
-  rotate: 0.5deg;
-}
-.realm-sheet {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-3);
-  background: var(--parch);
-  clip-path: var(--torn);
-  padding: var(--s-5) var(--s-5) var(--s-6);
-  --text: var(--ink);
-  --text-2: #1f2c3a;
-  --text-3: #33414f;
-  --line: var(--ink);
-  --line-soft: rgba(15, 25, 35, 0.3);
-}
-.poster-head {
-  text-align: center;
-  font-size: 1.25rem;
-  letter-spacing: 0.3em;
-  color: var(--ink);
-  border-bottom: 3px solid var(--ink);
-  padding-bottom: var(--s-2);
-}
-.realm-window {
-  position: relative;
-  overflow: hidden;
-  border: 3px solid var(--ink);
-  background: var(--parch);
-}
-.realm-art {
-  display: block;
-  width: 100%;
-  height: auto;
+.realm:hover::after,
+.realm:focus-within::after {
+  border-width: 6px;
 }
 .realm-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+  display: grid;
+  align-content: end;
   gap: var(--s-3);
+  justify-items: start;
+  padding: var(--s-6) var(--s-6) calc(var(--s-6) + 28px);
+}
+.realm-n {
+  position: absolute;
+  top: var(--s-4);
+  left: var(--s-5);
+  font-size: clamp(7rem, 11vw, 12rem);
+  font-weight: 900;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--m);
 }
 .realm-name {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  background: var(--navy-0);
   color: var(--m-text);
-}
-.mod-head {
-  display: grid;
-  gap: var(--s-2);
 }
 .mod-title {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 4.4vw, 4.2rem);
-  font-weight: 400;
-  line-height: 0.9;
-  letter-spacing: 0.005em;
-  text-transform: none;
-  text-align: center;
+  font-weight: 800;
+  font-size: clamp(3rem, 5.4vw, 5.5rem);
+  line-height: 0.86;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.mod-title a {
+  text-decoration: none;
+}
+.mod-title a:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 6px;
 }
 .mod-tagline {
   color: var(--text);
-  font-family: var(--font-type);
-  font-size: 1rem;
-  line-height: 1.35;
-  text-align: center;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  max-width: 30ch;
 }
 .mod-objective {
   color: var(--text-2);
   font-size: var(--fs-small);
+  max-width: 44ch;
 }
 .mod-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--s-3) var(--s-4);
-  margin: var(--s-2) 0;
+  gap: var(--s-3) var(--s-5);
+  width: 100%;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line-soft);
+  margin: 0;
 }
 .mod-facts div {
-  padding-top: var(--s-2);
-  border-top: 2px dashed var(--line-soft);
+  min-width: 0;
 }
 .mod-facts dt {
   font-family: var(--font-hud);
-  font-size: 0.875rem;
   font-weight: 700;
+  font-size: 0.9375rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
   color: var(--text-3);
 }
 .mod-facts dd {
   margin: 0;
-  font-size: var(--fs-small);
   font-weight: 600;
+  font-size: var(--fs-small);
+  line-height: 1.3;
 }
 .mod-foot {
-  margin-top: auto;
-  padding-top: var(--s-3);
-  border-top: 3px solid var(--ink);
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--s-2) var(--s-4);
+  gap: var(--s-4);
 }
 .mod-percent {
-  color: var(--text);
   font-family: var(--font-hud);
   font-weight: 700;
   font-size: 1.125rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  white-space: nowrap;
+  color: var(--text-2);
 }
+/* The button on a banner is the card's own link, drawn as a button: it presses when the card does. */
 .mod-cta {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  padding: 0.3rem 1rem 0.25rem;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--font-hud);
-  font-weight: 800;
-  font-size: 1.125rem;
-  letter-spacing: var(--track-hud);
-  text-transform: uppercase;
-  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  margin-top: var(--s-2);
+  pointer-events: none;
+  --face: var(--m);
+  --edge-c: var(--m-lo);
 }
-.mod-cta::after {
-  content: '';
-  width: 1em;
-  height: 1em;
-  background: currentColor;
-  -webkit-mask: var(--arrow) center / contain no-repeat;
-  mask: var(--arrow) center / contain no-repeat;
-  transition: translate var(--dur-fast) var(--ease-snap);
+.realm:hover .mod-cta {
+  translate: 0 -2px;
+  filter: drop-shadow(0 calc(var(--edge) + 2px) 0 var(--edge-c));
 }
 .realm:hover .mod-cta::after {
-  translate: 4px 0;
+  translate: 5px 0;
+}
+.realm:active .mod-cta {
+  translate: 0 var(--edge);
+  filter: drop-shadow(0 0 0 var(--edge-c));
 }
 
-/* ---- home: the method, as the rules in a notebook ------------------------------------------------------ */
+/* ---- how a module works: a light band, four numbered steps ------------------------------------------------ */
 .home-method {
-  padding-top: var(--section);
+  margin-top: var(--section);
+  padding-block: var(--section);
+  background: var(--paper);
+  color: var(--ink);
 }
-.notebook {
-  position: relative;
-  padding: clamp(var(--s-6), 4vw, var(--s-8)) clamp(var(--s-5), 5vw, var(--s-8))
-    clamp(var(--s-6), 4vw, var(--s-8)) clamp(var(--s-7), 8vw, 8rem);
-  background: var(--navy);
-  border: 3px solid var(--navy);
-  box-shadow: inset 0 0 0 2px var(--navy-3);
+.home-method .notebook {
+  display: grid;
+  gap: var(--s-7);
 }
-/* The margin: two red rules down the left of the page, as in a ledger. */
-.notebook::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: clamp(var(--s-5), 5vw, 5rem);
-  width: 6px;
-  border-inline: 2px solid var(--red);
-}
-.notebook .h2 {
-  margin-bottom: var(--s-6);
-  color: var(--hud-text);
+.home-method .h2 {
+  max-width: 14ch;
 }
 .steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-6);
   list-style: none;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--s-6) var(--s-7);
 }
 .step {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0 var(--s-4);
-  align-items: start;
+  align-content: start;
+  gap: var(--s-3);
+  padding-top: var(--s-4);
+  border-top: 6px solid var(--ink);
 }
 .step-n {
-  grid-row: 1 / span 2;
-  font-weight: 800;
-  font-size: 3.5rem;
+  font-size: clamp(4rem, 6vw, 6.5rem);
+  font-weight: 900;
   line-height: 0.8;
-  color: var(--red);
+  color: var(--red-lo);
 }
 .step h3 {
-  font-size: 1.75rem;
-  color: var(--hud-text);
+  font-size: 2rem;
 }
 .step p {
-  font-family: var(--font-type);
-  color: var(--hud-text-2);
-  font-size: 0.9688rem;
-  line-height: 1.6;
+  max-width: 34ch;
+  color: var(--text-2);
 }
 
-/* ---- home: the course map ------------------------------------------------------------------------------ */
 .home-map {
   padding-top: var(--section);
 }
 
-/* ---- home: the tariff of points ----------------------------------------------------------------------- */
+/* ---- the XP table --------------------------------------------------------------------------------------- */
 .home-ledger {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--s-6) var(--s-5);
-  padding-top: var(--section);
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s-8);
   align-items: start;
+  padding-top: var(--section);
 }
 .ledger-copy {
-  grid-column: 1 / span 5;
   display: grid;
   gap: var(--s-4);
 }
@@ -620,27 +625,18 @@
   max-width: 11ch;
 }
 .ledger {
-  grid-column: 7 / span 6;
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  --fill: var(--navy);
-  --text: var(--hud-text);
-  --text-2: var(--hud-text-2);
-  --line: var(--hud-text);
-  --line-soft: rgb(236 232 225 / 0.28);
-  color: var(--hud-text);
+  border-collapse: collapse;
+  padding: 0;
 }
 .ledger caption {
-  text-align: left;
   padding: var(--s-3) var(--s-5);
-  caption-side: top;
-  color: var(--ink);
   background: var(--red);
+  color: var(--ink);
+  text-align: left;
   font-family: var(--font-hud);
   font-weight: 800;
-  font-size: 1.125rem;
-  letter-spacing: var(--track-hud);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 .ledger th,
@@ -648,64 +644,67 @@
   padding: var(--s-3) var(--s-5);
   border-top: 1px solid var(--line-soft);
   text-align: left;
-  font-weight: 500;
-  color: var(--text-2);
-}
-.ledger tr:first-child th,
-.ledger tr:first-child td {
-  border-top: 0;
+  font-weight: 600;
 }
 .ledger td {
   text-align: right;
-  font-family: var(--font-hud);
   font-size: 1.75rem;
-  font-weight: 800;
   line-height: 1;
-  color: var(--hud-text);
+  color: var(--text);
+}
+.ledger th {
+  color: var(--text-2);
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1180px) {
   .record {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
-}
-@media (max-width: 1040px) {
-  .home-hero,
-  .home-ledger {
+  .record-next {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .home-mods-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .ledger-copy,
-  .ledger {
-    grid-column: 1 / -1;
+  .realm {
+    min-height: 34rem;
   }
-  .hero-art {
-    max-width: 600px;
+  .steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .home-ledger {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-6);
+  }
+}
+@media (max-width: 760px) {
+  .home-hero {
+    min-height: 40rem;
+  }
+  .hero-shade {
+    background: linear-gradient(
+      0deg,
+      var(--navy) 0%,
+      rgb(7 13 19 / 0.9) 40%,
+      rgb(7 13 19 / 0.7) 100%
+    );
+  }
+  .record {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-4);
   }
   .steps {
     grid-template-columns: minmax(0, 1fr);
   }
-  .home-mods-grid {
-    grid-template-columns: minmax(0, 1fr);
-    max-width: 520px;
-    margin-inline: auto;
-    gap: var(--s-8);
-  }
-  .realm:nth-child(1),
-  .realm:nth-child(3) {
-    rotate: 0deg;
+  .realm-body {
+    padding-inline: var(--s-5);
   }
 }
-@media (max-width: 640px) {
-  .record {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .mod-facts {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .notebook {
-    padding-left: var(--s-7);
-  }
-  .notebook::before {
-    left: var(--s-4);
-  }
+
+/* The pictures are static, so each is promoted to its own layer: it is painted once and not again when something
+   beside it (the 3D stage, a hover) changes. Without this, a lesson page dropped from 32 to 6 frames a second. */
+.key-art {
+  will-change: transform;
+  transform: translateZ(0);
 }

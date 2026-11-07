@@ -1,7 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { FOOTER_LINKS, NAV, SITE } from '../content/site';
 import { t } from '../core/assets';
+import { levelInfo } from '../core/gamification';
 import { Link, useRouter } from '../router';
+import { useData } from './hooks';
 
 /** "page" on the exact route; "true" on a route inside it, so a module page marks "Modules". */
 function locationState(path: string, href: string): 'page' | 'true' | undefined {
@@ -9,82 +11,56 @@ function locationState(path: string, href: string): 'page' | 'true' | undefined 
   return path.startsWith(`${href}/`) ? 'true' : undefined;
 }
 
-/** The mark: a small inked skull. */
+/** The mark: a chamfered frame with a slider inside it. A parameter is a value you can move. */
 export function Glyph({ size = 34 }: { size?: number }): ReactNode {
   return (
-    <svg className="glyph" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+    <svg
+      className="glyph"
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      aria-hidden="true"
+      focusable="false"
+    >
       <path
-        d="M16 2.6c-6.6 0-10.8 4.2-10.8 9.8 0 3.3 1.5 5.6 3.5 7V25c0 1.2.9 2.2 2.1 2.2h10.4c1.2 0 2.1-1 2.1-2.2v-5.6c2-1.4 3.5-3.7 3.5-7 0-5.6-4.2-9.8-10.8-9.8z"
-        fill="#ece8e1"
-        stroke="#0f1923"
-        strokeWidth="2.2"
-        strokeLinejoin="round"
+        d="M9 2h21v21l-7 7H2V9z"
+        fill="#15222e"
+        stroke="#ece8e1"
+        strokeWidth="2"
+        strokeLinejoin="miter"
       />
-      <path d="M8.6 13.2l6-1.4-1 5.6-4.4.3zM23.4 13.2l-6-1.4 1 5.6 4.4.3z" fill="#0f1923" />
-      <path d="M16 18.4l-1.7 3.2h3.4z" fill="#0f1923" />
-      <path d="M12.6 23.4v3M16 23.4v3M19.4 23.4v3" stroke="#0f1923" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M8 11h16M8 21h16" stroke="#6f7a85" strokeWidth="2.4" />
+      <path d="M17 7l5 0-3 8-5 0zM11 17l5 0-3 8-5 0z" fill="#ff4655" />
     </svg>
   );
 }
 
 function NavList({ path }: { path: string }): ReactNode {
-  const list = useRef<HTMLUListElement>(null);
-  const [hover, setHover] = useState<number | null>(null);
-  const current = NAV.findIndex((n) => locationState(path, n.href) !== undefined);
-  const target = hover ?? current;
-
-  // The glide: one orange tab that slides to the item under the pointer or focus, and rests on the current section.
-  useLayoutEffect(() => {
-    const ul = list.current;
-    if (!ul) return undefined;
-    const place = (): void => {
-      const li =
-        target >= 0 ? ul.querySelectorAll<HTMLElement>('li:not(.nav-glide)')[target] : undefined;
-      if (!li) {
-        ul.dataset.glide = 'off';
-        return;
-      }
-      ul.dataset.glide = 'on';
-      ul.style.setProperty('--gx', `${li.offsetLeft}px`);
-      ul.style.setProperty('--gw', `${li.offsetWidth}px`);
-    };
-    place();
-    // The first placement is instant; every move after it glides.
-    const settle = requestAnimationFrame(() =>
-      requestAnimationFrame(() => (ul.dataset.ready = 'true')),
-    );
-    const ro = new ResizeObserver(place);
-    ro.observe(ul);
-    void document.fonts?.ready.then(place);
-    return () => {
-      cancelAnimationFrame(settle);
-      ro.disconnect();
-    };
-  }, [target]);
-
   return (
-    <ul
-      className="nav-list"
-      ref={list}
-      data-hover={hover !== null && hover !== current}
-      onPointerLeave={() => setHover(null)}
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget)) setHover(null);
-      }}
-    >
-      <li className="nav-glide" aria-hidden="true" />
-      {NAV.map((n, i) => (
-        <li
-          key={n.href}
-          onPointerEnter={(e) => e.pointerType === 'mouse' && setHover(i)}
-          onFocus={() => setHover(i)}
-        >
+    <ul className="nav-list">
+      {NAV.map((n) => (
+        <li key={n.href}>
           <Link to={n.href} aria-current={locationState(path, n.href)}>
             {n.label}
           </Link>
         </li>
       ))}
     </ul>
+  );
+}
+
+/** Level and XP at the top right: a key that opens the progress page. */
+function Rank(): ReactNode {
+  const data = useData();
+  const level = levelInfo(data.xp);
+  return (
+    <Link to="/progress" className="site-rank">
+      <span className="sr-only">{t('hub.level', { level: level.level })}</span>
+      <b className="num" aria-hidden="true">
+        {String(level.level).padStart(2, '0')}
+      </b>
+      <span>{data.xp.toLocaleString('en-US')} XP</span>
+    </Link>
   );
 }
 
@@ -108,7 +84,7 @@ export function Header(): ReactNode {
 
   return (
     <header className="site-header" data-surface="ink" data-open={open}>
-      <div className="wrap site-header-inner">
+      <div className="site-header-inner">
         <Link to="/" className="wordmark" aria-label={t('nav.home')}>
           <Glyph />
           <span>{SITE.name}</span>
@@ -127,6 +103,7 @@ export function Header(): ReactNode {
         <nav id="site-nav" className="site-nav" aria-label={t('nav.primary')}>
           <NavList path={path} />
         </nav>
+        <Rank />
         <span className="read-line" aria-hidden="true" />
       </div>
     </header>

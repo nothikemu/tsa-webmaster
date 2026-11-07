@@ -11,10 +11,7 @@
   gap: var(--s-2);
   align-content: start;
   padding: var(--s-6);
-  border-color: var(--navy);
-}
-.pd-level::before {
-  background: repeating-linear-gradient(135deg, var(--ink) 0 1.5px, transparent 1.5px 5px);
+  background: var(--navy-0);
 }
 .pd-level .bar span {
   background: var(--red);
@@ -36,8 +33,8 @@
   font-family: var(--font-display);
   font-size: 2.6rem;
   line-height: 0.95;
-  text-transform: none;
-  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 .pd-stat {
   grid-column: span 2;
@@ -51,7 +48,7 @@
   font-weight: 900;
   font-size: clamp(3.5rem, 6vw, 5.5rem);
   line-height: 0.85;
-  color: var(--ink);
+  color: var(--text);
 }
 .pd-next {
   grid-column: span 3;
@@ -60,13 +57,20 @@
   align-content: start;
   justify-items: start;
   padding: var(--s-5);
-  background: var(--parch);
-  --fill: var(--parch);
+  background: var(--paper);
+  --fill: var(--paper);
+  --text: var(--ink);
+  --text-2: var(--ink-2);
+  --text-3: var(--ink-3);
+  --line: var(--ink);
+  --focus-ring: 3px solid #0a121a;
+  color: var(--ink);
 }
 .pd-next-title {
   font-family: var(--font-display);
   font-size: clamp(1.875rem, 2.8vw, 2.5rem);
   line-height: 0.95;
+  text-transform: uppercase;
   color: var(--ink);
 }
 .pd-section {
@@ -94,10 +98,10 @@
   gap: var(--s-4);
   align-items: center;
   padding-block: var(--s-4);
-  border-top: 2px dashed var(--line-soft);
+  border-top: 1px solid var(--line-soft);
 }
 .mod-bars li:last-child {
-  border-bottom: 2px dashed var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
 }
 .mod-bar-name {
   display: inline-flex;
@@ -164,7 +168,7 @@
   gap: 5px;
   background: linear-gradient(var(--line-soft) 1.5px, transparent 1.5px) 0 0 / 100% 50%;
   background-origin: content-box;
-  border-bottom: 3px solid var(--ink);
+  border-bottom: 3px solid var(--line);
 }
 .xp-bars > div {
   display: grid;
@@ -181,11 +185,11 @@
   display: block;
   width: 100%;
   max-width: 30px;
-  background: var(--ink);
+  background: var(--paper);
 }
 .xp-fill[data-empty='true'] {
   height: 3px !important;
-  background: var(--ink-3);
+  background: var(--line);
 }
 .xp-bars > div[data-best] .xp-fill {
   background: var(--red);
@@ -196,7 +200,7 @@
   font-family: var(--font-hud);
   font-weight: 800;
   font-size: 1rem;
-  color: var(--ink);
+  color: var(--text);
 }
 .xp-day {
   align-self: end;
@@ -249,18 +253,18 @@
 }
 .calendar li[data-level='1'],
 .cal-legend i[data-level='1'] {
-  background: linear-gradient(to top, var(--ink) 34%, transparent 34%);
-  box-shadow: inset 0 0 0 2px var(--ink);
+  background: linear-gradient(to top, var(--paper) 34%, transparent 34%);
+  box-shadow: inset 0 0 0 2px var(--paper);
 }
 .calendar li[data-level='2'],
 .cal-legend i[data-level='2'] {
-  background: linear-gradient(to top, var(--ink) 66%, transparent 66%);
-  box-shadow: inset 0 0 0 2px var(--ink);
+  background: linear-gradient(to top, var(--paper) 66%, transparent 66%);
+  box-shadow: inset 0 0 0 2px var(--paper);
 }
 .calendar li[data-level='3'],
 .cal-legend i[data-level='3'] {
-  background: var(--ink);
-  box-shadow: inset 0 0 0 2px var(--ink);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 2px var(--paper);
 }
 .calendar li[data-level='x'] {
   background: transparent;
@@ -268,7 +272,7 @@
 }
 .calendar li[data-today],
 .cal-legend i[data-today] {
-  outline: 3px solid var(--red-lo);
+  outline: 3px solid var(--red);
   outline-offset: 2px;
 }
 .cal-legend {
@@ -294,17 +298,18 @@
 /* ---- heatmap, data ---------------------------------------------------------------------------------- */
 .heatmap th,
 .heatmap td {
-  border-top: 2px dashed var(--line-soft);
+  border-top: 1px solid var(--line-soft);
 }
 .heatmap td[data-state='seen'] {
-  background: repeating-linear-gradient(135deg, rgb(15 25 35 / 0.18) 0 2px, transparent 2px 7px);
+  background: repeating-linear-gradient(135deg, rgb(236 232 225 / 0.2) 0 2px, transparent 2px 7px);
 }
 .heatmap td[data-state='practiced'] {
-  background: var(--parch);
+  background: var(--m-lo, var(--navy-4));
+  color: #ffffff;
 }
 .heatmap td[data-state='mastered'] {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
   font-weight: 800;
 }
 
@@ -322,13 +327,21 @@
   gap: var(--s-5);
   padding: var(--s-6);
 }
-/* Earned: the dossier is a parchment poster, as if the bounty were collected. */
+/* Earned: the dossier is a plate in the hue of the module. */
 .ach[data-status='earned'] > article {
-  background: var(--parch);
-  --fill: var(--parch);
+  background: var(--m);
+  --fill: var(--m);
   --text: var(--ink);
-  --text-2: #1f2c3a;
-  --text-3: #33414f;
+  --text-2: #1d2a38;
+  --text-3: #2a3948;
+  --line: var(--ink);
+  --line-soft: rgb(15 25 35 / 0.3);
+  --focus-ring: 3px solid #0f1923;
+  color: var(--ink);
+}
+.ach[data-status='earned'] > article::before,
+.ach[data-status='earned'] > article::after {
+  border-color: var(--ink);
 }
 .ach-art {
   align-self: start;
@@ -337,11 +350,12 @@
   justify-items: center;
   align-content: start;
   padding: var(--s-4);
-  background: var(--paper-2);
-  border: 2.5px solid var(--ink);
+  background: var(--navy-0);
+  border: 1px solid var(--line-soft);
 }
 .ach[data-status='earned'] .ach-art {
-  background: var(--parch-2);
+  background: var(--navy);
+  border-color: var(--ink);
 }
 .ach-main {
   display: grid;
@@ -369,7 +383,7 @@
 .ach .requirements li {
   align-items: center;
   padding-block: var(--s-2);
-  border-top: 2px dashed var(--line-soft);
+  border-top: 1px solid var(--line-soft);
 }
 .ach .requirements li > span:nth-child(2) {
   flex: 1;
@@ -453,18 +467,18 @@
   text-decoration: none;
 }
 .doc-rail a:hover {
-  color: var(--paper);
-  background: var(--ink);
+  color: var(--ink);
+  background: var(--paper);
 }
 .doc-rail-n,
 .doc-n {
   font-family: var(--font-hud);
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--red-lo);
+  color: var(--m-text, var(--red-hi));
 }
 .doc-rail a:hover .doc-rail-n {
-  color: var(--red);
+  color: var(--red-lo);
 }
 .doc-main {
   grid-column: 4 / span 9;
@@ -472,26 +486,14 @@
   gap: var(--s-7);
   min-width: 0;
   padding: clamp(var(--s-5), 4vw, var(--s-8));
-  padding-left: clamp(var(--s-7), 7vw, 6rem);
-  background:
-    linear-gradient(
-      90deg,
-      transparent calc(clamp(var(--s-5), 4vw, 3.4rem) - 3px),
-      var(--red) calc(clamp(var(--s-5), 4vw, 3.4rem) - 3px)
-        calc(clamp(var(--s-5), 4vw, 3.4rem) - 1px),
-      transparent calc(clamp(var(--s-5), 4vw, 3.4rem) - 1px),
-      transparent calc(clamp(var(--s-5), 4vw, 3.4rem) + 2px),
-      var(--red) calc(clamp(var(--s-5), 4vw, 3.4rem) + 2px)
-        calc(clamp(var(--s-5), 4vw, 3.4rem) + 4px),
-      transparent calc(clamp(var(--s-5), 4vw, 3.4rem) + 4px)
-    ),
-    var(--white);
+  background: var(--fill);
+  border-left: 6px solid var(--red);
 }
 .doc-section {
   display: grid;
   gap: var(--s-4);
   padding-top: var(--s-5);
-  border-top: 3px solid var(--ink);
+  border-top: 2px solid var(--line);
   scroll-margin-top: calc(var(--header-h) + var(--s-5));
 }
 .doc-section:first-child {
@@ -514,10 +516,10 @@
 }
 .doc-list li {
   padding-block: var(--s-3);
-  border-top: 2px dashed var(--line-soft);
+  border-top: 1px solid var(--line-soft);
 }
 .doc-list li:last-child {
-  border-bottom: 2px dashed var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
 }
 .credits-table {
   min-width: 560px;
@@ -550,25 +552,46 @@
   margin: 0;
 }
 .gloss-index a {
+  --face: var(--navy-4);
+  --edge-c: #05090d;
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: var(--tap);
   min-height: var(--tap);
-  border: 2.5px solid var(--ink);
-  background: var(--white);
+  margin-bottom: 5px;
   font-family: var(--font-hud);
   font-size: 1.375rem;
   font-weight: 800;
-  color: var(--ink);
+  color: var(--paper);
   text-decoration: none;
+  filter: drop-shadow(0 4px 0 var(--edge-c));
   transition:
-    background-color var(--dur-fast) var(--ease),
-    color var(--dur-fast) var(--ease);
+    translate var(--dur-fast) var(--ease-snap),
+    filter var(--dur-fast) var(--ease-snap);
+}
+.gloss-index a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 0.18) 0 2px, transparent 2px), var(--face);
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
 }
 .gloss-index a:hover {
-  background: var(--ink);
-  color: var(--paper);
+  translate: 0 -2px;
+  filter: drop-shadow(0 6px 0 var(--edge-c));
+}
+.gloss-index a:active {
+  translate: 0 4px;
+  filter: drop-shadow(0 0 0 var(--edge-c));
+}
+.gloss-index a:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 5px;
 }
 .gloss-list {
   display: grid;
@@ -580,7 +603,7 @@
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--s-4) var(--s-5);
   padding-top: var(--s-5);
-  border-top: 3px solid var(--ink);
+  border-top: 2px solid var(--line);
   scroll-margin-top: calc(var(--header-h) + var(--s-5));
 }
 .gloss-letter {
@@ -588,7 +611,7 @@
   font-family: var(--font-display);
   font-size: clamp(6rem, 11vw, 9.5rem);
   line-height: 0.74;
-  color: var(--red-lo);
+  color: var(--red);
 }
 .gloss-group dl {
   grid-column: 3 / -1;
@@ -600,7 +623,7 @@
   grid-template-columns: minmax(10rem, 1fr) minmax(0, 3fr);
   gap: var(--s-4);
   padding-block: var(--s-3);
-  border-top: 2px dashed var(--line-soft);
+  border-top: 1px solid var(--line-soft);
 }
 .gl-item:first-child {
   border-top: 0;
@@ -655,7 +678,7 @@
     'n note';
   gap: 0 var(--s-3);
   padding-block: var(--s-3);
-  border-top: 2px dashed var(--line-soft);
+  border-top: 1px solid var(--line-soft);
 }
 .res-n {
   grid-area: n;

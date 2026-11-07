@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 're
 import { FOOTER_LINKS, NAV, SITE } from '../content/site';
 import { t } from '../core/assets';
 import { Link, useRouter } from '../router';
+import { Icon, type IconName } from './Icons';
 
 /** "page" on the exact route; "true" on a route inside it, so a module page marks "Modules". */
 function locationState(path: string, href: string): 'page' | 'true' | undefined {
@@ -10,29 +11,30 @@ function locationState(path: string, href: string): 'page' | 'true' | undefined 
 }
 
 /**
- * The mark: a small glass sphere with a three-node network inside it, the smallest possible model.
- * The sphere is drawn in CSS (a lit gradient, a specular highlight), the network in SVG.
+ * The mark: a four-point star held in an armillary, the instrument that models the sky. Two tilted
+ * rings and an outer ring in gold, a blue star at the center. Drawn here so it needs no asset.
  */
-export function Glyph({ size = 30 }: { size?: number }): ReactNode {
+export function Glyph({ size = 32 }: { size?: number }): ReactNode {
   return (
-    <span className="glyph" style={{ width: size, height: size }} aria-hidden="true">
-      <svg width={size} height={size} viewBox="0 0 30 30" focusable="false">
-        <path
-          d="M8 20.5L15 10l7.5 9"
-          fill="none"
-          stroke="#06051a"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity="0.8"
-        />
-        <circle cx="8" cy="20.5" r="2.4" fill="#06051a" />
-        <circle cx="15" cy="10" r="2.4" fill="#06051a" />
-        <circle cx="22.5" cy="19" r="2.4" fill="#06051a" />
-      </svg>
-    </span>
+    <svg className="glyph" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <circle cx="16" cy="16" r="14.2" fill="none" stroke="#e9c46a" strokeWidth="1.4" />
+      <ellipse cx="16" cy="16" rx="14.2" ry="5.4" fill="none" stroke="#c9983a" strokeWidth="1.2" transform="rotate(-32 16 16)" />
+      <ellipse cx="16" cy="16" rx="14.2" ry="5.4" fill="none" stroke="#c9983a" strokeWidth="1.2" transform="rotate(32 16 16)" />
+      <path d="M16 6.2l2.3 7.5 7.5 2.3-7.5 2.3L16 25.8l-2.3-7.5L6.2 16l7.5-2.3z" fill="#5fd4ff" />
+      <path d="M16 6.2l2.3 7.5 7.5 2.3-7.5 2.3L16 25.8" fill="#bff0ff" fillOpacity="0.45" />
+      <circle cx="16" cy="16" r="1.9" fill="#fff" />
+    </svg>
   );
 }
+
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+const NAV_ICON: Record<string, IconName> = {
+  '/modules': 'compass',
+  '/progress': 'chart',
+  '/achievements': 'crest',
+  '/glossary': 'quill',
+  '/about': 'eye',
+};
 
 function NavList({ path }: { path: string }): ReactNode {
   const list = useRef<HTMLUListElement>(null);
@@ -88,8 +90,9 @@ function NavList({ path }: { path: string }): ReactNode {
         >
           <Link to={n.href} aria-current={locationState(path, n.href)}>
             <span className="nav-n" aria-hidden="true">
-              {String(i + 1).padStart(2, '0')}
+              {ROMAN[i]}
             </span>
+            <Icon name={NAV_ICON[n.href] ?? 'compass'} size={18} />
             {n.label}
           </Link>
         </li>
@@ -118,7 +121,7 @@ export function Header(): ReactNode {
 
   return (
     <header className="site-header" data-open={open}>
-      <div className="wrap site-header-inner glass edge">
+      <div className="wrap site-header-inner">
         <Link to="/" className="wordmark" aria-label={t('nav.home')}>
           <Glyph />
           <span>{SITE.name}</span>
@@ -126,7 +129,7 @@ export function Header(): ReactNode {
         <button
           ref={toggle}
           type="button"
-          className="menu-toggle"
+          className="menu-toggle btn btn-ghost"
           aria-expanded={open}
           aria-controls="site-nav"
           onClick={() => setOpen((v) => !v)}
@@ -166,6 +169,9 @@ export function Footer(): ReactNode {
         <p className="label colophon-event">
           <span className="spark" aria-hidden="true" /> {SITE.event}
         </p>
+      </div>
+      <div className="rule foot-rule" aria-hidden="true">
+        <i />
       </div>
       <p className="foot-mark" aria-hidden="true">
         {SITE.name}

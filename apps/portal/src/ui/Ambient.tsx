@@ -4,16 +4,17 @@ import { useRouter } from '../router';
 import { useReducedMotion } from './a11y';
 
 /**
- * The live atmosphere: a slow, pearlescent liquid field drawn by one small fragment shader on a
- * low-resolution canvas behind the whole page. It is decoration only (aria-hidden), and it is the
+ * The live atmosphere: the observatory's sky, drawn by one small fragment shader on a low-resolution
+ * canvas behind the whole page: stars in three depths, a warm horizon, a slow nebula, shafts of light
+ * and gold motes rising through the dark. It is decoration only (aria-hidden), and it is the
  * first thing to give way:
  *
  *  - on module, lesson, check and challenge pages the GPU belongs to the scene, so the field freezes;
  *  - under reduced motion, or on the lowest quality tier, it draws one still frame and stops;
  *  - without WebGL the canvas is removed and the CSS aurora in base.css is the background.
  *
- * It never decides what is readable: the shader's light is held low (see the ceiling in the source)
- * and every block of text sits on its own panel or on the dark ground.
+ * It never decides what is readable: the sky is held dark, the stars are single points, and every
+ * block of text sits on its own plate or on the dark ground.
  */
 
 const VERT = `attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }`;
@@ -36,41 +37,72 @@ float noise(vec2 p){
 }
 float fbm(vec2 p){
   float v = 0.0; float a = 0.5;
-  for (int i = 0; i < 4; i++) { v += a * noise(p); p = p * 2.02 + vec2(17.3, 9.1); a *= 0.5; }
+  for (int i = 0; i < 5; i++) { v += a * noise(p); p = p * 2.03 + vec2(13.7, 7.9); a *= 0.5; }
   return v;
+}
+// One layer of stars: a sparse grid, each cell holding at most one point that twinkles.
+vec3 stars(vec2 uv, float scale, float t, float seed){
+  vec2 g = uv * scale; vec2 id = floor(g); vec2 f = fract(g) - 0.5;
+  float h = hash(id + seed);
+  vec2 pos = (vec2(hash(id + seed + 1.7), hash(id + seed + 3.1)) - 0.5) * 0.62;
+  float d = length(f - pos);
+  float tw = 0.62 + 0.38 * sin(t * (0.8 + h * 2.6) + h * 40.0);
+  float s = smoothstep(0.05 + 0.04 * h, 0.0, d) * step(0.78, h) * tw;
+  vec3 tint = mix(vec3(0.72, 0.86, 1.0), vec3(1.0, 0.88, 0.66), hash(id + 9.0));
+  return tint * s;
+}
+// Rising motes: warm sparks that drift up through the dark and fade.
+float motes(vec2 uv, float scale, float speed, float t, float seed){
+  vec2 g = vec2(uv.x * scale, uv.y * scale * 0.55 - t * speed);
+  vec2 id = floor(g); vec2 f = fract(g);
+  float h = hash(id + seed);
+  vec2 pos = vec2(0.5 + 0.32 * sin(t * 0.4 + h * 30.0), 0.5 + 0.3 * sin(t * 0.3 + h * 17.0));
+  float d = length((f - pos) * vec2(1.0, 1.4));
+  return smoothstep(0.075, 0.0, d) * step(0.82, h) * (0.55 + 0.45 * sin(t * 1.6 + h * 50.0)) * smoothstep(0.0, 0.25, uv.y);
 }
 void main(){
   vec2 uv = gl_FragCoord.xy / uRes;
-  vec2 p = (gl_FragCoord.xy - 0.5 * uRes) / min(uRes.x, uRes.y);
-  float t = uTime * 0.045;
-  vec2 w = p * 1.55;
-  w.y += uScroll * 0.00045;
-  vec2 q = vec2(fbm(w + vec2(0.0, t)), fbm(w + vec2(5.2, 1.3) - t));
-  float f = fbm(w + 2.4 * q + vec2(1.7, 9.2) + t * 0.6);
-  // The pointer lifts the field a little where it is.
-  vec2 m = (uMouse - 0.5) * vec2(uRes.x / uRes.y, 1.0);
-  float md = length(p - m);
-  f += 0.1 * exp(-md * md * 7.0);
-  float ridge = pow(1.0 - abs(2.0 * f - 1.0), 5.0);
-  float body = smoothstep(0.25, 0.85, f);
-  vec3 aqua = vec3(0.36, 0.95, 1.0);
-  vec3 violet = vec3(0.70, 0.65, 1.0);
-  vec3 orchid = vec3(1.0, 0.45, 0.86);
-  vec3 acid = vec3(0.78, 1.0, 0.29);
-  vec3 pal = mix(mix(aqua, violet, smoothstep(0.2, 0.5, f)), mix(orchid, acid, smoothstep(0.62, 0.95, f)), smoothstep(0.45, 0.7, f));
-  vec3 hue = 0.5 + 0.5 * cos(6.28318 * (vec3(0.0, 0.33, 0.67) * 0.55 + f * 1.15 + q.x * 0.6 + vec3(0.52, 0.14, 0.8)));
-  // The ground is the page's own ink. The light added to it has a ceiling of about 0.2 per channel.
-  vec3 col = vec3(0.024, 0.020, 0.102);
-  col += pal * body * 0.075;
-  col += mix(pal, hue, 0.35) * ridge * 0.13;
-  col *= mix(0.55, 1.0, smoothstep(1.25, 0.25, length(uv - 0.5) * 1.4));
+  float asp = uRes.x / uRes.y;
+  vec2 p = vec2((uv.x - 0.5) * asp, uv.y - 0.5);
+  float t = uTime;
+  vec2 par = vec2((uMouse.x - 0.5) * 0.02, uScroll * 0.00006);
+
+  // The sky: deep at the zenith, a cold blue through the middle, a warm glow at the horizon.
+  vec3 col = mix(vec3(0.030, 0.052, 0.125), vec3(0.010, 0.014, 0.040), smoothstep(0.1, 1.0, uv.y));
+  col += vec3(0.20, 0.085, 0.03) * pow(1.0 - uv.y, 5.0) * 0.55;
+  col += vec3(0.05, 0.075, 0.2) * exp(-pow((uv.x - 0.5) * 1.6, 2.0) - pow((uv.y - 1.05) * 2.2, 2.0)) * 1.0;
+
+  // Nebula: slow clouds of indigo and teal, strongest toward the top.
+  vec2 q = p * 1.25 + vec2(t * 0.004, -t * 0.002) + par * 40.0;
+  float n1 = fbm(q + fbm(q * 1.6 + 3.0) * 0.9);
+  float n2 = fbm(q * 1.4 + vec2(9.0, 4.0));
+  col += vec3(0.075, 0.07, 0.24) * smoothstep(0.38, 0.9, n1) * 0.55 * (0.35 + 0.65 * uv.y);
+  col += vec3(0.02, 0.17, 0.16) * smoothstep(0.52, 0.95, n2) * 0.4 * (0.2 + 0.8 * uv.y);
+
+  // Stars, in three depths that drift at different rates as the page scrolls.
+  vec2 su = vec2(uv.x * asp, uv.y);
+  col += stars(su + par * 6.0, 14.0, t, 1.0) * 0.55;
+  col += stars(su + par * 12.0 + 3.7, 26.0, t, 7.0) * 0.5;
+  col += stars(su + par * 22.0 + 8.1, 46.0, t, 13.0) * 0.4;
+
+  // Light shafts falling from above the page, a warm gold at a low intensity.
+  vec2 o = vec2(0.5, 1.22);
+  float ang = atan((uv.x - o.x) * asp, o.y - uv.y);
+  float rays = pow(noise(vec2(ang * 11.0 + t * 0.03, 2.0)), 2.6) * pow(noise(vec2(ang * 27.0 - t * 0.02, 7.0)), 1.4);
+  col += vec3(1.0, 0.8, 0.5) * rays * 0.085 * smoothstep(0.1, 0.9, uv.y) * smoothstep(1.4, 0.2, length((uv - o) * vec2(asp, 1.0)));
+
+  // Motes: warm sparks rising through the dark.
+  vec3 gold = vec3(1.0, 0.78, 0.4);
+  col += gold * motes(su, 9.0, 0.045, t, 21.0) * 0.55;
+  col += gold * motes(su + 0.31, 17.0, 0.07, t, 31.0) * 0.38;
+
   col += (hash(gl_FragCoord.xy) - 0.5) / 255.0;
   gl_FragColor = vec4(col, 1.0);
 }
 `;
 
-const SCALE = 0.42; // drawing pixels per CSS pixel: the field is soft, so it is drawn small and scaled up
-const STILL_TIME = 14; // the frame drawn when the field does not move
+const SCALE = 0.55; // drawing pixels per CSS pixel: the field is soft, so it is drawn small and scaled up
+const STILL_TIME = 21; // the frame drawn when the field does not move
 
 interface Field {
   draw(time: number): void;
@@ -223,7 +255,7 @@ export function Ambient(): ReactNode {
     // steps down to tier 0, where the field holds still.
     const sub = loop.subscribe(
       (f) => {
-        // Thirty frames a second is plenty for a field this slow.
+        // Thirty frames a second is plenty for a sky this slow.
         if (f.frame % 2 === 0) field.draw(STILL_TIME + f.time);
       },
       { heavy: true },

@@ -2,60 +2,75 @@
  * Typefaces, bundled with the site (SIL Open Font License 1.1, listed on /credits). Latin subsets
  * only, served from this origin, so there is no third-party request and the CSP stays 'self'.
  *
- *   Param Display  Unbounded (variable): wide, round, early-2000s. Headlines and numerals.
- *   Param Sans     Hanken Grotesk (variable): the reading face.
- *   Param Serif    Instrument Serif italic: one accent word per headline.
- *   Param Mono     Geist Mono (variable): short labels and numbers.
+ *   Param Display  Cinzel (variable): inscriptional capitals. Titles, numerals, engraved plaques.
+ *   Param Body     Newsreader (variable, roman and italic): the reading face for lessons and prose.
+ *   Param UI       Barlow Condensed (600, 700): controls, labels, tabs. Compact and legible at small sizes.
  *
  * Each face has a local fallback with adjusted metrics so the swap does not shift the layout.
  */
 @font-face {
   font-family: 'Param Display';
-  src: url('../../node_modules/@fontsource-variable/unbounded/files/unbounded-latin-wght-normal.woff2')
+  src: url('../../node_modules/@fontsource-variable/cinzel/files/cinzel-latin-wght-normal.woff2')
     format('woff2-variations');
-  font-weight: 200 900;
+  font-weight: 400 900;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Param Sans';
-  src: url('../../node_modules/@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2')
+  font-family: 'Param Body';
+  src: url('../../node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2')
     format('woff2-variations');
-  font-weight: 100 900;
+  font-weight: 200 800;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Param Serif';
-  src: url('../../node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2')
-    format('woff2');
-  font-weight: 400;
+  font-family: 'Param Body';
+  src: url('../../node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-italic.woff2')
+    format('woff2-variations');
+  font-weight: 200 800;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Param Mono';
-  src: url('../../node_modules/@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2')
-    format('woff2-variations');
-  font-weight: 100 900;
+  font-family: 'Param UI';
+  src: url('../../node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-600-normal.woff2')
+    format('woff2');
+  font-weight: 500 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Param UI';
+  src: url('../../node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-700-normal.woff2')
+    format('woff2');
+  font-weight: 700 900;
   font-style: normal;
   font-display: swap;
 }
 
 /* Metric-matched fallbacks, used until the real face is ready. */
 @font-face {
-  font-family: 'Param Sans Fallback';
-  src: local('Arial'), local('Helvetica Neue'), local('Liberation Sans');
-  size-adjust: 101%;
-  ascent-override: 93%;
-  descent-override: 24%;
+  font-family: 'Param Body Fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Liberation Serif');
+  size-adjust: 104%;
+  ascent-override: 92%;
+  descent-override: 26%;
   line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Param Display Fallback';
-  src: local('Arial Black'), local('Arial'), local('Liberation Sans');
-  size-adjust: 104%;
-  ascent-override: 88%;
-  descent-override: 22%;
+  src: local('Georgia'), local('Times New Roman'), local('Liberation Serif');
+  size-adjust: 96%;
+  ascent-override: 94%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Param UI Fallback';
+  src: local('Arial Narrow'), local('Arial'), local('Liberation Sans Narrow'), local('Liberation Sans');
+  size-adjust: 92%;
+  ascent-override: 98%;
+  descent-override: 24%;
   line-gap-override: 0%;
 }

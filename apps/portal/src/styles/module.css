@@ -78,10 +78,10 @@
   padding: 0 var(--s-4);
   border: 0;
   border-radius: var(--r-pill);
-  background: rgb(255 255 255 / 0.055);
+  background: rgb(255 244 214 / 0.055);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.14),
-    inset 0 0 0 1px rgb(220 214 255 / 0.2);
+    inset 0 1px 0 rgb(255 244 214 / 0.14),
+    inset 0 0 0 1px rgb(233 196 106 / 0.2);
   color: var(--text-2);
   font-size: var(--fs-small);
   font-weight: 500;
@@ -92,20 +92,20 @@
     color var(--dur) var(--ease);
 }
 .stepper a:not(.link-arrow):hover {
-  background: rgb(255 255 255 / 0.11);
+  background: rgb(255 244 214 / 0.11);
   color: var(--text);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.2),
-    inset 0 0 0 1px rgb(92 241 255 / 0.55);
+    inset 0 1px 0 rgb(255 244 214 / 0.2),
+    inset 0 0 0 1px rgb(95 212 255 / 0.55);
 }
 .stepper a[aria-current='page'] {
   background: var(--acid-soft);
   color: var(--text);
   font-weight: 650;
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    inset 0 1px 0 rgb(255 244 214 / 0.2),
     inset 0 0 0 1.5px var(--acid),
-    0 8px 24px -10px rgb(200 255 74 / 0.5);
+    0 8px 24px -10px rgb(233 196 106 / 0.5);
 }
 .stepper-jump {
   display: none;
@@ -338,7 +338,7 @@
   padding: var(--s-5);
   border-radius: var(--r-xl);
   background:
-    radial-gradient(100% 100% at 100% 0%, rgb(200 255 74 / 0.1), transparent 60%),
+    radial-gradient(100% 100% at 100% 0%, rgb(233 196 106 / 0.1), transparent 60%),
     var(--glass-strong);
 }
 .mp-badge-name {
@@ -371,7 +371,7 @@
 }
 .requirements li[data-done='true'] .req-mark {
   color: var(--acid);
-  filter: drop-shadow(0 0 6px rgb(200 255 74 / 0.55));
+  filter: drop-shadow(0 0 6px rgb(233 196 106 / 0.55));
 }
 
 /* Foundations: the drawing in the header, a narrow reading column, the instrument large on the right. */

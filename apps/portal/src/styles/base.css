@@ -1,65 +1,51 @@
-/* Base: ground, atmosphere, grain, type, focus, selection and the staged load. */
+/* Base: the night, its atmosphere, type, focus, selection and the staged load. */
 html {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
   font-size: 100%;
-  /* Anchors and keyboard focus scroll clear of the sticky header and the floating progress control. */
+  /* Anchors and keyboard focus scroll clear of the sticky header and the floating rank control. */
   scroll-padding-top: calc(var(--header-h) + var(--s-4));
   scroll-padding-bottom: var(--hub-clearance);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scroll-behavior: auto;
-  scrollbar-color: rgb(179 165 255 / 0.38) transparent;
+  scrollbar-color: #8a6a2a #0a0d1a;
   scrollbar-width: thin;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: transparent; /* the atmosphere below shows through */
+  background: transparent; /* the sky below shows through */
   color: var(--text);
   font-size: var(--fs-body);
   font-weight: 400;
   line-height: var(--lh-body);
-  font-feature-settings: 'ss01', 'cv11';
+  font-optical-sizing: auto;
+  font-kerning: normal;
   overflow-x: clip;
 }
 
 /* ---- atmosphere --------------------------------------------------------------------------------------
- * Two fixed layers sit behind everything. The first is a slow aurora made of four tinted fields; it is
- * the whole background when WebGL is unavailable and the base the live field (ui/Ambient.tsx) draws
- * over. The second is film grain, a tiled noise image at a few percent, which keeps large gradients
- * from banding and gives the glass something to refract. Both are static images moved by transform
- * only, so they cost nothing to composite. */
+ * Three fixed layers sit behind everything. The first is a static sky of stars, a cold glow overhead
+ * and a warm one at the horizon; it is the whole background when WebGL is unavailable and the base the
+ * live sky (ui/Ambient.tsx) draws over. The second is the vignette and a film grain, which pull the eye
+ * to the middle of the page and keep large gradients from banding. Nothing here moves except by transform. */
 html::before {
   content: '';
   position: fixed;
-  inset: -24vmax;
+  inset: -4vmax;
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(42vmax 34vmax at 84% 6%, rgb(255 116 220 / 0.2), transparent 70%),
-    radial-gradient(50vmax 38vmax at 4% 16%, rgb(92 241 255 / 0.15), transparent 70%),
-    radial-gradient(44vmax 36vmax at 72% 96%, rgb(130 110 255 / 0.22), transparent 70%),
-    radial-gradient(32vmax 26vmax at 18% 104%, rgb(200 255 74 / 0.08), transparent 70%);
-  transform: translate3d(calc(var(--px) * -1.4vmax), calc(var(--py) * -1.4vmax), 0);
-  animation: aurora-drift 46s var(--ease-soft) infinite alternate;
-}
-@keyframes aurora-drift {
-  from {
-    transform: translate3d(calc(var(--px) * -1.4vmax - 2vmax), calc(var(--py) * -1.4vmax), 0)
-      rotate(-2deg);
-  }
-  to {
-    transform: translate3d(
-        calc(var(--px) * -1.4vmax + 2vmax),
-        calc(var(--py) * -1.4vmax + 2vmax),
-        0
-      )
-      rotate(2deg) scale(1.06);
-  }
+    radial-gradient(70vmax 46vmax at 50% -14%, rgb(80 120 230 / 0.26), transparent 70%),
+    radial-gradient(60vmax 30vmax at 50% 118%, rgb(255 150 70 / 0.16), transparent 70%),
+    radial-gradient(30vmax 22vmax at 12% 30%, rgb(79 227 180 / 0.07), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520'%3E%3Cg fill='%23f4ecd6'%3E%3Ccircle cx='41' cy='63' r='1.1' opacity='.9'/%3E%3Ccircle cx='133' cy='211' r='.8' opacity='.6'/%3E%3Ccircle cx='219' cy='37' r='1.4' opacity='.95'/%3E%3Ccircle cx='307' cy='149' r='.7' opacity='.55'/%3E%3Ccircle cx='389' cy='71' r='1' opacity='.8'/%3E%3Ccircle cx='471' cy='233' r='.9' opacity='.7'/%3E%3Ccircle cx='77' cy='331' r='.7' opacity='.5'/%3E%3Ccircle cx='181' cy='419' r='1.2' opacity='.85'/%3E%3Ccircle cx='263' cy='311' r='.8' opacity='.6'/%3E%3Ccircle cx='353' cy='463' r='1' opacity='.75'/%3E%3Ccircle cx='443' cy='389' r='.7' opacity='.5'/%3E%3Ccircle cx='23' cy='479' r='.9' opacity='.65'/%3E%3Ccircle cx='497' cy='97' r='.6' opacity='.5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: auto, auto, auto, 520px 520px;
+  transform: translate3d(calc(var(--px) * -0.8vmax), calc(var(--py) * -0.8vmax), 0);
 }
 html::after {
   content: '';
@@ -67,30 +53,30 @@ html::after {
   inset: 0;
   z-index: 900;
   pointer-events: none;
-  opacity: 0.07;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
+  background-image:
+    radial-gradient(ellipse 120% 100% at 50% 45%, transparent 52%, rgb(2 3 9 / 0.62) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .95 0 0 0 0 .8 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 180px 180px;
 }
 
 ::selection {
-  background: var(--acid);
-  color: var(--on-accent);
+  background: var(--gold);
+  color: var(--gold-ink);
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #0a0d1a;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgb(179 165 255 / 0.32);
-  border-radius: 10px;
-  border: 2px solid var(--bg);
+  background: linear-gradient(90deg, #7a5a1f, #c9983a, #7a5a1f);
+  border: 2px solid #0a0d1a;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(179 165 255 / 0.55);
+  background: linear-gradient(90deg, #a87a28, #f0cf7a, #a87a28);
 }
 
 h1,
@@ -106,22 +92,22 @@ figure {
   margin: 0;
 }
 
-/* Headlines are wide and round (Unbounded); small headings drop to the reading face so they stay legible. */
+/* Titles are inscriptional capitals (Cinzel); lower case is set as small capitals by the face. */
 h1,
-h2 {
+h2,
+h3,
+h4 {
   font-family: var(--font-display);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: var(--track-display);
   line-height: var(--lh-tight);
   text-wrap: balance;
 }
 h3,
 h4 {
-  font-family: var(--font-sans);
   font-weight: 650;
-  letter-spacing: -0.015em;
+  letter-spacing: 0.05em;
   line-height: 1.2;
-  text-wrap: balance;
 }
 
 p,
@@ -144,7 +130,7 @@ a:hover {
 .prose a,
 .doc-list a,
 .res-list a {
-  color: var(--aqua);
+  color: var(--azure);
   text-decoration: underline;
   text-decoration-color: currentColor;
 }
@@ -180,7 +166,7 @@ button {
 }
 
 .num {
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .muted {
@@ -195,51 +181,52 @@ button {
 .display {
   font-family: var(--font-display);
   font-size: var(--t-display);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: var(--track-display);
-  line-height: 1.04;
+  line-height: 1.06;
   color: var(--text);
 }
 
 .h2 {
   font-family: var(--font-display);
   font-size: var(--t-h2);
-  font-weight: 500;
-  letter-spacing: var(--track-display);
-  line-height: 1.08;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.12;
 }
 
 .lead {
   font-size: var(--t-lead);
   color: var(--text-2);
-  max-width: 48ch;
+  max-width: 46ch;
   font-weight: 400;
   line-height: 1.5;
 }
-/* A short technical label: mono, small capitals, drawn from real state or real structure. */
+/* An engraved label: compact capitals, drawn from real state or real structure. */
 .label {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--fs-label);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--text-3);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 .label b {
-  font-weight: 500;
+  font-weight: 700;
   color: var(--text);
 }
-/* One accent word per headline, in the italic serif, with a chrome fill. */
+/* One word per title in the italic serif, with a gold fill. */
 .serif,
 .accent-word {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-style: italic;
   font-weight: 400;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .accent-word {
-  background: var(--chrome);
+  background: var(--metal);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -267,9 +254,11 @@ button {
   z-index: 2000;
   padding: var(--s-3) var(--s-5);
   background: var(--gel);
-  color: var(--on-accent);
+  color: var(--gold-ink);
+  font-family: var(--font-ui);
   font-weight: 700;
-  border-radius: var(--r-pill);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   transition: top var(--dur) var(--ease);
 }
 .skip-link:focus {
@@ -289,9 +278,9 @@ h1:focus {
 }
 
 /* ---- staged load ---------------------------------------------------------------------------------------
- * Before the app is ready the page shows a pearl ring around a breathing glass orb. The app then fades
- * in. If it is not ready after 1.4 s (a slow device or network) the pre-rendered readable page is shown
- * instead, so there is never a permanent blank screen. */
+ * Before the app is ready the page shows an armillary ring turning around a small blue star. The app then
+ * fades in. If it is not ready after 1.4 s (a slow device or network) the pre-rendered readable page is
+ * shown instead, so there is never a permanent blank screen. */
 #root {
   transition: opacity var(--dur-slow) var(--ease);
 }
@@ -319,34 +308,34 @@ body::after {
   transition: opacity 600ms var(--ease-exit);
 }
 body::before {
-  width: 72px;
-  height: 72px;
-  margin: -36px 0 0 -36px;
-  background: conic-gradient(from 0deg, transparent 0 18%, #5cf1ff, #b3a5ff, #ff74dc, #c8ff4a);
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  width: 84px;
+  height: 84px;
+  margin: -42px 0 0 -42px;
+  background:
+    conic-gradient(from 0deg, transparent 0 12%, #7a5a1f, #e9c46a 40%, #fff3c8 52%, #c9983a 70%, transparent 88%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
 }
 body::after {
-  width: 30px;
-  height: 30px;
-  margin: -15px 0 0 -15px;
-  background:
-    radial-gradient(circle at 34% 26%, rgb(255 255 255 / 0.95) 0 9%, transparent 22%),
-    radial-gradient(circle at 50% 120%, rgb(200 255 74 / 0.9), transparent 60%),
-    radial-gradient(circle at 50% 40%, #8fe9ff, #5a4bd6 78%);
-  box-shadow: 0 0 28px rgb(92 241 255 / 0.5);
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  background: radial-gradient(circle at 36% 30%, #fff 0 12%, #9fe6ff 30%, #2f86c8 80%);
+  box-shadow:
+    0 0 24px 6px rgb(95 212 255 / 0.5),
+    0 0 0 28px rgb(233 196 106 / 0.08);
 }
 @media (scripting: enabled) {
   html:not([data-boot]) body::before {
     opacity: 1;
     animation:
-      boot-spin 1.15s linear infinite,
+      boot-spin 1.6s linear infinite,
       boot-off 0s 6s forwards;
   }
   html:not([data-boot]) body::after {
     opacity: 1;
     animation:
-      boot-breathe 2.2s var(--ease-soft) infinite alternate,
+      boot-breathe 2s var(--ease-soft) infinite alternate,
       boot-off 0s 6s forwards;
   }
 }
@@ -357,10 +346,11 @@ body::after {
 }
 @keyframes boot-breathe {
   from {
-    transform: scale(0.82);
+    transform: scale(0.8);
+    opacity: 0.7;
   }
   to {
-    transform: scale(1.1);
+    transform: scale(1.15);
   }
 }
 @keyframes boot-off {

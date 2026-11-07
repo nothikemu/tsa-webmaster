@@ -13,8 +13,8 @@
   padding: var(--s-6);
   border-radius: var(--r-xl);
   background:
-    radial-gradient(90% 80% at 0% 0%, rgb(92 241 255 / 0.16), transparent 62%),
-    radial-gradient(70% 70% at 100% 100%, rgb(255 116 220 / 0.12), transparent 62%),
+    radial-gradient(90% 80% at 0% 0%, rgb(95 212 255 / 0.16), transparent 62%),
+    radial-gradient(70% 70% at 100% 100%, rgb(79 227 180 / 0.12), transparent 62%),
     var(--glass-strong);
 }
 .pd-level-n {
@@ -64,7 +64,7 @@
   padding: var(--s-5);
   border-radius: var(--r-xl);
   background:
-    radial-gradient(100% 100% at 100% 0%, rgb(200 255 74 / 0.12), transparent 60%),
+    radial-gradient(100% 100% at 100% 0%, rgb(233 196 106 / 0.12), transparent 60%),
     var(--glass-strong);
 }
 .pd-next-title {
@@ -186,9 +186,9 @@
   display: block;
   width: 100%;
   max-width: 26px;
-  background: linear-gradient(180deg, var(--aqua), rgb(150 120 255 / 0.85));
+  background: linear-gradient(180deg, var(--aqua), rgb(255 154 78 / 0.85));
   border-radius: 8px 8px 2px 2px;
-  box-shadow: 0 0 14px -4px rgb(92 241 255 / 0.6);
+  box-shadow: 0 0 14px -4px rgb(95 212 255 / 0.6);
 }
 .xp-fill[data-empty='true'] {
   height: 2px !important;
@@ -196,7 +196,7 @@
 }
 .xp-bars > div[data-best] .xp-fill {
   background: var(--gel);
-  box-shadow: 0 0 18px -2px rgb(200 255 74 / 0.7);
+  box-shadow: 0 0 18px -2px rgb(233 196 106 / 0.7);
 }
 .xp-val {
   position: absolute;
@@ -247,21 +247,21 @@
 .cal-legend i {
   aspect-ratio: 1;
   border-radius: 5px;
-  background: rgb(255 255 255 / 0.07);
-  box-shadow: inset 0 0 0 1px rgb(220 214 255 / 0.1);
+  background: rgb(255 244 214 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(233 196 106 / 0.1);
 }
 .calendar li[data-level='1'],
 .cal-legend i[data-level='1'] {
-  background: rgb(92 241 255 / 0.28);
+  background: rgb(95 212 255 / 0.28);
 }
 .calendar li[data-level='2'],
 .cal-legend i[data-level='2'] {
-  background: rgb(92 241 255 / 0.58);
+  background: rgb(95 212 255 / 0.58);
 }
 .calendar li[data-level='3'],
 .cal-legend i[data-level='3'] {
   background: var(--aqua);
-  box-shadow: 0 0 12px -2px rgb(92 241 255 / 0.7);
+  box-shadow: 0 0 12px -2px rgb(95 212 255 / 0.7);
 }
 .calendar li[data-level='x'] {
   background: transparent;
@@ -301,10 +301,10 @@
   border-top: 1px solid var(--line);
 }
 .heatmap td[data-state='seen'] {
-  background: rgb(92 241 255 / 0.12);
+  background: rgb(95 212 255 / 0.12);
 }
 .heatmap td[data-state='practiced'] {
-  background: rgb(92 241 255 / 0.3);
+  background: rgb(95 212 255 / 0.3);
 }
 .heatmap td[data-state='mastered'] {
   background: var(--aqua);
@@ -341,7 +341,7 @@
 }
 .ach[data-status='earned'] > article {
   background:
-    radial-gradient(90% 100% at 0% 0%, rgb(200 255 74 / 0.16), transparent 62%),
+    radial-gradient(90% 100% at 0% 0%, rgb(233 196 106 / 0.16), transparent 62%),
     radial-gradient(
       60% 80% at 100% 100%,
       color-mix(in srgb, var(--m) 14%, transparent),
@@ -425,8 +425,8 @@
   align-items: center;
   padding: var(--s-1) var(--s-4);
   border-radius: var(--r-pill);
-  background: rgb(255 255 255 / 0.06);
-  box-shadow: inset 0 0 0 1px rgb(220 214 255 / 0.28);
+  background: rgb(255 244 214 / 0.06);
+  box-shadow: inset 0 0 0 1px rgb(233 196 106 / 0.28);
   font-size: var(--fs-small);
   font-weight: 500;
   color: var(--text-2);
@@ -434,15 +434,15 @@
 .status-tag[data-status='earned'] {
   background: var(--gel);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.8),
+    inset 0 1px 0 rgb(255 244 214 / 0.8),
     0 0 0 1px rgb(110 160 0 / 0.5),
-    0 8px 22px -10px rgb(200 255 74 / 0.6);
+    0 8px 22px -10px rgb(233 196 106 / 0.6);
   color: var(--selected-text);
   font-weight: 700;
 }
 .status-tag[data-status='progress'] {
   background: var(--accent-soft);
-  box-shadow: inset 0 0 0 1px rgb(92 241 255 / 0.6);
+  box-shadow: inset 0 0 0 1px rgb(95 212 255 / 0.6);
   color: var(--accent-bright);
 }
 .ach-status {
@@ -488,7 +488,7 @@
 }
 .doc-rail a:hover {
   color: var(--text);
-  background: rgb(255 255 255 / 0.06);
+  background: rgb(255 244 214 / 0.06);
 }
 .doc-rail-n,
 .doc-n {
@@ -572,8 +572,8 @@
   min-width: var(--tap);
   min-height: var(--tap);
   border-radius: var(--r-pill);
-  background: rgb(255 255 255 / 0.05);
-  box-shadow: inset 0 0 0 1px rgb(220 214 255 / 0.22);
+  background: rgb(255 244 214 / 0.05);
+  box-shadow: inset 0 0 0 1px rgb(233 196 106 / 0.22);
   font-family: var(--font-mono);
   color: var(--text-2);
   text-decoration: none;
@@ -582,8 +582,8 @@
     box-shadow var(--dur) var(--ease);
 }
 .gloss-index a:hover {
-  background: rgb(255 255 255 / 0.12);
-  box-shadow: inset 0 0 0 1px rgb(92 241 255 / 0.65);
+  background: rgb(255 244 214 / 0.12);
+  box-shadow: inset 0 0 0 1px rgb(95 212 255 / 0.65);
   color: var(--text);
 }
 .gloss-list {
